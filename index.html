@@ -7,6 +7,22 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ambition CBT Mode</title>
 
+<!-- LOGIN CHECK (Security) -->
+<script>
+  document.documentElement.style.display = 'none';
+  fetch('/api/auth/session')
+    .then(function(res) {
+      if (res.status === 401) {
+        window.location.replace('/login.html');
+      } else {
+        document.documentElement.style.display = 'block';
+      }
+    })
+    .catch(function() {
+      window.location.replace('/login.html');
+    });
+</script>
+
 <link rel="manifest" href="/manifest.json" />
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
 
@@ -376,12 +392,9 @@ async function aiCall(message, context, opts) {
   throw lastErr;
 }
 
-// Protect LaTeX commands (\tan, \frac, \beta, \sqrt, etc.) before JSON.parse eats them!
 function fixLatexEscapesInJSON(jsonStr) {
   return jsonStr
-    // Protect single backslash before common LaTeX commands starting with t, f, b, r, n
     .replace(/(?<!\\)\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '\\\\$1')
-    // Protect any remaining single backslash that isn't a valid JSON escape
     .replace(/(?<!\\)\\(?![/\"\\bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\');
 }
 
@@ -389,28 +402,14 @@ function safeParseJSON(text){
   if (!text) return [];
   var t = String(text).trim();
   t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
-  
   var safeT = fixLatexEscapesInJSON(t);
   try { return JSON.parse(safeT); } catch(e) {}
   try { return JSON.parse(t); } catch(e) {}
-  
   var s = safeT.indexOf('['), e = safeT.lastIndexOf(']');
-  if(s >= 0 && e > s) { 
-    try { return JSON.parse(safeT.slice(s, e+1)); } catch(err) {} 
-  }
+  if(s >= 0 && e > s) { try { return JSON.parse(safeT.slice(s, e+1)); } catch(err) {} }
   var s2 = safeT.indexOf('{'), e2 = safeT.lastIndexOf('}');
-  if(s2 >= 0 && e2 > s2) { 
-    try { 
-      var o = JSON.parse(safeT.slice(s2, e2+1)); 
-      if (o && Array.isArray(o.questions)) return o.questions; 
-      return o; 
-    } catch(err) {} 
-  }
-  
-  if (t.length > 0 && t.length < 500 && !t.includes('{')) {
-     return []; 
-  }
-  
+  if(s2 >= 0 && e2 > s2) { try { var o = JSON.parse(safeT.slice(s2, e2+1)); if (o && Array.isArray(o.questions)) return o.questions; return o; } catch(err) {} }
+  if (t.length > 0 && t.length < 500 && !t.includes('{')) return [];
   throw new Error('AI returned non-JSON. Please retry.');
 }
 
@@ -424,53 +423,24 @@ function formatStatements(text) {
   return formatted.trim();
 }
 
-// Upgraded autoWrapMath: Repairs corrupted tabs/formfeeds and wraps any unwrapped LaTeX
 function autoWrapMath(str) {
   if (!str) return '';
   str = String(str).trim();
-
-  // Repair control characters if already corrupted in older saved IndexedDB banks
-  str = str
-    .replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1')
-    .replace(/\f(rac|orall|lat)\b/g, '\\f$1')
-    .replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1')
-    .replace(/\r(ight|ho|aise)\b/g, '\\r$1');
-
-  // Skip plain English phrases like "None of these" or "All of the above"
-  if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) {
-    return str;
-  }
-
-  // Balance odd dollar signs
+  str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1');
+  if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str;
   var dollarCount = (str.match(/\$/g) || []).length;
-  if (dollarCount % 2 !== 0) {
-    str = str.replace(/\$/g, '');
-    dollarCount = 0;
-  }
-
-  // If already properly wrapped in $...$ or \(...\) without raw leaked LaTeX outside
+  if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; }
   if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) {
-    // Check if raw LaTeX exists outside $...$
     var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, '');
-    if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) {
-      return str;
-    }
-    // If mixed raw LaTeX and $, strip $ and wrap cleanly
+    if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str;
     str = str.replace(/\$/g, '');
   }
-
-  // Detect any LaTeX command (\sqrt, \cos, \frac, etc.) or math exponents/subscripts (^, _)
   var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str);
-
   if (hasLatex) {
-    // If string starts with prose like "Evaluate " followed by math
     var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i);
-    if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) {
-      return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)';
-    }
+    if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)';
     return '\\(' + str + '\\)';
   }
-
   return str;
 }
 
@@ -494,16 +464,9 @@ function normaliseList(raw){
     opts = opts.slice(0, 4);
     var ans = Number(item.ans);
     if(isNaN(ans) || ans < 0 || ans > 3) ans = 0;
-    
-    var fixedQ = autoWrapMath(formatStatements(q));
-    
-    var fixedOpts = opts.map(function(o) { 
-      return autoWrapMath(cleanOptionText(o)); 
-    });
-
     out.push({
-      q: fixedQ,
-      options: fixedOpts,
+      q: autoWrapMath(formatStatements(q)),
+      options: opts.map(function(o) { return autoWrapMath(cleanOptionText(o)); }),
       ans: ans,
       topic: String(item.topic || 'CUET UG'),
       diff: String(item.diff || 'medium'),
@@ -514,30 +477,23 @@ function normaliseList(raw){
 }
 
 function compressImage(file, maxDim, quality){
-  maxDim = maxDim || 1600;
-  quality = quality || 0.8;
+  maxDim = maxDim || 1600; quality = quality || 0.8;
   return new Promise(function(resolve, reject){
     var reader = new FileReader();
     reader.onload = function(e){
       var img = new Image();
       img.onload = function(){
         var w = img.width, h = img.height;
-        if(w > maxDim || h > maxDim){
-          if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; }
-          else { w = Math.round((w * maxDim)/h); h = maxDim; }
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
+        if(w > maxDim || h > maxDim){ if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; } else { w = Math.round((w * maxDim)/h); h = maxDim; } }
+        var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         var dataUrl = canvas.toDataURL('image/jpeg', quality);
         canvas.width = 0; canvas.height = 0;
         resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
       };
-      img.onerror = reject;
-      img.src = e.target.result;
+      img.onerror = reject; img.src = e.target.result;
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    reader.onerror = reject; reader.readAsDataURL(file);
   });
 }
 
@@ -564,8 +520,7 @@ async function renderPDFPages(file, maxPages) {
     var page = await pdf.getPage(i);
     var viewport = page.getViewport({ scale: 1.2 });
     var canvas = document.createElement('canvas');
-    canvas.width = Math.round(viewport.width);
-    canvas.height = Math.round(viewport.height);
+    canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height);
     await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
     var dataUrl = canvas.toDataURL('image/jpeg', 0.72);
     images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
@@ -599,8 +554,7 @@ function renderHistory(){
   var avg=Math.round(hist.reduce(function(a,h){return a+h.pct},0)/hist.length);
   analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="analysis-grid">'+
     '<div class="analysis-stat"><div class="value">'+hist.length+'</div><div class="label">Tests taken</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average accuracy</div></div>'+
-    '</div>';
+    '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average accuracy</div></div></div>';
 }
 
 function openSetup(){state.subject=null;state.chapters=[];state.count=10;renderSubjects();renderChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
@@ -661,39 +615,25 @@ async function handleFileUpload(file){
   var isPDF = file.type === 'application/pdf' || fname.endsWith('.pdf');
   var isText = file.type === 'text/plain' || fname.endsWith('.txt');
 
-  if(file.size > 100*1024*1024){
-    dialog({title:'File too large',message:'Max 100 MB allowed.'});
-    return;
-  }
-  if(isImage && file.size > 20*1024*1024){
-    dialog({title:'Image too large',message:'Max 20 MB allowed for images.'});
-    return;
-  }
+  if(file.size > 100*1024*1024){dialog({title:'File too large',message:'Max 100 MB allowed.'});return;}
+  if(isImage && file.size > 20*1024*1024){dialog({title:'Image too large',message:'Max 20 MB allowed for images.'});return;}
 
   var progressWrap=$('uploadProgress');
   var progressBar=$('uploadProgressBar');
   var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');
-  progressBar.style.width='5%';
-  progressText.textContent='Reading file…';
+  progressWrap.classList.remove('hidden'); progressBar.style.width='5%'; progressText.textContent='Reading file…';
   var startTime=Date.now();
 
   try {
     var questions;
-    if(isImage){
-      questions = await processImageFile(file, progressBar, progressText);
-    } else if(isPDF){
-      questions = await processPDFFile(file, progressBar, progressText);
-    } else if(isText){
-      questions = await processTextFile(file, progressBar, progressText);
-    } else {
-      throw new Error('Unsupported file type.');
-    }
+    if(isImage){ questions = await processImageFile(file, progressBar, progressText); } 
+    else if(isPDF){ questions = await processPDFFile(file, progressBar, progressText); } 
+    else if(isText){ questions = await processTextFile(file, progressBar, progressText); } 
+    else { throw new Error('Unsupported file type.'); }
 
     if(!questions || !questions.length) throw new Error('No valid questions found. Please upload a clearer image or a text-based PDF.');
 
-    progressBar.style.width='100%';
-    progressText.textContent='Saving '+questions.length+' questions…';
+    progressBar.style.width='100%'; progressText.textContent='Saving '+questions.length+' questions…';
 
     var bank={id:'bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),name:file.name,questions:questions,created:Date.now()};
     await IDB.put(bank);
@@ -701,11 +641,7 @@ async function handleFileUpload(file){
     progressWrap.classList.add('hidden');
     renderBanks();
     var elapsed=((Date.now()-startTime)/1000).toFixed(1);
-    dialog({
-      title:'✅ Done in '+elapsed+'s',
-      message:questions.length+' questions extracted from '+file.name,
-      buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]
-    }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
+    dialog({title:'✅ Done in '+elapsed+'s',message:questions.length+' questions extracted from '+file.name,buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]}).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
   } catch(err){
     progressWrap.classList.add('hidden');
     dialog({title:'Upload failed',message:(err.message||'Unknown error')});
@@ -713,122 +649,67 @@ async function handleFileUpload(file){
 }
 
 async function processImageFile(file, bar, text){
-  bar.style.width='15%';
-  text.textContent='Compressing image…';
+  bar.style.width='15%'; text.textContent='Compressing image…';
   var img = await compressImage(file, 1600, 0.8);
-
-  bar.style.width='40%';
-  text.textContent='AI is reading the image…';
-
-  var raw = await aiCall(
-    'Extract ALL questions from this image. If MCQ, copy options exactly. If direct question, solve it and create 4 options. "ans" = 0-based index of correct option. Wrap ALL math in $...$ and double-escape backslashes (\\\\frac, \\\\sqrt, \\\\cos). Return raw JSON array only.',
-    {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'image-extract', image: img},
-    {timeoutMs: 60000}
-  );
-
+  bar.style.width='40%'; text.textContent='AI is reading the image…';
+  var raw = await aiCall('Extract ALL questions from this image. If MCQ, copy options exactly. If direct question, solve it and create 4 options. "ans" = 0-based index of correct option. Wrap ALL math in $...$ and double-escape backslashes (\\\\frac, \\\\sqrt, \\\\cos). Return raw JSON array only.',{source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'image-extract', image: img},{timeoutMs: 60000});
   bar.style.width='90%';
   return normaliseList(safeParseJSON(raw));
 }
 
 async function processTextFile(file, bar, text){
-  bar.style.width='15%';
-  text.textContent='Reading text…';
+  bar.style.width='15%'; text.textContent='Reading text…';
   var content = await file.text();
   if(!content.trim()) throw new Error('Empty file.');
-
-  bar.style.width='40%';
-  text.textContent='AI is extracting questions from text…';
-
+  bar.style.width='40%'; text.textContent='AI is extracting questions from text…';
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-  var raw = await aiCall(
-    (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),
-    {source:'ambition-cuet-cbt', mode: mode},
-    {timeoutMs: 60000}
-  );
-
+  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),{source:'ambition-cuet-cbt', mode: mode},{timeoutMs: 60000});
   bar.style.width='90%';
   return normaliseList(safeParseJSON(raw));
 }
 
 async function processPDFFile(file, bar, text){
-  bar.style.width='10%';
-  text.textContent='Loading PDF…';
-
+  bar.style.width='10%'; text.textContent='Loading PDF…';
   var extracted;
-  try {
-    extracted = await extractPDFText(file, function(page, total){
-      bar.style.width = (10 + (page/total)*15) + '%';
-      text.textContent = 'Extracting text… page '+page+'/'+total;
-    });
-  } catch(e) {
-    extracted = { text: '', pageCount: 0 };
-  }
+  try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); } 
+  catch(e) { extracted = { text: '', pageCount: 0 }; }
 
   var textLen = (extracted.text || '').trim().length;
-
   if(textLen > 500){
-    bar.style.width='30%';
-    text.textContent='Text extracted. AI is reading…';
-
+    bar.style.width='30%'; text.textContent='Text extracted. AI is reading…';
     var chunks = chunkText(extracted.text, 25000);
     var mode = uploadMode === 'notes' ? 'notes' : 'extract';
     var collected = [];
     var concurrency = 2; 
-    
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
       bar.style.width = (30 + (b/chunks.length)*60) + '%';
       text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions collected…';
-
-      var results = await Promise.all(group.map(function(chunk){
-        return aiCall(
-          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,
-          {source:'ambition-cuet-cbt', mode: mode},
-          {timeoutMs: 60000, retries: 1}
-        ).catch(function(e){
-          console.warn('Chunk failed:', e.message);
-          return '';
-        });
-      }));
-
-      results.forEach(function(r){
-        if(r) {
-          try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){}
-        }
-      });
+      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,{source:'ambition-cuet-cbt', mode: mode},{timeoutMs: 60000, retries: 1}).catch(function(e){ return ''; }); }));
+      results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){} } });
     }
     return collected;
   }
 
-  bar.style.width='25%';
-  text.textContent='Scanned PDF — rendering pages…';
+  bar.style.width='25%'; text.textContent='Scanned PDF — rendering pages…';
   var rendered = await renderPDFPages(file, 10);
   if(!rendered.images.length) throw new Error('Could not render PDF pages.');
 
-  bar.style.width='40%';
-  text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
-
+  bar.style.width='40%'; text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
   var collected = [];
   for(var i=0; i<rendered.images.length; i++){
     bar.style.width = (40 + (i/rendered.images.length)*50) + '%';
     text.textContent = 'Processing page '+(i+1)+'/'+rendered.images.length+'…';
     try {
-      var raw = await aiCall(
-        'Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Wrap ALL math in $...$. Return raw JSON array only.',
-        {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', image: rendered.images[i]},
-        {timeoutMs: 60000, retries: 1}
-      );
+      var raw = await aiCall('Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Wrap ALL math in $...$. Return raw JSON array only.',{source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', image: rendered.images[i]},{timeoutMs: 60000, retries: 1});
       collected = collected.concat(normaliseList(safeParseJSON(raw)));
-    } catch(e) {
-      console.warn('Page '+(i+1)+' failed:', e.message);
-    }
+    } catch(e) {}
   }
   return collected;
 }
 
 function chunkText(text, size){
-  var chunks = [];
-  var i = 0;
+  var chunks = []; var i = 0;
   while(i < text.length){
     var end = Math.min(i + size, text.length);
     if(end < text.length){
@@ -845,10 +726,7 @@ function chunkText(text, size){
 function launchTest(cfg){
   T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'up',answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
   $('testTitle').textContent=T.name;
-  showScreen('screen-test');
-  startTimer();
-  renderQuestion();
-  renderPalette();
+  showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette();
 }
 
 function startTimer(){
@@ -860,7 +738,6 @@ function startTimer(){
   },1000);
 }
 
-// Upgraded renderQuestion: runs autoWrapMath live so even already-saved Question Banks render properly
 function renderQuestion(){
   if(!T) return;
   var q=T.questions[T.cur];
@@ -882,8 +759,7 @@ function renderQuestion(){
 
   $('btnPrev').disabled=(T.cur===0);
   $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
-  renderMath($('qText'));
-  renderMath(box);
+  renderMath($('qText')); renderMath(box);
 }
 
 function renderPalette(){
@@ -919,9 +795,7 @@ function submitTest(){
   var pct=Math.max(0,Math.round((score/max)*100));
 
   var record={name:T.name,score:score,max:max,pct:pct,correct:correct,wrong:wrong,skipped:skipped,date:new Date().toLocaleString()};
-  var hist=LS.get(K.HISTORY,[]);
-  hist.unshift(record);
-  LS.set(K.HISTORY,hist);
+  var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
 
   $('resultBody').innerHTML='<div class="scorecard">'+
     '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
@@ -942,11 +816,11 @@ function wireEvents(){
   $('btnOpenSettings').onclick=function(){
     dialog({
       title:'Ambition CBT Mode 2.0',
-      message:'Private Beta. Signed in as Super Admin. Math & LaTeX rendering active.',
+      message:'Private Beta. Math & LaTeX rendering active.',
       buttons:[{text:'Close',value:false},{text:'Log out',primary:true,value:true}]
     }).then(function(out){
       if(!out) return;
-      fetch('/api/auth/logout',{method:'POST'}).finally(function(){location.href='/login';});
+      fetch('/api/auth/logout',{method:'POST'}).finally(function(){location.href='/login.html';});
     });
   };
   $('btnBackHome').onclick=function(){showScreen('screen-home')};
@@ -983,4 +857,4 @@ function wireEvents(){
 })();
 </script>
 </body>
-  </html>
+</html>
