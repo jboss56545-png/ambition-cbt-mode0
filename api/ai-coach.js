@@ -15,7 +15,7 @@ async function fetchGemini(model, key, body, timeoutMs) {
   const timer = setTimeout(function () { controller.abort(); }, timeoutMs);
   try {
     return await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -31,9 +31,13 @@ async function fetchGemini(model, key, body, timeoutMs) {
 function isSafeImage(img) {
   if (!img || typeof img !== 'object') return false;
   if (typeof img.data !== 'string' || typeof img.mime !== 'string') return false;
-  if (img.data.length === 0 || img.data.length > MAX_IMAGE_B64) return false;
-  if (!/^image\/(jpeg|png|webp)$/.test(img.mime)) return false;
-  return /^[A-Za-z0-9+/=\r\n]+$/.test(img.data.slice(0, 200));
+  // Strip accidental data URL prefix if frontend sent "data:image/jpeg;base64,..."
+  const cleanData = img.data.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, '').trim();
+  if (cleanData.length === 0 || cleanData.length > MAX_IMAGE_B64) return false;
+  if (!/^image\/(jpeg|jpg|png|webp)$/i.test(img.mime)) return false;
+  img.data = cleanData;
+  img.mime = img.mime.toLowerCase() === 'image/jpg' ? 'image/jpeg' : img.mime.toLowerCase();
+  return /^[A-Za-z0-9+/=\r\n]+$/.test(cleanData.slice(0, 200));
 }
 
 module.exports = async function handler(req, res) {
@@ -69,8 +73,9 @@ module.exports = async function handler(req, res) {
     return http.json(res, 413, { error: 'CONTEXT_TOO_LARGE' });
   }
 
-  const isCBT = ctx.source === 'cbt-test-studio' || ctx.source === 'ambition-cuet-cbt';
   const mode = typeof ctx.mode === 'string' ? ctx.mode : 'chat';
+  const isExtractMode = (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes' || mode === 'ai');
+  const isCBT = ctx.source === 'cbt-test-studio' || ctx.source === 'ambition-cuet-cbt' || isExtractMode;
 
   let allImages = [];
   const rawImages = Array.isArray(body.images) ? body.images : (body.image ? [body.image] : []);
@@ -156,14 +161,14 @@ module.exports = async function handler(req, res) {
     if (lastMsg && lastMsg.role === 'user') {
       for (let i = 0; i < allImages.length; i++) {
         lastMsg.parts.push({
-          inline_data: { mime_type: allImages[i].mime, data: allImages[i].data }
+          inlineData: { mimeType: allImages[i].mime, data: allImages[i].data }
         });
       }
     }
   }
 
-  // gemini-3.5-flash-lite does not exist — replaced with gemini-2.5-flash-lite.
-  const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-flash-lite'];
+  // Active production Gemini models in 2026 (removed retired gemini-1.5-flash)
+  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
 
   let lastErr = '';
   let sawQuota = false;
@@ -179,7 +184,7 @@ module.exports = async function handler(req, res) {
         systemInstruction: { parts: [{ text: system }] },
         contents: contents,
         generationConfig: genConfig
-      }, 45000);
+      }, 22000);
 
       const data = await r.json().catch(function () { return {}; });
 
@@ -196,26 +201,30 @@ module.exports = async function handler(req, res) {
           }
           return reply(text);
         }
-        lastErr = '[' + model + '] Empty response';
+        const blockReason = data.promptFeedback && data.promptFeedback.blockReason;
+        lastErr = '[' + model + '] Empty response' + (blockReason ? ' (Blocked: ' + blockReason + ')' : '');
         continue;
       }
 
       const msg = (data.error && data.error.message) || ('HTTP ' + r.status);
       lastErr = '[' + model + '] ' + r.status + ': ' + msg;
 
-      if (r.status === 401 || r.status === 403) { authError = msg; break; }
-      if (r.status === 429) { sawQuota = true; continue; } // try next model instead of aborting
-      if (r.status === 404) { continue; }
+      if (r.status === 401 || r.status === 403 || (r.status === 400 && /API_KEY_INVALID|key not valid/i.test(msg))) {
+        authError = msg;
+        break;
+      }
+      if (r.status === 429) { sawQuota = true; continue; }
+      if (r.status === 404 || r.status === 503 || r.status === 500) { continue; }
 
     } catch (e) {
-      lastErr = '[' + model + '] ' + (e.name === 'AbortError' ? 'Timeout' : e.message);
+      lastErr = '[' + model + '] ' + (e.name === 'AbortError' ? 'Timeout (22s)' : e.message);
     }
   }
 
   console.error('[ai-coach] all models failed:', lastErr);
-  if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'API key problem. Check GEMINI_API_KEY.' });
+  if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'API key problem: ' + authError });
   if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'API quota limit hit. Wait 1 minute.' });
-  return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: 'AI is busy. Please retry.' });
+  return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: 'AI is busy. Reason: ' + lastErr });
 };
 
 module.exports.config = { maxDuration: 60 };
