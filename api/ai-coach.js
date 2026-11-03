@@ -14,8 +14,9 @@ async function fetchGemini(model, key, body, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(function () { controller.abort(); }, timeoutMs);
   try {
+    const cleanModel = model.replace(/^models\//, '');
     return await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(cleanModel) + ':generateContent',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -28,10 +29,34 @@ async function fetchGemini(model, key, body, timeoutMs) {
   }
 }
 
+async function discoverAvailableModels(key) {
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
+      headers: { 'x-goog-api-key': key }
+    });
+    if (!r.ok) return [];
+    const data = await r.json();
+    const list = (data && Array.isArray(data.models)) ? data.models : [];
+    return list
+      .filter(function (m) {
+        return m && m.name && Array.isArray(m.supportedGenerationMethods) &&
+          m.supportedGenerationMethods.indexOf('generateContent') !== -1 &&
+          /gemini/i.test(m.name) && !/embedding|vision|imagen|aqa|tts|audio/i.test(m.name);
+      })
+      .map(function (m) { return m.name.replace(/^models\//, ''); })
+      .sort(function (a, b) {
+        const aFlash = /flash/i.test(a) ? 0 : 1;
+        const bFlash = /flash/i.test(b) ? 0 : 1;
+        return aFlash - bFlash;
+      });
+  } catch (e) {
+    return [];
+  }
+}
+
 function isSafeImage(img) {
   if (!img || typeof img !== 'object') return false;
   if (typeof img.data !== 'string' || typeof img.mime !== 'string') return false;
-  // Strip accidental data URL prefix if frontend sent "data:image/jpeg;base64,..."
   const cleanData = img.data.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, '').trim();
   if (cleanData.length === 0 || cleanData.length > MAX_IMAGE_B64) return false;
   if (!/^image\/(jpeg|jpg|png|webp)$/i.test(img.mime)) return false;
@@ -44,7 +69,6 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return http.methodNotAllowed(res, ['POST']);
 
-  // Defence in depth: middleware already gates this, but never rely on one layer.
   let authed = null;
   try {
     authed = session.verify(http.parseCookies(req.headers.cookie)[http.COOKIE_NAME]);
@@ -66,7 +90,6 @@ module.exports = async function handler(req, res) {
   const key = (process.env.GEMINI_API_KEY || '').trim();
   if (!key) return http.json(res, 500, { error: 'NO_KEY', message: 'GEMINI_API_KEY missing on Vercel.' });
 
-  // Hard cap on context — this is the prompt-injection / cost-DoS surface.
   const ctx = (context && typeof context === 'object' && !Array.isArray(context)) ? context : {};
   const ctxJson = JSON.stringify(ctx);
   if (ctxJson.length > MAX_CONTEXT_CHARS) {
@@ -167,12 +190,11 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // Active production Gemini models in 2026 (removed retired gemini-1.5-flash)
-  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
-
-  let lastErr = '';
+  let models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-flash-latest'];
+  const errors = [];
   let sawQuota = false;
   let authError = '';
+  let didAutoDiscover = false;
 
   for (let i = 0; i < models.length; i++) {
     const model = models[i];
@@ -184,7 +206,7 @@ module.exports = async function handler(req, res) {
         systemInstruction: { parts: [{ text: system }] },
         contents: contents,
         generationConfig: genConfig
-      }, 22000);
+      }, 20000);
 
       const data = await r.json().catch(function () { return {}; });
 
@@ -202,29 +224,40 @@ module.exports = async function handler(req, res) {
           return reply(text);
         }
         const blockReason = data.promptFeedback && data.promptFeedback.blockReason;
-        lastErr = '[' + model + '] Empty response' + (blockReason ? ' (Blocked: ' + blockReason + ')' : '');
+        errors.push(model + ':Empty' + (blockReason ? '(' + blockReason + ')' : ''));
         continue;
       }
 
       const msg = (data.error && data.error.message) || ('HTTP ' + r.status);
-      lastErr = '[' + model + '] ' + r.status + ': ' + msg;
+      errors.push(model + ':' + r.status);
 
       if (r.status === 401 || r.status === 403 || (r.status === 400 && /API_KEY_INVALID|key not valid/i.test(msg))) {
-        authError = msg;
+        authError = msg.slice(0, 60);
         break;
       }
       if (r.status === 429) { sawQuota = true; continue; }
-      if (r.status === 404 || r.status === 503 || r.status === 500) { continue; }
+
+      // If default models return 404, auto-discover live models from Google API
+      if (r.status === 404 && !didAutoDiscover && i === models.length - 1) {
+        didAutoDiscover = true;
+        const discovered = await discoverAvailableModels(key);
+        for (let d = 0; d < discovered.length; d++) {
+          if (models.indexOf(discovered[d]) === -1 && models.length < 6) {
+            models.push(discovered[d]);
+          }
+        }
+      }
 
     } catch (e) {
-      lastErr = '[' + model + '] ' + (e.name === 'AbortError' ? 'Timeout (22s)' : e.message);
+      errors.push(model + ':' + (e.name === 'AbortError' ? 'Timeout' : e.message.slice(0, 25)));
     }
   }
 
-  console.error('[ai-coach] all models failed:', lastErr);
-  if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'API key problem: ' + authError });
-  if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'API quota limit hit. Wait 1 minute.' });
-  return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: 'AI is busy. Reason: ' + lastErr });
+  const errSummary = errors.join(' | ');
+  console.error('[ai-coach] failed:', errSummary);
+  if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'Key Invalid: ' + authError });
+  if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'Quota hit (' + errSummary + '). Wait 1m.' });
+  return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: errSummary });
 };
 
 module.exports.config = { maxDuration: 60 };
