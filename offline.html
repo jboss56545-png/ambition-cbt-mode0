@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<title>Offline · Ambition CBT</title>
+<style>
+:root{--bg:#0b0d12;--card:#161a24;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center}
+.box{max-width:340px}
+.icon{font-size:46px;margin-bottom:18px}
+h1{margin:0 0 10px;font-size:23px;font-weight:800}
+p{margin:0 0 24px;color:var(--muted);font-size:14.5px;line-height:1.6}
+button{padding:14px 26px;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">📡</div>
+  <h1>You're offline</h1>
+  <p>Ambition CBT needs a connection for AI question generation and sign-in. Your saved question banks are still on this device.</p>
+  <button onclick="location.reload()">Retry</button>
+</div>
+</body>
+</html>
