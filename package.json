@@ -1,0 +1,13 @@
+{
+  "name": "ambition-cbt-mode",
+  "version": "2.0.0-beta.1",
+  "private": true,
+  "description": "Ambition CBT Mode 2.0 — Private Beta",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "hash": "node scripts/hash-password.mjs"
+  },
+  "dependencies": {}
+}
