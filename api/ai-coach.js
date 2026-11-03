@@ -1,4 +1,4 @@
-// Ambition CBT Mode 2.0 — AI Backend (session-gated)
+// Ambition CBT Mode 2.0 — AI Backend (Session-gated)
 // Powered by ASVIRO STUDIO
 'use strict';
 
@@ -14,9 +14,8 @@ async function fetchGemini(model, key, body, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(function () { controller.abort(); }, timeoutMs);
   try {
-    const cleanModel = model.replace(/^models\//, '');
     return await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(cleanModel) + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -29,46 +28,19 @@ async function fetchGemini(model, key, body, timeoutMs) {
   }
 }
 
-async function discoverAvailableModels(key) {
-  try {
-    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
-      headers: { 'x-goog-api-key': key }
-    });
-    if (!r.ok) return [];
-    const data = await r.json();
-    const list = (data && Array.isArray(data.models)) ? data.models : [];
-    return list
-      .filter(function (m) {
-        return m && m.name && Array.isArray(m.supportedGenerationMethods) &&
-          m.supportedGenerationMethods.indexOf('generateContent') !== -1 &&
-          /gemini/i.test(m.name) && !/embedding|vision|imagen|aqa|tts|audio/i.test(m.name);
-      })
-      .map(function (m) { return m.name.replace(/^models\//, ''); })
-      .sort(function (a, b) {
-        const aFlash = /flash/i.test(a) ? 0 : 1;
-        const bFlash = /flash/i.test(b) ? 0 : 1;
-        return aFlash - bFlash;
-      });
-  } catch (e) {
-    return [];
-  }
-}
-
 function isSafeImage(img) {
   if (!img || typeof img !== 'object') return false;
   if (typeof img.data !== 'string' || typeof img.mime !== 'string') return false;
-  const cleanData = img.data.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, '').trim();
-  if (cleanData.length === 0 || cleanData.length > MAX_IMAGE_B64) return false;
-  if (!/^image\/(jpeg|jpg|png|webp)$/i.test(img.mime)) return false;
-  img.data = cleanData;
-  img.mime = img.mime.toLowerCase() === 'image/jpg' ? 'image/jpeg' : img.mime.toLowerCase();
-  return /^[A-Za-z0-9+/=\r\n]+$/.test(cleanData.slice(0, 200));
+  if (img.data.length === 0 || img.data.length > MAX_IMAGE_B64) return false;
+  if (!/^image\/(jpeg|png|webp)$/.test(img.mime)) return false;
+  return /^[A-Za-z0-9+/=\r\n]+$/.test(img.data.slice(0, 200));
 }
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return http.methodNotAllowed(res, ['POST']);
 
+  // Defence in depth: middleware already gates this, but never rely on one layer.
   let authed = null;
   try {
     authed = session.verify(http.parseCookies(req.headers.cookie)[http.COOKIE_NAME]);
@@ -90,15 +62,15 @@ module.exports = async function handler(req, res) {
   const key = (process.env.GEMINI_API_KEY || '').trim();
   if (!key) return http.json(res, 500, { error: 'NO_KEY', message: 'GEMINI_API_KEY missing on Vercel.' });
 
+  // Hard cap on context — this is the prompt-injection / cost-DoS surface.
   const ctx = (context && typeof context === 'object' && !Array.isArray(context)) ? context : {};
   const ctxJson = JSON.stringify(ctx);
   if (ctxJson.length > MAX_CONTEXT_CHARS) {
     return http.json(res, 413, { error: 'CONTEXT_TOO_LARGE' });
   }
 
+  const isCBT = ctx.source === 'cbt-test-studio' || ctx.source === 'ambition-cuet-cbt';
   const mode = typeof ctx.mode === 'string' ? ctx.mode : 'chat';
-  const isExtractMode = (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes' || mode === 'ai');
-  const isCBT = ctx.source === 'cbt-test-studio' || ctx.source === 'ambition-cuet-cbt' || isExtractMode;
 
   let allImages = [];
   const rawImages = Array.isArray(body.images) ? body.images : (body.image ? [body.image] : []);
@@ -184,17 +156,18 @@ module.exports = async function handler(req, res) {
     if (lastMsg && lastMsg.role === 'user') {
       for (let i = 0; i < allImages.length; i++) {
         lastMsg.parts.push({
-          inlineData: { mimeType: allImages[i].mime, data: allImages[i].data }
+          inline_data: { mime_type: allImages[i].mime, data: allImages[i].data }
         });
       }
     }
   }
 
-  let models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-flash-latest'];
-  const errors = [];
+  // UPDATED: Latest stable & fast Gemini Models
+  const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite'];
+
+  let lastErr = '';
   let sawQuota = false;
   let authError = '';
-  let didAutoDiscover = false;
 
   for (let i = 0; i < models.length; i++) {
     const model = models[i];
@@ -206,7 +179,7 @@ module.exports = async function handler(req, res) {
         systemInstruction: { parts: [{ text: system }] },
         contents: contents,
         generationConfig: genConfig
-      }, 20000);
+      }, 45000);
 
       const data = await r.json().catch(function () { return {}; });
 
@@ -223,41 +196,26 @@ module.exports = async function handler(req, res) {
           }
           return reply(text);
         }
-        const blockReason = data.promptFeedback && data.promptFeedback.blockReason;
-        errors.push(model + ':Empty' + (blockReason ? '(' + blockReason + ')' : ''));
+        lastErr = '[' + model + '] Empty response';
         continue;
       }
 
       const msg = (data.error && data.error.message) || ('HTTP ' + r.status);
-      errors.push(model + ':' + r.status);
+      lastErr = '[' + model + '] ' + r.status + ': ' + msg;
 
-      if (r.status === 401 || r.status === 403 || (r.status === 400 && /API_KEY_INVALID|key not valid/i.test(msg))) {
-        authError = msg.slice(0, 60);
-        break;
-      }
-      if (r.status === 429) { sawQuota = true; continue; }
-
-      // If default models return 404, auto-discover live models from Google API
-      if (r.status === 404 && !didAutoDiscover && i === models.length - 1) {
-        didAutoDiscover = true;
-        const discovered = await discoverAvailableModels(key);
-        for (let d = 0; d < discovered.length; d++) {
-          if (models.indexOf(discovered[d]) === -1 && models.length < 6) {
-            models.push(discovered[d]);
-          }
-        }
-      }
+      if (r.status === 401 || r.status === 403) { authError = msg; break; }
+      if (r.status === 429) { sawQuota = true; continue; } // try next model instead of aborting
+      if (r.status === 404) { continue; }
 
     } catch (e) {
-      errors.push(model + ':' + (e.name === 'AbortError' ? 'Timeout' : e.message.slice(0, 25)));
+      lastErr = '[' + model + '] ' + (e.name === 'AbortError' ? 'Timeout' : e.message);
     }
   }
 
-  const errSummary = errors.join(' | ');
-  console.error('[ai-coach] failed:', errSummary);
-  if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'Key Invalid: ' + authError });
-  if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'Quota hit (' + errSummary + '). Wait 1m.' });
-  return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: errSummary });
+  console.error('[ai-coach] all models failed:', lastErr);
+  if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'API key problem. Check GEMINI_API_KEY.' });
+  if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'API quota limit hit. Wait 1 minute.' });
+  return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: 'AI is busy. Please retry.' });
 };
 
 module.exports.config = { maxDuration: 60 };
