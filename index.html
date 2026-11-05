@@ -7,8 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ambition CBT Mode</title>
 
+<!-- Google Site Verification -->
 <meta name="google-site-verification" content="BPY__4U3V_3ojViyn2vqneUaRpdIJ2gAgIkAEyvUxdo" />
 
+<!-- LOGIN CHECK (Security) -->
 <script>
   document.documentElement.style.display = 'none';
   fetch('/api/auth/session')
@@ -24,6 +26,9 @@
 
 <link rel="manifest" href="/manifest.json" />
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
+
+<!-- Chart.js for Line Graph -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
@@ -151,10 +156,21 @@ window.MathJax = {
       <h1>Your CUET preparation, one test at a time.</h1>
       <p>Practice CUET UG with AI tests or your own PDFs, photos and question papers. Track every score with instant analytics.</p>
     </div>
+    
     <div id="resumeBanner"></div>
+    
+    <!-- Dashboard Analytics -->
+    <div id="analysisWrap"></div>
+    <div class="card hidden" id="chartContainer" style="margin-top: 14px; padding: 18px;">
+      <h2 class="section-title" style="margin-top: 0; margin-bottom: 10px;">Progress Trend</h2>
+      <div style="height: 220px; width: 100%; position: relative;">
+        <canvas id="progressChart"></canvas>
+      </div>
+    </div>
+
     <h2 class="section-title">Choose your CUET practice mode</h2>
     <div class="exam-grid" id="examGrid"></div>
-    <div id="analysisWrap"></div>
+    
     <footer class="asviro-footer">
       Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
     </footer>
@@ -290,7 +306,6 @@ window.MathJax = {
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/service-worker.js').catch(function(){});});}</script>
 <script>
 "use strict";
 
@@ -456,7 +471,7 @@ function normaliseList(raw){
       q: autoWrapMath(formatStatements(q)),
       options: opts.map(function(o) { return autoWrapMath(cleanOptionText(o)); }),
       ans: ans,
-      topic: String(item.topic || 'CUET UG'),
+      topic: String(item.topic || 'General'),
       diff: String(item.diff || 'medium'),
       explain: String(item.explain || '')
     });
@@ -529,6 +544,7 @@ var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',time
 var uploadMode='extract';
 var T=null,timerHandle=null;
 var startTime=0, totalDuration=0;
+var myChart=null;
 
 function renderHome(){
   var grid=$('examGrid');grid.innerHTML='';
@@ -537,22 +553,80 @@ function renderHome(){
   b.innerHTML='<div style="font-size:26px">🎓</div><div style="font-weight:700;font-size:16px">CUET UG 2026</div><div class="muted small">Practice • PYQs • Image Solver</div><div style="color:var(--accent);font-weight:700;font-size:12px;margin-top:4px">+5 Correct | -1 Negative</div>';
   b.onclick=function(){showScreen('screen-exam')};
   grid.appendChild(b);
+  
   renderHistory();
   renderResumeBanner();
 }
-function openExam(){showScreen('screen-exam')}
 
 function renderHistory(){
   var hist=LS.get(K.HISTORY,[]);
   var analysis=$('analysisWrap');
+  
   if(!hist.length){
     analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="card"><p class="muted small" style="margin:0">Completed test scores will appear here.</p></div>';
+    $('chartContainer').classList.add('hidden');
     return;
   }
+  
   var avg=Math.round(hist.reduce(function(a,h){return a+h.pct},0)/hist.length);
-  analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="analysis-grid">'+
+  var totalCorrect=0, totalQs=0;
+  hist.forEach(function(h) {
+    totalCorrect += (h.correct || 0);
+    totalQs += ((h.correct || 0) + (h.wrong || 0) + (h.skipped || 0));
+  });
+  var overallAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
+
+  analysis.innerHTML='<h2 class="section-title">Your Dashboard</h2><div class="analysis-grid">'+
     '<div class="analysis-stat"><div class="value">'+hist.length+'</div><div class="label">Tests taken</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average accuracy</div></div></div>';
+    '<div class="analysis-stat"><div class="value">'+overallAcc+'%</div><div class="label">Overall Accuracy</div></div>'+
+    '</div>';
+
+  // Render Chart
+  $('chartContainer').classList.remove('hidden');
+  var recentTests = hist.slice(0, 10).reverse();
+  var labels = recentTests.map(function(h, i) { 
+      var d = h.date ? h.date.split(',')[0] : 'Test '+(i+1);
+      return d;
+  });
+  var dataPts = recentTests.map(function(h) { return h.pct; });
+
+  var ctx = document.getElementById('progressChart').getContext('2d');
+  if(myChart) myChart.destroy();
+  myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Score %',
+        data: dataPts,
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        borderWidth: 3,
+        pointBackgroundColor: '#a855f7',
+        pointBorderColor: '#fff',
+        pointRadius: 4,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#8b95ad', font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#8b95ad', font: { size: 11 } }
+        }
+      }
+    }
+  });
 }
 
 function renderResumeBanner(){
@@ -607,7 +681,7 @@ function startAITest(){
 function openUpload(mode){
   uploadMode=mode;
   var config = {
-    image: { title:'📷 Upload Question Photo', card:'📷 Add a phone photo', hint:'JPG, PNG, WEBP — max 20 MB. Take a clear photo of the question paper.', bank:'Image Question Banks' },
+    image: { title:'📷 Upload Question Photo', card:'📷 Add a phone photo', hint:'JPG, PNG, WEBP — max 30 MB. Take a clear photo of the question paper.', bank:'Image Question Banks' },
     extract: { title:'📄 Upload Question Paper', card:'📄 Add PDF / TXT file', hint:'PDF / TXT up to 500 MB. Text-based or scanned — both supported.', bank:'PDF Question Banks' },
     notes: { title:'📝 Upload Notes', card:'📝 Add notes (PDF / TXT / Photo)', hint:'AI will GENERATE new MCQs from your notes. Max 500 MB.', bank:'Notes Question Banks' }
   }[mode];
@@ -642,14 +716,8 @@ async function handleFileUpload(file){
   var isPDF = file.type === 'application/pdf' || fname.endsWith('.pdf');
   var isText = file.type === 'text/plain' || fname.endsWith('.txt');
 
-  if(file.size > 500*1024*1024){
-    dialog({title:'File too large',message:'Max 500 MB allowed.'});
-    return;
-  }
-  if(isImage && file.size > 30*1024*1024){
-    dialog({title:'Image too large',message:'Max 30 MB allowed for images.'});
-    return;
-  }
+  if(file.size > 500*1024*1024){ dialog({title:'File too large',message:'Max 500 MB allowed.'}); return; }
+  if(isImage && file.size > 30*1024*1024){ dialog({title:'Image too large',message:'Max 30 MB allowed for images.'}); return; }
 
   var progressWrap=$('uploadProgress');
   var progressBar=$('uploadProgressBar');
@@ -698,17 +766,14 @@ async function processImageFile(file, bar, text){
   bar.style.width='15%';
   text.textContent='Compressing photo (high-res)…';
   var img = await compressImage(file, 2500, 0.88);
-
   bar.style.width='40%';
   text.textContent='AI is reading the photo…';
-
   var mode = uploadMode==='notes' ? 'notes' : 'image-extract';
   var raw = await aiCall(
     'Extract every single question from this photo. Reply with raw JSON array only.',
     {source:'ambition-cuet-cbt', mode: mode, image: img},
     {timeoutMs: 90000}
   );
-
   bar.style.width='90%';
   return normaliseList(safeParseJSON(raw));
 }
@@ -718,17 +783,14 @@ async function processTextFile(file, bar, text){
   text.textContent='Reading text…';
   var content = await file.text();
   if(!content.trim()) throw new Error('Empty file.');
-
   bar.style.width='40%';
   text.textContent='AI is extracting questions from text…';
-
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
   var raw = await aiCall(
     (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),
     {source:'ambition-cuet-cbt', mode: mode},
     {timeoutMs: 90000}
   );
-
   bar.style.width='90%';
   return normaliseList(safeParseJSON(raw));
 }
@@ -890,17 +952,52 @@ function clearAns(){ T.answers[T.cur]=null; LS.set(K.ACTIVE, T); renderQuestion(
 function submitTest(){
   if(timerHandle) clearInterval(timerHandle);
   LS.del(K.ACTIVE);
+  
   var correct=0,wrong=0,skipped=0;
+  var topicStats = {};
+
   T.questions.forEach(function(q,i){
+    var topic = q.topic || 'General';
+    if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 };
+    topicStats[topic].total++;
+
     if(T.answers[i]===null) { skipped++; return; }
-    if(T.answers[i]===q.ans) correct++;
-    else wrong++;
+    if(T.answers[i]===q.ans) { correct++; topicStats[topic].correct++; }
+    else { wrong++; }
   });
+
   var score=(correct*5)-(wrong*1);
   var max=T.questions.length*5;
   var pct=Math.max(0,Math.round((score/max)*100));
-  var record={name:T.name,score:score,max:max,pct:pct,correct:correct,wrong:wrong,skipped:skipped,date:new Date().toLocaleString()};
+  
+  var record={
+    name:T.name, score:score, max:max, pct:pct, 
+    correct:correct, wrong:wrong, skipped:skipped, 
+    date:new Date().toLocaleString(),
+    topicStats: topicStats // Save topic-wise stats!
+  };
+  
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
+
+  // Build Topic Analysis UI
+  var strongHtml = '', weakHtml = '';
+  for (var t in topicStats) {
+    var stats = topicStats[t];
+    var acc = Math.round((stats.correct / stats.total) * 100);
+    if (acc >= 70) strongHtml += '<div style="color:var(--green);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>✅ '+esc(t)+'</span><b>'+acc+'%</b></div>';
+    else if (acc < 50) weakHtml += '<div style="color:var(--red);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>⚠️ '+esc(t)+'</span><b>'+acc+'%</b></div>';
+  }
+  
+  var analysisHtml = '<div class="card" style="margin-top:16px; padding:16px;">';
+  if(strongHtml || weakHtml) {
+    analysisHtml += '<h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Topic Analysis</h3>';
+    if(strongHtml) analysisHtml += '<div style="margin-bottom:12px;"><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Strong Topics</div>'+strongHtml+'</div>';
+    if(weakHtml) analysisHtml += '<div><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Needs Improvement</div>'+weakHtml+'</div>';
+  } else {
+    analysisHtml += '<p class="muted small" style="margin:0">Complete more questions to see topic-wise analysis.</p>';
+  }
+  analysisHtml += '</div>';
+
   $('resultBody').innerHTML='<div class="scorecard">'+
     '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
     '<div class="scorecard-score">'+score+'</div>'+
@@ -910,7 +1007,9 @@ function submitTest(){
     '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">'+wrong+'</div><div class="scr-meta-lbl">Wrong (-'+wrong+')</div></div>'+
     '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
     '</div></div>'+
+    analysisHtml +
     '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
+
   $('btnResHome').onclick=function(){renderHome();showScreen('screen-home')};
   showScreen('screen-result');
   T = null;
