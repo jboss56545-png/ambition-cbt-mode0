@@ -15,19 +15,14 @@
   document.documentElement.style.display = 'none';
   fetch('/api/auth/session')
     .then(function(res) {
-      if (res.status === 401) {
-        window.location.replace('/login.html');
-      } else {
-        document.documentElement.style.display = 'block';
-      }
+      if (res.status === 401) { window.location.replace('/login.html'); }
+      else { document.documentElement.style.display = 'block'; }
     })
     .catch(function() { window.location.replace('/login.html'); });
 </script>
 
 <link rel="manifest" href="/manifest.json" />
 <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
-
-<!-- Chart.js for Line Graph -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -81,6 +76,8 @@ a{color:var(--accent-2);text-decoration:none}
 .btn.small{padding:8px 14px;font-size:12.5px;border-radius:9px;min-height:38px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
 input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed var(--border);background:var(--bg-2);font-size:13px;cursor:pointer;color:var(--text)}
+input[type=number]{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;margin-top:10px;}
+input[type=number]:focus{outline:none;border-color:var(--accent);}
 .progress-outer{height:8px;background:var(--card-2);border-radius:99px;overflow:hidden;margin-top:10px}
 .progress-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s;border-radius:99px}
 .overlay{position:fixed;inset:0;background:rgba(5,7,12,.8);backdrop-filter:blur(7px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:900;padding:24px;text-align:center}
@@ -133,6 +130,12 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 mjx-container{color:var(--text)!important;max-width:100%;overflow-x:auto}
 mjx-container svg{fill:var(--text)!important;stroke:var(--text)!important}
 mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
+
+/* New Review Styles */
+.review-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; text-align: left; }
+.review-q { font-size: 14.5px; font-weight: 600; margin-bottom: 10px; white-space: pre-wrap; }
+.review-ans { font-size: 13.5px; margin-bottom: 4px; }
+.review-exp { font-size: 13px; margin-top: 8px; padding: 8px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--border); }
 </style>
 
 <script>
@@ -158,9 +161,8 @@ window.MathJax = {
     </div>
     
     <div id="resumeBanner"></div>
-    
-    <!-- Dashboard Analytics -->
     <div id="analysisWrap"></div>
+    
     <div class="card hidden" id="chartContainer" style="margin-top: 14px; padding: 18px;">
       <h2 class="section-title" style="margin-top: 0; margin-bottom: 10px;">Progress Trend</h2>
       <div style="height: 220px; width: 100%; position: relative;">
@@ -225,12 +227,20 @@ window.MathJax = {
         <button type="button" class="btn small" id="btnClearChapters">Clear</button>
       </div>
       <div class="check-list" id="chapterList"></div>
+      
       <h2 class="section-title">Number of Questions</h2>
-      <div class="chip-row" id="numChips"></div>
+      <div class="chip-row" id="numChips" style="margin-bottom:8px;"></div>
+      <input type="number" id="customNumInput" min="1" max="100" placeholder="Ya type karo (jaise 50)" value="10">
+      
       <h2 class="section-title">Difficulty</h2>
       <div class="chip-row" id="diffChips"></div>
-      <h2 class="section-title">Timer</h2>
+      
+      <h2 class="section-title">Timer Mode</h2>
       <div class="chip-row" id="timerChips"></div>
+      <div id="customTimerWrap" class="hidden">
+        <input type="number" id="customTimerInput" min="1" max="180" placeholder="Minutes (e.g. 45)" value="15">
+      </div>
+      
       <button type="button" class="btn primary big" id="btnStartTest">⚡ Start Test</button>
     </div>
   </div>
@@ -320,10 +330,7 @@ var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","R
 
 var EXAM_DATA={
   CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{
-    "Mathematics (Class 12)":CH_MATH_12,
-    "Physics (Class 12)":CH_PHY_12,
-    "Chemistry (Class 12)":CH_CHEM_12,
-    "Biology (Class 12)":CH_BIO_12,
+    "Mathematics (Class 12)":CH_MATH_12, "Physics (Class 12)":CH_PHY_12, "Chemistry (Class 12)":CH_CHEM_12, "Biology (Class 12)":CH_BIO_12,
     "English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],
     "General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]
   }}
@@ -341,10 +348,7 @@ function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0
 function renderMath(el){
   if(!el) return;
   if(window.MathJax && MathJax.typesetPromise){
-    try{
-      if(MathJax.typesetClear) MathJax.typesetClear([el]);
-      MathJax.typesetPromise([el]).catch(function(){});
-    }catch(e){}
+    try{ if(MathJax.typesetClear) MathJax.typesetClear([el]); MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}
   } else { setTimeout(function(){ renderMath(el); }, 350); }
 }
 
@@ -365,30 +369,19 @@ async function aiCall(message, context, opts) {
     var timer = setTimeout(function() { ctrl.abort(); }, timeoutMs);
     try {
       var res = await fetch('/api/ai-coach', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: ctrl.signal
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: ctrl.signal
       });
       clearTimeout(timer);
       if (!res.ok) {
-        var body = '';
-        try { body = await res.text(); } catch (e) {}
+        var body = ''; try { body = await res.text(); } catch (e) {}
         var err = new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : ''));
-        err.status = res.status;
-        throw err;
+        err.status = res.status; throw err;
       }
-      var data = await res.json();
-      var text = data && (data.message || data.text);
-      if (!text) throw new Error('Empty AI response');
-      return String(text);
+      var data = await res.json(); var text = data && (data.message || data.text);
+      if (!text) throw new Error('Empty AI response'); return String(text);
     } catch (e) {
-      clearTimeout(timer);
-      lastErr = e;
-      if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) {
-        await new Promise(function(r) { setTimeout(r, 1000); });
-        continue;
-      }
+      clearTimeout(timer); lastErr = e;
+      if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) { await new Promise(function(r) { setTimeout(r, 1000); }); continue; }
       throw e;
     }
   }
@@ -396,15 +389,12 @@ async function aiCall(message, context, opts) {
 }
 
 function fixLatexEscapesInJSON(jsonStr) {
-  return jsonStr
-    .replace(/(^|[^\\])\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '$1\\\\$2')
-    .replace(/(^|[^\\])\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})/g, '$1\\\\');
+  return jsonStr.replace(/(^|[^\\])\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '$1\\\\$2').replace(/(^|[^\\])\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})/g, '$1\\\\');
 }
 
 function safeParseJSON(text){
   if (!text) return [];
-  var t = String(text).trim();
-  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  var t = String(text).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
   var safeT = fixLatexEscapesInJSON(t);
   try { return JSON.parse(safeT); } catch(e) {}
   try { return JSON.parse(t); } catch(e) {}
@@ -419,10 +409,7 @@ function safeParseJSON(text){
 function formatStatements(text) {
   if (!text) return '';
   var formatted = text;
-  formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2');
-  formatted = formatted.replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2');
-  formatted = formatted.replace(/^([A-E]\.\s)/, '\n$1');
-  formatted = formatted.replace(/^(\([A-E1-4]\)\s)/, '\n$1');
+  formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2').replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2').replace(/^([A-E]\.\s)/, '\n$1').replace(/^(\([A-E1-4]\)\s)/, '\n$1');
   return formatted.trim();
 }
 
@@ -480,30 +467,23 @@ function normaliseList(raw){
 }
 
 function compressImage(file, maxDim, quality){
-  maxDim = maxDim || 2500;
-  quality = quality || 0.88;
+  maxDim = maxDim || 2500; quality = quality || 0.88;
   return new Promise(function(resolve, reject){
     var reader = new FileReader();
     reader.onload = function(e){
       var img = new Image();
       img.onload = function(){
         var w = img.width, h = img.height;
-        if(w > maxDim || h > maxDim){
-          if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; }
-          else { w = Math.round((w * maxDim)/h); h = maxDim; }
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
+        if(w > maxDim || h > maxDim){ if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; } else { w = Math.round((w * maxDim)/h); h = maxDim; } }
+        var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         var dataUrl = canvas.toDataURL('image/jpeg', quality);
         canvas.width = 0; canvas.height = 0;
         resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
       };
-      img.onerror = reject;
-      img.src = e.target.result;
+      img.onerror = reject; img.src = e.target.result;
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    reader.onerror = reject; reader.readAsDataURL(file);
   });
 }
 
@@ -530,8 +510,7 @@ async function renderPDFPages(file, maxPages) {
     var page = await pdf.getPage(i);
     var viewport = page.getViewport({ scale: 2.0 });
     var canvas = document.createElement('canvas');
-    canvas.width = Math.round(viewport.width);
-    canvas.height = Math.round(viewport.height);
+    canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height);
     await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
     var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
     images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
@@ -540,7 +519,7 @@ async function renderPDFPages(file, maxPages) {
   return { images: images, pageCount: pdf.numPages, renderedCount: total };
 }
 
-var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up'};
+var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'stopwatch',timerMins:15};
 var uploadMode='extract';
 var T=null,timerHandle=null;
 var startTime=0, totalDuration=0;
@@ -553,7 +532,6 @@ function renderHome(){
   b.innerHTML='<div style="font-size:26px">🎓</div><div style="font-weight:700;font-size:16px">CUET UG 2026</div><div class="muted small">Practice • PYQs • Image Solver</div><div style="color:var(--accent);font-weight:700;font-size:12px;margin-top:4px">+5 Correct | -1 Negative</div>';
   b.onclick=function(){showScreen('screen-exam')};
   grid.appendChild(b);
-  
   renderHistory();
   renderResumeBanner();
 }
@@ -568,7 +546,6 @@ function renderHistory(){
     return;
   }
   
-  var avg=Math.round(hist.reduce(function(a,h){return a+h.pct},0)/hist.length);
   var totalCorrect=0, totalQs=0;
   hist.forEach(function(h) {
     totalCorrect += (h.correct || 0);
@@ -581,13 +558,9 @@ function renderHistory(){
     '<div class="analysis-stat"><div class="value">'+overallAcc+'%</div><div class="label">Overall Accuracy</div></div>'+
     '</div>';
 
-  // Render Chart
   $('chartContainer').classList.remove('hidden');
   var recentTests = hist.slice(0, 10).reverse();
-  var labels = recentTests.map(function(h, i) { 
-      var d = h.date ? h.date.split(',')[0] : 'Test '+(i+1);
-      return d;
-  });
+  var labels = recentTests.map(function(h, i) { return h.date ? h.date.split(',')[0] : 'Test '+(i+1); });
   var dataPts = recentTests.map(function(h) { return h.pct; });
 
   var ctx = document.getElementById('progressChart').getContext('2d');
@@ -597,34 +570,15 @@ function renderHistory(){
     data: {
       labels: labels,
       datasets: [{
-        label: 'Score %',
-        data: dataPts,
-        borderColor: '#6366f1',
-        backgroundColor: 'rgba(99, 102, 241, 0.15)',
-        borderWidth: 3,
-        pointBackgroundColor: '#a855f7',
-        pointBorderColor: '#fff',
-        pointRadius: 4,
-        fill: true,
-        tension: 0.4
+        label: 'Score %', data: dataPts,
+        borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.15)', borderWidth: 3,
+        pointBackgroundColor: '#a855f7', pointBorderColor: '#fff', pointRadius: 4, fill: true, tension: 0.4
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#8b95ad', font: { size: 11 } }
-        },
-        x: {
-          grid: { display: false },
-          ticks: { color: '#8b95ad', font: { size: 11 } }
-        }
-      }
+      responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b95ad', font: { size: 11 } } },
+                x: { grid: { display: false }, ticks: { color: '#8b95ad', font: { size: 11 } } } }
     }
   });
 }
@@ -651,27 +605,61 @@ function renderResumeBanner(){
   }
 }
 
-function openSetup(){state.subject=null;state.chapters=[];state.count=10;renderSubjects();renderChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
+function openSetup(){
+  state.subject=null; state.chapters=[]; state.count=10; state.timerMode='stopwatch';
+  renderSubjects(); renderChips(); $('setupPanel').classList.add('hidden'); showScreen('screen-setup');
+}
+
 function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
 function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
 function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)})}
 function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}}
+
 function renderChips(){
-  var nc=$('numChips');nc.innerHTML='';[10,15,20,25,30].forEach(function(n){var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;b.onclick=function(){state.count=n;renderChips()};nc.appendChild(b)});
-  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d;b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b)});
-  var tc=$('timerChips');tc.innerHTML='';[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min'}].forEach(function(tm){var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;b.onclick=function(){state.timerMode=tm.k;renderChips()};tc.appendChild(b)});
+  // Number of Questions Chips
+  var nc=$('numChips');nc.innerHTML='';[10,15,20,25,30].forEach(function(n){
+    var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;
+    b.onclick=function(){state.count=n; $('customNumInput').value=n; renderChips()};nc.appendChild(b)
+  });
+  
+  // Difficulty Chips
+  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){
+    var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d;
+    b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b)
+  });
+  
+  // Timer Mode Chips
+  var tc=$('timerChips');tc.innerHTML='';
+  [{k:'stopwatch',t:'⏱ Stopwatch (Count Up)'},{k:'timer',t:'⏳ Timer (Count Down)'}].forEach(function(tm){
+    var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;
+    b.onclick=function(){state.timerMode=tm.k; renderChips()};tc.appendChild(b)
+  });
+  
+  if (state.timerMode === 'timer') {
+    $('customTimerWrap').classList.remove('hidden');
+  } else {
+    $('customTimerWrap').classList.add('hidden');
+  }
 }
 
 function startAITest(){
   if(!state.subject){dialog({title:'Pick a subject',message:'Please select a subject first.'});return}
+  
+  var cInput = parseInt($('customNumInput').value);
+  if(cInput > 0 && cInput <= 100) state.count = cInput;
+
+  var tInput = parseInt($('customTimerInput').value);
+  if(tInput > 0 && tInput <= 180) state.timerMins = tInput;
+  else state.timerMins = 15;
+
   var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
   var prompt='Generate '+state.count+' CUET MCQs for '+state.subject+' (Topics: '+chapters.join(', ')+'). Difficulty: '+state.difficulty+'. Raw JSON format.';
-  showLoader('AI is generating questions…','This usually takes 3-5 seconds');
+  showLoader('AI is generating questions…','This might take a few seconds');
   aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai'}).then(function(res){
     var list=normaliseList(safeParseJSON(res));
     hideLoader();
     if(!list.length) throw new Error('No questions generated');
-    launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode});
+    launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins});
   }).catch(function(err){
     hideLoader();
     dialog({title:'Error',message:err.message||'Failed to generate questions.'});
@@ -681,9 +669,9 @@ function startAITest(){
 function openUpload(mode){
   uploadMode=mode;
   var config = {
-    image: { title:'📷 Upload Question Photo', card:'📷 Add a phone photo', hint:'JPG, PNG, WEBP — max 30 MB. Take a clear photo of the question paper.', bank:'Image Question Banks' },
-    extract: { title:'📄 Upload Question Paper', card:'📄 Add PDF / TXT file', hint:'PDF / TXT up to 500 MB. Text-based or scanned — both supported.', bank:'PDF Question Banks' },
-    notes: { title:'📝 Upload Notes', card:'📝 Add notes (PDF / TXT / Photo)', hint:'AI will GENERATE new MCQs from your notes. Max 500 MB.', bank:'Notes Question Banks' }
+    image: { title:'📷 Upload Question Photo', card:'📷 Add a phone photo', hint:'JPG, PNG, WEBP — max 30 MB. Take a clear photo.', bank:'Image Question Banks' },
+    extract: { title:'📄 Upload Question Paper', card:'📄 Add PDF / TXT file', hint:'PDF / TXT up to 500 MB. Text-based or scanned.', bank:'PDF Question Banks' },
+    notes: { title:'📝 Upload Notes', card:'📝 Add notes (PDF / TXT / Photo)', hint:'AI will GENERATE new MCQs from your notes.', bank:'Notes Question Banks' }
   }[mode];
   $('uploadTitle').textContent = config.title;
   $('uploadCardTitle').textContent = config.card;
@@ -702,7 +690,7 @@ function renderBanks(){
     filtered.forEach(function(b){
       var d=document.createElement('div');d.className='bank-item';
       d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions saved</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
-      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'up'})};
+      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch'})};
       d.querySelector('[data-act="del"]').onclick=function(){IDB.del(b.id).then(renderBanks)};
       host.appendChild(d);
     });
@@ -722,9 +710,7 @@ async function handleFileUpload(file){
   var progressWrap=$('uploadProgress');
   var progressBar=$('uploadProgressBar');
   var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');
-  progressBar.style.width='5%';
-  progressText.textContent='Reading file…';
+  progressWrap.classList.remove('hidden'); progressBar.style.width='5%'; progressText.textContent='Reading file…';
   var startTs=Date.now();
 
   try {
@@ -736,26 +722,15 @@ async function handleFileUpload(file){
 
     if(!questions || !questions.length) throw new Error('No valid questions found. Please upload a clearer image or a text-based PDF.');
 
-    progressBar.style.width='100%';
-    progressText.textContent='Saving '+questions.length+' questions…';
+    progressBar.style.width='100%'; progressText.textContent='Saving '+questions.length+' questions…';
 
-    var bank={
-      id:'bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
-      name:file.name,
-      category: uploadMode,
-      questions:questions,
-      created:Date.now()
-    };
+    var bank={ id:'bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
     await IDB.put(bank);
 
     progressWrap.classList.add('hidden');
     renderBanks();
     var elapsed=((Date.now()-startTs)/1000).toFixed(1);
-    dialog({
-      title:'✅ Done in '+elapsed+'s',
-      message:questions.length+' questions extracted from '+file.name,
-      buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]
-    }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
+    dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted from '+file.name, buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch'}); });
   } catch(err){
     progressWrap.classList.add('hidden');
     dialog({title:'Upload failed',message:(err.message||'Unknown error')});
@@ -763,94 +738,54 @@ async function handleFileUpload(file){
 }
 
 async function processImageFile(file, bar, text){
-  bar.style.width='15%';
-  text.textContent='Compressing photo (high-res)…';
+  bar.style.width='15%'; text.textContent='Compressing photo (high-res)…';
   var img = await compressImage(file, 2500, 0.88);
-  bar.style.width='40%';
-  text.textContent='AI is reading the photo…';
+  bar.style.width='40%'; text.textContent='AI is reading the photo…';
   var mode = uploadMode==='notes' ? 'notes' : 'image-extract';
-  var raw = await aiCall(
-    'Extract every single question from this photo. Reply with raw JSON array only.',
-    {source:'ambition-cuet-cbt', mode: mode, image: img},
-    {timeoutMs: 90000}
-  );
-  bar.style.width='90%';
-  return normaliseList(safeParseJSON(raw));
+  var raw = await aiCall('Extract every single question from this photo. Reply with raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode, image: img}, {timeoutMs: 90000});
+  bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
 }
 
 async function processTextFile(file, bar, text){
-  bar.style.width='15%';
-  text.textContent='Reading text…';
+  bar.style.width='15%'; text.textContent='Reading text…';
   var content = await file.text();
   if(!content.trim()) throw new Error('Empty file.');
-  bar.style.width='40%';
-  text.textContent='AI is extracting questions from text…';
+  bar.style.width='40%'; text.textContent='AI is extracting questions from text…';
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-  var raw = await aiCall(
-    (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),
-    {source:'ambition-cuet-cbt', mode: mode},
-    {timeoutMs: 90000}
-  );
-  bar.style.width='90%';
-  return normaliseList(safeParseJSON(raw));
+  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000), {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000});
+  bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
 }
 
 async function processPDFFile(file, bar, text){
-  bar.style.width='10%';
-  text.textContent='Loading PDF…';
-
+  bar.style.width='10%'; text.textContent='Loading PDF…';
   var extracted;
-  try {
-    extracted = await extractPDFText(file, function(page, total){
-      bar.style.width = (10 + (page/total)*15) + '%';
-      text.textContent = 'Extracting text… page '+page+'/'+total;
-    });
-  } catch(e) { extracted = { text: '', pageCount: 0 }; }
+  try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); } 
+  catch(e) { extracted = { text: '', pageCount: 0 }; }
 
   var textLen = (extracted.text || '').trim().length;
-
   if(textLen > 500){
-    bar.style.width='30%';
-    text.textContent='Text extracted. AI is reading…';
-    var chunks = chunkText(extracted.text, 25000);
-    var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-    var collected = [];
-    var concurrency = 2;
+    bar.style.width='30%'; text.textContent='Text extracted. AI is reading…';
+    var chunks = chunkText(extracted.text, 25000); var mode = uploadMode === 'notes' ? 'notes' : 'extract'; var collected = []; var concurrency = 2;
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
-      bar.style.width = (30 + (b/chunks.length)*60) + '%';
-      text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions collected…';
-      var results = await Promise.all(group.map(function(chunk){
-        return aiCall(
-          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,
-          {source:'ambition-cuet-cbt', mode: mode},
-          {timeoutMs: 90000, retries: 1}
-        ).catch(function(e){ return ''; });
-      }));
+      bar.style.width = (30 + (b/chunks.length)*60) + '%'; text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions collected…';
+      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk, {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000, retries: 1}).catch(function(e){ return ''; }); }));
       results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){} } });
     }
     return collected;
   }
 
-  bar.style.width='25%';
-  text.textContent='Scanned PDF — rendering pages…';
+  bar.style.width='25%'; text.textContent='Scanned PDF — rendering pages…';
   var rendered = await renderPDFPages(file, 30);
   if(!rendered.images.length) throw new Error('Could not render PDF pages.');
 
-  bar.style.width='40%';
-  text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
-
+  bar.style.width='40%'; text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
   var collected = [];
   for(var i=0; i<rendered.images.length; i++){
-    bar.style.width = (40 + (i/rendered.images.length)*50) + '%';
-    text.textContent = 'Page '+(i+1)+'/'+rendered.images.length+' — '+collected.length+' questions collected…';
+    bar.style.width = (40 + (i/rendered.images.length)*50) + '%'; text.textContent = 'Page '+(i+1)+'/'+rendered.images.length+' — '+collected.length+' questions collected…';
     try {
       var mode2 = uploadMode==='notes' ? 'notes' : 'scanned-extract';
-      var raw = await aiCall(
-        'Extract every single question on this page. Raw JSON array only.',
-        {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]},
-        {timeoutMs: 90000, retries: 1}
-      );
+      var raw = await aiCall('Extract every single question on this page. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]}, {timeoutMs: 90000, retries: 1});
       collected = collected.concat(normaliseList(safeParseJSON(raw)));
     } catch(e) {}
   }
@@ -862,36 +797,30 @@ function chunkText(text, size){
   while(i < text.length){
     var end = Math.min(i + size, text.length);
     if(end < text.length){
-      var slice = text.slice(i, end);
-      var lastBreak = Math.max(slice.lastIndexOf('\n\n'), slice.lastIndexOf('. '));
+      var slice = text.slice(i, end); var lastBreak = Math.max(slice.lastIndexOf('\n\n'), slice.lastIndexOf('. '));
       if(lastBreak > size * 0.5) end = i + lastBreak + 1;
     }
-    chunks.push(text.slice(i, end));
-    i = end;
+    chunks.push(text.slice(i, end)); i = end;
   }
   return chunks;
 }
 
 function launchTest(cfg){
-  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'up',answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
+  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
   LS.set(K.ACTIVE, T);
   $('testTitle').textContent=T.name;
   $('timerDisplay').style.color = 'var(--text)';
-  startTime = Date.now(); totalDuration = 0;
-  showScreen('screen-test');
-  startTimer();
-  renderQuestion();
-  renderPalette();
+  startTime = Date.now(); totalDuration = T.timerMins * 60;
+  showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette();
 }
 
 function startTimer(){
   if(timerHandle) clearInterval(timerHandle);
-  if(T.timerMode === 'down' && totalDuration === 0) totalDuration = 15 * 60;
   timerHandle=setInterval(function(){
     if(!T) return;
     var now = Date.now();
     T.elapsed = Math.floor((now - startTime) / 1000);
-    if (T.timerMode === 'down') {
+    if (T.timerMode === 'timer') {
       var remaining = totalDuration - T.elapsed;
       if (remaining <= 0) {
         clearInterval(timerHandle);
@@ -973,13 +902,11 @@ function submitTest(){
   var record={
     name:T.name, score:score, max:max, pct:pct, 
     correct:correct, wrong:wrong, skipped:skipped, 
-    date:new Date().toLocaleString(),
-    topicStats: topicStats // Save topic-wise stats!
+    date:new Date().toLocaleString(), topicStats: topicStats
   };
   
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
 
-  // Build Topic Analysis UI
   var strongHtml = '', weakHtml = '';
   for (var t in topicStats) {
     var stats = topicStats[t];
@@ -998,6 +925,38 @@ function submitTest(){
   }
   analysisHtml += '</div>';
 
+  // --- Answer Review Generation ---
+  var reviewHtml = '<div style="margin-top:26px; display:none;" id="reviewSection">';
+  reviewHtml += '<h2 class="section-title" style="margin-top:0;">Review Answers & Explanations</h2>';
+  
+  T.questions.forEach(function(q, i) {
+    var userAns = T.answers[i];
+    var isCorrect = (userAns === q.ans);
+    var statusColor = userAns === null ? 'var(--muted)' : (isCorrect ? 'var(--green)' : 'var(--red)');
+    var statusIcon = userAns === null ? '⚪' : (isCorrect ? '✅' : '❌');
+    
+    reviewHtml += '<div class="review-item" style="border-left: 4px solid '+statusColor+';">';
+    reviewHtml += '<div class="review-q">Q'+(i+1)+'. ' + esc(q.q) + '</div>';
+    
+    // Show all options
+    q.options.forEach(function(opt, optIdx) {
+        var isThisCorrect = (optIdx === q.ans);
+        var isThisUser = (optIdx === userAns);
+        var optStyle = 'padding:6px 10px; border-radius:6px; margin-bottom:4px; font-size:13px;';
+        if (isThisCorrect) optStyle += 'background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); font-weight:600;';
+        else if (isThisUser) optStyle += 'background: rgba(239,68,68,0.15); border: 1px solid var(--red); color: var(--red);';
+        else optStyle += 'color: var(--muted);';
+        
+        reviewHtml += '<div style="'+optStyle+'">' + String.fromCharCode(65 + optIdx) + ') ' + esc(opt) + '</div>';
+    });
+    
+    if(q.explain) {
+        reviewHtml += '<div class="review-exp"><b style="color:var(--accent);">Explanation:</b> ' + esc(q.explain) + '</div>';
+    }
+    reviewHtml += '</div>';
+  });
+  reviewHtml += '</div>';
+
   $('resultBody').innerHTML='<div class="scorecard">'+
     '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
     '<div class="scorecard-score">'+score+'</div>'+
@@ -1008,7 +967,21 @@ function submitTest(){
     '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
     '</div></div>'+
     analysisHtml +
+    '<button class="btn big" id="btnToggleReview" style="margin-top:20px; background:var(--card-2); border:1px solid var(--border); color:var(--text);">👁️ Review Answers & Explanations</button>' +
+    reviewHtml +
     '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
+
+  $('btnToggleReview').onclick = function() {
+    var rev = $('reviewSection');
+    if (rev.style.display === 'none') {
+      rev.style.display = 'block';
+      this.textContent = '🙈 Hide Answers & Explanations';
+      renderMath(rev); // Render MathJax inside review
+    } else {
+      rev.style.display = 'none';
+      this.textContent = '👁️ Review Answers & Explanations';
+    }
+  };
 
   $('btnResHome').onclick=function(){renderHome();showScreen('screen-home')};
   showScreen('screen-result');
@@ -1017,14 +990,8 @@ function submitTest(){
 
 function wireEvents(){
   $('btnOpenSettings').onclick=function(){
-    dialog({
-      title:'Ambition CBT Mode 2.0',
-      message:'Private Beta. Math & LaTeX rendering active.',
-      buttons:[{text:'Close',value:false},{text:'Log out',primary:true,value:true}]
-    }).then(function(out){
-      if(!out) return;
-      fetch('/api/auth/logout',{method:'POST'}).finally(function(){location.href='/login.html';});
-    });
+    dialog({ title:'Ambition CBT Mode 2.0', message:'Private Beta. Math & LaTeX rendering active.', buttons:[{text:'Close',value:false},{text:'Log out',primary:true,value:true}] })
+    .then(function(out){ if(!out) return; fetch('/api/auth/logout',{method:'POST'}).finally(function(){location.href='/login.html';}); });
   };
   $('btnBackHome').onclick=function(){showScreen('screen-home')};
   $('btnModeAI').onclick=openSetup;
@@ -1033,6 +1000,7 @@ function wireEvents(){
   $('btnModeImage').onclick=function(){openUpload('image')};
   $('btnSetupBack').onclick=function(){showScreen('screen-exam')};
   $('btnUploadBack').onclick=function(){showScreen('screen-exam')};
+  
   $('btnFullSubject').onclick=function(){
     state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice();
     document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')});
@@ -1041,6 +1009,17 @@ function wireEvents(){
     state.chapters=[];
     document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')});
   };
+  
+  // Custom Input Logic
+  $('customNumInput').oninput = function(e) {
+      var v = parseInt(e.target.value);
+      if(v > 0 && v <= 100) { state.count = v; renderChips(); }
+  };
+  $('customTimerInput').oninput = function(e) {
+      var v = parseInt(e.target.value);
+      if(v > 0 && v <= 180) { state.timerMins = v; }
+  };
+
   $('btnStartTest').onclick=startAITest;
   $('fileInput').onchange=function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
   $('btnPaletteToggle').onclick=function(){$('palette').classList.toggle('open')};
