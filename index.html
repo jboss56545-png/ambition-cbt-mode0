@@ -14,7 +14,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-/* ... (CSS SAME AS BEFORE) ... */
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;overscroll-behavior-y:none}
@@ -140,30 +139,41 @@ window.MathJax = {
     <div class="logo ambition-brand" style="justify-content:center; margin-bottom:20px;">
       <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
-    <div class="card">
-      <h2 id="authTitle" style="margin-top:0; text-align:center;">Welcome Back</h2>
-      <p class="muted small" style="text-align:center; margin-bottom:20px;" id="authSub">Sign in to continue to your dashboard.</p>
+    
+    <!-- STEP 1: Verify Code -->
+    <div class="card" id="authStep1">
+      <h2 style="margin-top:0; text-align:center;">Welcome</h2>
+      <p class="muted small" style="text-align:center; margin-bottom:20px;">Enter your invite code to continue.</p>
       
-      <div id="signupFields" class="hidden">
-        <label class="small muted">Full Name</label>
-        <input type="text" id="authName" placeholder="Your Name">
-        
-        <label class="small muted" style="color:var(--accent);">Access Code</label>
-        <input type="text" id="authAccessCode" placeholder="Enter your secret invite code" style="border-color:var(--accent);">
-      </div>
+      <label class="small muted">Full Name</label>
+      <input type="text" id="authName" placeholder="Your Name">
+      
+      <label class="small muted">I am a</label>
+      <select id="authRole">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+      </select>
 
-      <label class="small muted">Email</label>
-      <input type="email" id="authEmail" placeholder="you@example.com">
+      <label class="small muted" style="color:var(--accent);">Access Code</label>
+      <input type="text" id="authAccessCode" placeholder="Enter secret code" style="border-color:var(--accent);">
       
-      <label class="small muted">Password</label>
-      <input type="password" id="authPassword" placeholder="••••••••">
-      
-      <button class="btn primary big" id="btnAuth" style="margin-top:10px;">Sign In</button>
-      
-      <div style="text-align:center; margin-top:16px;">
-        <a href="#" id="toggleAuth" style="color:var(--accent-2); font-weight:600; font-size:13.5px;">Have an access code? Create account</a>
+      <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify Code</button>
+      <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
+    </div>
+
+    <!-- STEP 2: Tap to Login -->
+    <div class="card hidden" id="authStep2">
+      <div style="text-align:center; margin-bottom:20px;">
+        <div style="font-size:40px; margin-bottom:10px;">🎉</div>
+        <h3 style="margin:0;">Code Verified!</h3>
+        <p class="muted small">Account associated with this code:</p>
+        <div style="font-weight:bold; font-size:16px; color:var(--accent-2); margin:10px 0; word-break: break-all;" id="foundEmail">email@gmail.com</div>
       </div>
-      <div id="authError" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
+      <button class="btn primary big" id="btnLoginTap" style="margin-top:0;">Tap to Login</button>
+      <div style="text-align:center; margin-top:16px;">
+        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">Use a different code</a>
+      </div>
+      <div id="authError2" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
     </div>
   </div>
 </section>
@@ -329,87 +339,116 @@ let currentUser = null;
 let currentUserData = null;
 let testType = 'self'; 
 
-// 2. AUTH LOGIC (Secret Code System)
-let isSignUp = false;
-const authTitle = document.getElementById('authTitle');
-const authSub = document.getElementById('authSub');
-const signupFields = document.getElementById('signupFields');
-const toggleAuth = document.getElementById('toggleAuth');
-const btnAuth = document.getElementById('btnAuth');
-const authError = document.getElementById('authError');
+// 2. AUTH LOGIC (Verify Code -> Show Email -> Tap to Login)
+let tempEmail = null;
+let tempRole = null;
+let tempCode = null;
+let tempName = null;
 
-toggleAuth.addEventListener('click', (e) => {
-    e.preventDefault();
-    isSignUp = !isSignUp;
-    if(isSignUp) {
-        authTitle.textContent = "Create Account";
-        authSub.textContent = "Enter your invite code to register.";
-        signupFields.classList.remove('hidden');
-        btnAuth.textContent = "Sign Up";
-        toggleAuth.textContent = "Already have an account? Sign in";
-    } else {
-        authTitle.textContent = "Welcome Back";
-        authSub.textContent = "Sign in to continue to your dashboard.";
-        signupFields.classList.add('hidden');
-        btnAuth.textContent = "Sign In";
-        toggleAuth.textContent = "Have an access code? Create account";
-    }
+document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('authStep2').classList.add('hidden');
+  document.getElementById('authStep1').classList.remove('hidden');
+  document.getElementById('authError1').textContent = '';
+  document.getElementById('authError2').textContent = '';
 });
 
-btnAuth.addEventListener('click', async () => {
-    const email = document.getElementById('authEmail').value;
-    const password = document.getElementById('authPassword').value;
-    authError.textContent = '';
-    btnAuth.disabled = true;
-    btnAuth.textContent = 'Please wait...';
+document.getElementById('btnVerifyCode').addEventListener('click', async () => {
+  const name = document.getElementById('authName').value.trim();
+  const role = document.getElementById('authRole').value;
+  const code = document.getElementById('authAccessCode').value.trim();
+  const errDiv = document.getElementById('authError1');
+  
+  errDiv.textContent = '';
+  if(!name) { errDiv.textContent = "Please enter your name."; return; }
+  if(!code) { errDiv.textContent = "Please enter access code."; return; }
 
-    try {
-        if (isSignUp) {
-            const name = document.getElementById('authName').value || 'User';
-            const code = document.getElementById('authAccessCode').value.trim();
+  const btn = document.getElementById('btnVerifyCode');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
 
-            if (!code) throw new Error("Access Code is required.");
-            if (!name) throw new Error("Name is required.");
+  try {
+    // 1. Query Firestore for the code
+    const q = query(collection(db, "access_codes"), where("code", "==", code));
+    const snap = await getDocs(q);
 
-            // 1. Verify Code from Firestore (access_codes collection)
-            const q = query(collection(db, "access_codes"), where("code", "==", code), where("used", "==", false));
-            const snap = await getDocs(q);
-            
-            if (snap.empty) {
-                throw new Error("Invalid or already used Access Code.");
-            }
-            
-            const codeData = snap.docs[0].data();
-            const docId = snap.docs[0].id;
-            const assignedRole = codeData.role; // 'teacher' or 'student'
-
-            // 2. Create Firebase Auth User
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            
-            // 3. Save User Data to Firestore
-            await setDoc(doc(db, "users", userCredential.user.uid), {
-                name: name, 
-                email: email, 
-                role: assignedRole, 
-                createdAt: serverTimestamp()
-            });
-
-            // 4. Mark Code as Used
-            await updateDoc(doc(db, "access_codes", docId), { 
-                used: true, 
-                usedBy: userCredential.user.uid,
-                usedByEmail: email,
-                usedAt: serverTimestamp()
-            });
-
-        } else {
-            await signInWithEmailAndPassword(auth, email, password);
-        }
-    } catch (error) {
-        authError.textContent = error.message.replace('Firebase: ', '').replace('Firebase:', '');
-        btnAuth.disabled = false;
-        btnAuth.textContent = isSignUp ? "Sign Up" : "Sign In";
+    if (snap.empty) {
+      throw new Error("Invalid Access Code. Please check and try again.");
     }
+
+    const codeData = snap.docs[0].data();
+    
+    // 2. Role Check
+    if (codeData.role !== role) {
+      throw new Error(`This code is for a ${codeData.role}, not a ${role}.`);
+    }
+
+    // 3. Store temp data for Step 2
+    tempEmail = codeData.email;
+    tempRole = codeData.role;
+    tempCode = code;
+    tempName = name;
+
+    // 4. Show Step 2
+    document.getElementById('foundEmail').textContent = tempEmail;
+    document.getElementById('authStep1').classList.add('hidden');
+    document.getElementById('authStep2').classList.remove('hidden');
+
+  } catch (err) {
+    errDiv.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Verify Code';
+  }
+});
+
+document.getElementById('btnLoginTap').addEventListener('click', async () => {
+  const errDiv = document.getElementById('authError2');
+  errDiv.textContent = '';
+  
+  const btn = document.getElementById('btnLoginTap');
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+
+  try {
+    let userCredential;
+    try {
+      // Try signing in (Code acts as password)
+      userCredential = await signInWithEmailAndPassword(auth, tempEmail, tempCode);
+    } catch (err) {
+      // If user doesn't exist, create new
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        userCredential = await createUserWithEmailAndPassword(auth, tempEmail, tempCode);
+      } else {
+        throw err;
+      }
+    }
+
+    // Save User Profile
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      name: tempName,
+      email: tempEmail,
+      role: tempRole,
+      lastLogin: serverTimestamp()
+    }, { merge: true });
+
+    // Mark code as used
+    const q = query(collection(db, "access_codes"), where("code", "==", tempCode));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+        await updateDoc(doc(db, "access_codes", snap.docs[0].id), {
+            used: true,
+            usedByEmail: tempEmail
+        });
+    }
+
+    // Auth state listener handles the rest
+
+  } catch (err) {
+    errDiv.textContent = "Login failed: " + err.message;
+    btn.disabled = false;
+    btn.textContent = 'Tap to Login';
+  }
 });
 
 document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
@@ -440,6 +479,7 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('mainApp').classList.remove('hidden');
             renderHome();
         } else {
+            // Fallback
             await setDoc(doc(db, "users", user.uid), {
                 name: user.email.split('@')[0], email: user.email, role: 'student', createdAt: serverTimestamp()
             });
@@ -449,8 +489,15 @@ onAuthStateChanged(auth, async (user) => {
         currentUser = null; currentUserData = null;
         document.getElementById('mainApp').classList.add('hidden');
         document.getElementById('screen-auth').classList.add('active');
-        btnAuth.disabled = false;
-        btnAuth.textContent = isSignUp ? "Sign Up" : "Sign In";
+        
+        // Reset Auth Form
+        document.getElementById('authStep1').classList.remove('hidden');
+        document.getElementById('authStep2').classList.add('hidden');
+        document.getElementById('authAccessCode').value = '';
+        document.getElementById('btnLoginTap').disabled = false;
+        document.getElementById('btnLoginTap').textContent = 'Tap to Login';
+        document.getElementById('btnVerifyCode').disabled = false;
+        document.getElementById('btnVerifyCode').textContent = 'Verify Code';
     }
 });
 
@@ -495,7 +542,7 @@ async function loadTeacherDashboard() {
     });
 }
 
-// 4. APP CORE LOGIC (Everything else is same)
+// 4. APP CORE LOGIC
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
@@ -966,4 +1013,4 @@ wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-</html>
+  </html>
