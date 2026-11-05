@@ -14,6 +14,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+/* ... (CSS SAME AS BEFORE) ... */
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;overscroll-behavior-y:none}
@@ -143,20 +144,12 @@ window.MathJax = {
       <h2 id="authTitle" style="margin-top:0; text-align:center;">Welcome Back</h2>
       <p class="muted small" style="text-align:center; margin-bottom:20px;" id="authSub">Sign in to continue to your dashboard.</p>
       
-      <div id="nameGroup" class="hidden">
+      <div id="signupFields" class="hidden">
         <label class="small muted">Full Name</label>
         <input type="text" id="authName" placeholder="Your Name">
-      </div>
-      <div id="roleGroup" class="hidden">
-        <label class="small muted">I am a</label>
-        <select id="authRole">
-          <option value="student">Student</option>
-          <option value="teacher">Teacher (Requires Code)</option>
-        </select>
-      </div>
-      <div id="teacherCodeGroup" class="hidden">
-        <label class="small muted">Teacher Invite Code</label>
-        <input type="password" id="authTeacherCode" placeholder="Enter code from Admin">
+        
+        <label class="small muted" style="color:var(--accent);">Access Code</label>
+        <input type="text" id="authAccessCode" placeholder="Enter your secret invite code" style="border-color:var(--accent);">
       </div>
 
       <label class="small muted">Email</label>
@@ -168,7 +161,7 @@ window.MathJax = {
       <button class="btn primary big" id="btnAuth" style="margin-top:10px;">Sign In</button>
       
       <div style="text-align:center; margin-top:16px;">
-        <a href="#" id="toggleAuth" style="color:var(--accent-2); font-weight:600; font-size:13.5px;">Don't have an account? Sign up</a>
+        <a href="#" id="toggleAuth" style="color:var(--accent-2); font-weight:600; font-size:13.5px;">Have an access code? Create account</a>
       </div>
       <div id="authError" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
     </div>
@@ -192,10 +185,8 @@ window.MathJax = {
         <p id="userGreeting">Ready to practice today?</p>
       </div>
 
-      <!-- STUDENT DASHBOARD -->
       <div id="studentDashboard" class="hidden">
         <div id="resumeBanner"></div>
-        
         <h2 class="section-title">Assigned Tests</h2>
         <div id="assignedTestsList"><p class="muted small">No tests assigned yet.</p></div>
 
@@ -218,7 +209,6 @@ window.MathJax = {
         </div>
       </div>
 
-      <!-- TEACHER DASHBOARD -->
       <div id="teacherDashboard" class="hidden">
         <h2 class="section-title">Teacher Actions</h2>
         <div class="exam-grid">
@@ -339,45 +329,30 @@ let currentUser = null;
 let currentUserData = null;
 let testType = 'self'; 
 
-// 2. AUTH LOGIC (One-Time Code System)
+// 2. AUTH LOGIC (Secret Code System)
 let isSignUp = false;
 const authTitle = document.getElementById('authTitle');
 const authSub = document.getElementById('authSub');
-const nameGroup = document.getElementById('nameGroup');
-const roleGroup = document.getElementById('roleGroup');
-const teacherCodeGroup = document.getElementById('teacherCodeGroup');
+const signupFields = document.getElementById('signupFields');
 const toggleAuth = document.getElementById('toggleAuth');
 const btnAuth = document.getElementById('btnAuth');
 const authError = document.getElementById('authError');
-const authRole = document.getElementById('authRole');
-
-authRole.addEventListener('change', (e) => {
-    if (e.target.value === 'teacher') {
-        teacherCodeGroup.classList.remove('hidden');
-    } else {
-        teacherCodeGroup.classList.add('hidden');
-    }
-});
 
 toggleAuth.addEventListener('click', (e) => {
     e.preventDefault();
     isSignUp = !isSignUp;
     if(isSignUp) {
         authTitle.textContent = "Create Account";
-        authSub.textContent = "Join Ambition CBT to start learning.";
-        nameGroup.classList.remove('hidden');
-        roleGroup.classList.remove('hidden');
-        if(authRole.value === 'teacher') teacherCodeGroup.classList.remove('hidden');
+        authSub.textContent = "Enter your invite code to register.";
+        signupFields.classList.remove('hidden');
         btnAuth.textContent = "Sign Up";
         toggleAuth.textContent = "Already have an account? Sign in";
     } else {
         authTitle.textContent = "Welcome Back";
         authSub.textContent = "Sign in to continue to your dashboard.";
-        nameGroup.classList.add('hidden');
-        roleGroup.classList.add('hidden');
-        teacherCodeGroup.classList.add('hidden');
+        signupFields.classList.add('hidden');
         btnAuth.textContent = "Sign In";
-        toggleAuth.textContent = "Don't have an account? Sign up";
+        toggleAuth.textContent = "Have an access code? Create account";
     }
 });
 
@@ -391,29 +366,42 @@ btnAuth.addEventListener('click', async () => {
     try {
         if (isSignUp) {
             const name = document.getElementById('authName').value || 'User';
-            const role = authRole.value;
+            const code = document.getElementById('authAccessCode').value.trim();
 
-            if (role === 'teacher') {
-                const code = document.getElementById('authTeacherCode').value;
-                if(!code) throw new Error("Invite code required for Teacher.");
-                
-                // Verify One-Time Code from Firestore
-                const invQ = query(collection(db, "invites"), where("email", "==", email), where("code", "==", code), where("used", "==", false));
-                const invSnap = await getDocs(invQ);
-                
-                if (invSnap.empty) {
-                    throw new Error("Invalid email/code OR code already used.");
-                }
-                
-                // Mark code as used
-                const inviteId = invSnap.docs[0].id;
-                await updateDoc(doc(db, "invites", inviteId), { used: true, usedBy: email });
+            if (!code) throw new Error("Access Code is required.");
+            if (!name) throw new Error("Name is required.");
+
+            // 1. Verify Code from Firestore (access_codes collection)
+            const q = query(collection(db, "access_codes"), where("code", "==", code), where("used", "==", false));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                throw new Error("Invalid or already used Access Code.");
             }
+            
+            const codeData = snap.docs[0].data();
+            const docId = snap.docs[0].id;
+            const assignedRole = codeData.role; // 'teacher' or 'student'
 
+            // 2. Create Firebase Auth User
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            
+            // 3. Save User Data to Firestore
             await setDoc(doc(db, "users", userCredential.user.uid), {
-                name: name, email: email, role: role, createdAt: serverTimestamp()
+                name: name, 
+                email: email, 
+                role: assignedRole, 
+                createdAt: serverTimestamp()
             });
+
+            // 4. Mark Code as Used
+            await updateDoc(doc(db, "access_codes", docId), { 
+                used: true, 
+                usedBy: userCredential.user.uid,
+                usedByEmail: email,
+                usedAt: serverTimestamp()
+            });
+
         } else {
             await signInWithEmailAndPassword(auth, email, password);
         }
@@ -507,7 +495,7 @@ async function loadTeacherDashboard() {
     });
 }
 
-// 4. APP CORE LOGIC
+// 4. APP CORE LOGIC (Everything else is same)
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
@@ -936,7 +924,6 @@ function wireEvents(){
   $('btnModeNotes').onclick=function(){openUpload('notes')};
   $('btnModeImage').onclick=function(){openUpload('image')};
   
-  // Fix Back Button for Setup (Teacher -> Home, Student -> Exam Selection)
   $('btnSetupBack').onclick=function(){
     if (currentUserData && currentUserData.role === 'teacher') {
         showScreen('screen-home');
