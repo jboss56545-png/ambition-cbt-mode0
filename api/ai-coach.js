@@ -1,16 +1,12 @@
-// Ambition CBT Mode 2.0 — AI Backend (Firebase Auth + Dynamic + Shuffle)
+// Ambition CBT Mode 2.0 — AI Backend (Standalone Node.js)
 'use strict';
-
-const http = require('../lib/http'); // We will keep a simple http helper
-// NOTE: User will delete lib/session.js but keep lib/http.js
-// For simplicity, I will write the fetch/response logic directly here so you don't need lib/ folder.
 
 const MAX_MESSAGE_CHARS = 60000;
 const MAX_CONTEXT_CHARS = 60000;
 const MAX_IMAGES = 10;
 const MAX_IMAGE_B64 = 6 * 1024 * 1024;
 
-// ... (Gemini and Groq functions remain exactly the same) ...
+let cachedModels = null;
 
 async function fetchGemini(model, key, body, timeoutMs) {
   const controller = new AbortController();
@@ -30,6 +26,7 @@ async function fetchGemini(model, key, body, timeoutMs) {
 }
 
 async function getLiveGeminiModels(key) {
+  if (cachedModels && cachedModels.length > 0) return cachedModels;
   try {
     const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models', { headers: { 'x-goog-api-key': key } });
     if (!r.ok) return [];
@@ -51,7 +48,9 @@ async function getLiveGeminiModels(key) {
       };
       return score(a) - score(b);
     });
-    return valid.slice(0, 5);
+
+    if (valid.length > 0) cachedModels = valid.slice(0, 5);
+    return cachedModels || [];
   } catch (e) { return []; }
 }
 
@@ -129,27 +128,45 @@ function shuffleAnswers(jsonString) {
 }
 
 module.exports = async function handler(req, res) {
-  // CORS Headers
+  // CORS setup
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
-
-  const reply = (text) => res.status(200).json({ message: text });
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 204;
+    return res.end();
+  }
+  
+  if (req.method !== 'POST') {
+    res.statusCode = 405;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'POST only' }));
+  }
 
   let body = req.body;
-  if (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { return res.status(400).json({error: 'BAD_BODY'}); } }
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch(e) {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: 'Invalid JSON' }));
+    }
+  }
   
   const { message, context, history } = body || {};
   if (!message || typeof message !== 'string' || message.length > MAX_MESSAGE_CHARS) {
-    return res.status(400).json({ error: 'BAD_INPUT' });
+    res.statusCode = 400;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'Message missing or too long' }));
   }
 
   const key = (process.env.GEMINI_API_KEY || '').trim();
   const groqKey = (process.env.GROQ_API_KEY || '').trim();
-  if (!key && !groqKey) return res.status(500).json({ error: 'NO_KEY' });
+  if (!key && !groqKey) {
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'API keys missing on Vercel' }));
+  }
 
   const ctx = (context && typeof context === 'object' && !Array.isArray(context)) ? context : {};
   const mode = typeof ctx.mode === 'string' ? ctx.mode : 'chat';
@@ -218,7 +235,9 @@ module.exports = async function handler(req, res) {
               if (!isJsonComplete(text)) { errors.push(model + ':Truncated'); continue; }
               text = shuffleAnswers(text);
             }
-            return reply(text);
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify({ message: text }));
           }
           errors.push(model + ':Empty'); continue;
         }
@@ -236,15 +255,30 @@ module.exports = async function handler(req, res) {
     if (gRes.ok && gRes.text) {
       let gText = gRes.text;
       if (isCBT) gText = shuffleAnswers(cleanCBTJson(gText));
-      return reply(gText);
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ message: gText }));
     }
     errors.push(gRes.err);
   }
 
   const errSummary = errors.slice(0, 3).join(' | ');
-  if (authError) return res.status(401).json({ error: 'AUTH_ERROR', message: 'Invalid Key' });
-  if (sawQuota) return res.status(429).json({ error: 'QUOTA_EXCEEDED', message: 'Quota hit.' });
-  return res.status(502).json({ error: 'AI_UNAVAILABLE', message: errSummary });
+  
+  if (authError) {
+    res.statusCode = 401;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'AUTH_ERROR', message: 'Invalid Key' }));
+  }
+  
+  if (sawQuota) {
+    res.statusCode = 429;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'QUOTA_EXCEEDED', message: 'Quota hit.' }));
+  }
+  
+  res.statusCode = 502;
+  res.setHeader('Content-Type', 'application/json');
+  return res.end(JSON.stringify({ error: 'AI_UNAVAILABLE', message: errSummary }));
 };
 
 module.exports.config = { maxDuration: 60 };
