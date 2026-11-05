@@ -121,6 +121,13 @@ mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
 .review-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; text-align: left; }
 .review-q { font-size: 14.5px; font-weight: 600; margin-bottom: 10px; white-space: pre-wrap; }
 .review-exp { font-size: 13px; margin-top: 8px; padding: 8px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--border); }
+
+/* VIP AUTH SCREEN STYLES */
+.vip-header { text-align: center; margin-bottom: 24px; }
+.vip-icon { width: 60px; height: 60px; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
+.vip-title { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
+.vip-sub { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+.signed-in-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-2); border: 1px solid var(--green); padding: 8px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 16px; }
 </style>
 
 <script>
@@ -140,10 +147,12 @@ window.MathJax = {
       <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
     
-    <!-- STEP 1: Verify Code -->
+    <!-- STEP 1: Details -->
     <div class="card" id="authStep1">
-      <h2 style="margin-top:0; text-align:center;">Welcome</h2>
-      <p class="muted small" style="text-align:center; margin-bottom:20px;">Enter your details and invite code to continue.</p>
+      <div class="vip-header">
+        <div class="vip-title">Welcome to Ambition CBT</div>
+        <p class="vip-sub">Enter your basic details to proceed to the secure login gateway.</p>
+      </div>
       
       <label class="small muted">Full Name</label>
       <input type="text" id="authName" placeholder="Your Name">
@@ -157,26 +166,26 @@ window.MathJax = {
         <option value="teacher">Teacher</option>
       </select>
 
-      <label class="small muted" style="color:var(--accent);">Access Code</label>
-      <input type="text" id="authAccessCode" placeholder="Enter secret code" style="border-color:var(--accent);">
-      
-      <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify Code</button>
-      <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
+      <button class="btn primary big" id="btnNextStep" style="margin-top:10px;">Next Step →</button>
     </div>
 
-    <!-- STEP 2: Tap to Login -->
+    <!-- STEP 2: VIP Code -->
     <div class="card hidden" id="authStep2">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px; margin-bottom:10px;">🎉</div>
-        <h3 style="margin:0;">Code Verified!</h3>
-        <p class="muted small">Account will be created for:</p>
-        <div style="font-weight:bold; font-size:16px; color:var(--accent-2); margin:10px 0; word-break: break-all;" id="foundEmail">email@gmail.com</div>
+      <div class="vip-header">
+        <div class="vip-icon">🔑</div>
+        <div class="vip-title">VIP Access Required</div>
+        <p class="vip-sub">Ambition CBT is an invite-only private ecosystem. Enter your access code to unlock the dashboard.</p>
+        <div class="signed-in-badge">✔ Signed in as <span id="displayEmail" style="color:var(--text)">...</span></div>
       </div>
-      <button class="btn primary big" id="btnLoginTap" style="margin-top:0;">Tap to Login</button>
+      
+      <label class="small muted" style="color:var(--accent);">Access Code</label>
+      <input type="text" id="authAccessCode" placeholder="e.g. AT-ARPIT" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
+      
+      <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify &amp; Login</button>
       <div style="text-align:center; margin-top:16px;">
-        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">Go Back</a>
+        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">← Edit Details</a>
       </div>
-      <div id="authError2" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
+      <div id="authError" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
   </div>
 </section>
@@ -342,7 +351,7 @@ let currentUser = null;
 let currentUserData = null;
 let testType = 'self'; 
 
-// 2. AUTH LOGIC (Verify Code -> Show Email -> Tap to Login)
+// 2. AUTH LOGIC (2-Step Flow)
 let tempEmail = null;
 let tempRole = null;
 let tempCode = null;
@@ -352,20 +361,32 @@ document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('authStep2').classList.add('hidden');
   document.getElementById('authStep1').classList.remove('hidden');
-  document.getElementById('authError1').textContent = '';
-  document.getElementById('authError2').textContent = '';
+  document.getElementById('authError').textContent = '';
 });
 
-document.getElementById('btnVerifyCode').addEventListener('click', async () => {
+document.getElementById('btnNextStep').addEventListener('click', () => {
   const name = document.getElementById('authName').value.trim();
   const email = document.getElementById('authEmail').value.trim();
   const role = document.getElementById('authRole').value;
+  
+  if(!name) { alert("Please enter your name."); return; }
+  if(!email) { alert("Please enter your email."); return; }
+
+  tempName = name;
+  tempEmail = email;
+  tempRole = role;
+
+  document.getElementById('displayEmail').textContent = tempEmail;
+  document.getElementById('authStep1').classList.add('hidden');
+  document.getElementById('authStep2').classList.remove('hidden');
+  document.getElementById('authAccessCode').focus();
+});
+
+document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   const code = document.getElementById('authAccessCode').value.trim();
-  const errDiv = document.getElementById('authError1');
+  const errDiv = document.getElementById('authError');
   
   errDiv.textContent = '';
-  if(!name) { errDiv.textContent = "Please enter your name."; return; }
-  if(!email) { errDiv.textContent = "Please enter your email."; return; }
   if(!code) { errDiv.textContent = "Please enter access code."; return; }
 
   const btn = document.getElementById('btnVerifyCode');
@@ -373,86 +394,60 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   btn.textContent = 'Verifying...';
 
   try {
-    // 1. Query Firestore for the code (Using Document ID as the code, Habit Tracker style)
+    // 1. Query Firestore using Document ID (Habit Tracker style)
     const docRef = doc(db, "access_codes", code);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
-      throw new Error("Invalid Access Code.");
+      throw new Error("Invalid Access Code. Please check spelling.");
     }
 
     const codeData = docSnap.data();
     
     if (codeData.used === true) {
-      throw new Error("This Access Code has already been used.");
+      throw new Error("This Access Code has already been used by someone else.");
     }
 
-    // 2. Role Check
-    if (codeData.role !== role) {
-      throw new Error(`This code is for a ${codeData.role}, not a ${role}.`);
+    // 2. Robust Role Check (Fixes the space/capital letter issue)
+    const firestoreRole = (codeData.role || '').trim().toLowerCase();
+    const selectedRole = tempRole.trim().toLowerCase();
+    
+    if (firestoreRole !== selectedRole) {
+      throw new Error(`This code is for a ${firestoreRole.toUpperCase()}, not ${selectedRole.toUpperCase()}.`);
     }
 
-    // 3. Store temp data for Step 2
-    tempEmail = email;
-    tempRole = codeData.role;
-    tempCode = code;
-    tempName = name;
-
-    // 4. Show Step 2
-    document.getElementById('foundEmail').textContent = tempEmail;
-    document.getElementById('authStep1').classList.add('hidden');
-    document.getElementById('authStep2').classList.remove('hidden');
-
-  } catch (err) {
-    errDiv.textContent = err.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Verify Code';
-  }
-});
-
-document.getElementById('btnLoginTap').addEventListener('click', async () => {
-  const errDiv = document.getElementById('authError2');
-  errDiv.textContent = '';
-  
-  const btn = document.getElementById('btnLoginTap');
-  btn.disabled = true;
-  btn.textContent = 'Logging in...';
-
-  try {
+    // 3. Login / Register
     let userCredential;
     try {
-      // Try signing in (Code acts as password)
-      userCredential = await signInWithEmailAndPassword(auth, tempEmail, tempCode);
+      userCredential = await signInWithEmailAndPassword(auth, tempEmail, code);
     } catch (err) {
-      // If user doesn't exist, create new
       if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        userCredential = await createUserWithEmailAndPassword(auth, tempEmail, tempCode);
+        userCredential = await createUserWithEmailAndPassword(auth, tempEmail, code);
       } else {
         throw err;
       }
     }
 
-    // Save User Profile
+    // 4. Save User Profile
     await setDoc(doc(db, "users", userCredential.user.uid), {
       name: tempName,
       email: tempEmail,
-      role: tempRole,
+      role: firestoreRole,
       lastLogin: serverTimestamp()
     }, { merge: true });
 
-    // Mark code as used (Using Document ID)
-    await updateDoc(doc(db, "access_codes", tempCode), {
+    // 5. Mark Code as Used
+    await updateDoc(doc(db, "access_codes", code), {
         used: true,
         usedByEmail: tempEmail
     });
 
-    // Auth state listener handles the rest
+    // Auth state listener handles the redirect
 
   } catch (err) {
-    errDiv.textContent = "Login failed: " + err.message;
+    errDiv.textContent = err.message;
     btn.disabled = false;
-    btn.textContent = 'Tap to Login';
+    btn.textContent = 'Verify & Login';
   }
 });
 
@@ -484,7 +479,6 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('mainApp').classList.remove('hidden');
             renderHome();
         } else {
-            // Fallback
             await setDoc(doc(db, "users", user.uid), {
                 name: user.email.split('@')[0], email: user.email, role: 'student', createdAt: serverTimestamp()
             });
@@ -495,16 +489,14 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('mainApp').classList.add('hidden');
         document.getElementById('screen-auth').classList.add('active');
         
-        // Reset Auth Form
         document.getElementById('authStep1').classList.remove('hidden');
         document.getElementById('authStep2').classList.add('hidden');
         document.getElementById('authAccessCode').value = '';
         document.getElementById('authEmail').value = '';
         document.getElementById('authName').value = '';
-        document.getElementById('btnLoginTap').disabled = false;
-        document.getElementById('btnLoginTap').textContent = 'Tap to Login';
         document.getElementById('btnVerifyCode').disabled = false;
-        document.getElementById('btnVerifyCode').textContent = 'Verify Code';
+        document.getElementById('btnVerifyCode').textContent = 'Verify & Login';
+        document.getElementById('authError').textContent = '';
     }
 });
 
