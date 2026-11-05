@@ -143,10 +143,13 @@ window.MathJax = {
     <!-- STEP 1: Verify Code -->
     <div class="card" id="authStep1">
       <h2 style="margin-top:0; text-align:center;">Welcome</h2>
-      <p class="muted small" style="text-align:center; margin-bottom:20px;">Enter your invite code to continue.</p>
+      <p class="muted small" style="text-align:center; margin-bottom:20px;">Enter your details and invite code to continue.</p>
       
       <label class="small muted">Full Name</label>
       <input type="text" id="authName" placeholder="Your Name">
+      
+      <label class="small muted">Email Address</label>
+      <input type="email" id="authEmail" placeholder="you@example.com">
       
       <label class="small muted">I am a</label>
       <select id="authRole">
@@ -166,12 +169,12 @@ window.MathJax = {
       <div style="text-align:center; margin-bottom:20px;">
         <div style="font-size:40px; margin-bottom:10px;">🎉</div>
         <h3 style="margin:0;">Code Verified!</h3>
-        <p class="muted small">Account associated with this code:</p>
+        <p class="muted small">Account will be created for:</p>
         <div style="font-weight:bold; font-size:16px; color:var(--accent-2); margin:10px 0; word-break: break-all;" id="foundEmail">email@gmail.com</div>
       </div>
       <button class="btn primary big" id="btnLoginTap" style="margin-top:0;">Tap to Login</button>
       <div style="text-align:center; margin-top:16px;">
-        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">Use a different code</a>
+        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">Go Back</a>
       </div>
       <div id="authError2" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center;"></div>
     </div>
@@ -355,12 +358,14 @@ document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
 
 document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   const name = document.getElementById('authName').value.trim();
+  const email = document.getElementById('authEmail').value.trim();
   const role = document.getElementById('authRole').value;
   const code = document.getElementById('authAccessCode').value.trim();
   const errDiv = document.getElementById('authError1');
   
   errDiv.textContent = '';
   if(!name) { errDiv.textContent = "Please enter your name."; return; }
+  if(!email) { errDiv.textContent = "Please enter your email."; return; }
   if(!code) { errDiv.textContent = "Please enter access code."; return; }
 
   const btn = document.getElementById('btnVerifyCode');
@@ -368,23 +373,27 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   btn.textContent = 'Verifying...';
 
   try {
-    // 1. Query Firestore for the code
-    const q = query(collection(db, "access_codes"), where("code", "==", code));
-    const snap = await getDocs(q);
+    // 1. Query Firestore for the code (Using Document ID as the code, Habit Tracker style)
+    const docRef = doc(db, "access_codes", code);
+    const docSnap = await getDoc(docRef);
 
-    if (snap.empty) {
-      throw new Error("Invalid Access Code. Please check and try again.");
+    if (!docSnap.exists()) {
+      throw new Error("Invalid Access Code.");
     }
 
-    const codeData = snap.docs[0].data();
+    const codeData = docSnap.data();
     
+    if (codeData.used === true) {
+      throw new Error("This Access Code has already been used.");
+    }
+
     // 2. Role Check
     if (codeData.role !== role) {
       throw new Error(`This code is for a ${codeData.role}, not a ${role}.`);
     }
 
     // 3. Store temp data for Step 2
-    tempEmail = codeData.email;
+    tempEmail = email;
     tempRole = codeData.role;
     tempCode = code;
     tempName = name;
@@ -432,15 +441,11 @@ document.getElementById('btnLoginTap').addEventListener('click', async () => {
       lastLogin: serverTimestamp()
     }, { merge: true });
 
-    // Mark code as used
-    const q = query(collection(db, "access_codes"), where("code", "==", tempCode));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-        await updateDoc(doc(db, "access_codes", snap.docs[0].id), {
-            used: true,
-            usedByEmail: tempEmail
-        });
-    }
+    // Mark code as used (Using Document ID)
+    await updateDoc(doc(db, "access_codes", tempCode), {
+        used: true,
+        usedByEmail: tempEmail
+    });
 
     // Auth state listener handles the rest
 
@@ -494,6 +499,8 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('authStep1').classList.remove('hidden');
         document.getElementById('authStep2').classList.add('hidden');
         document.getElementById('authAccessCode').value = '';
+        document.getElementById('authEmail').value = '';
+        document.getElementById('authName').value = '';
         document.getElementById('btnLoginTap').disabled = false;
         document.getElementById('btnLoginTap').textContent = 'Tap to Login';
         document.getElementById('btnVerifyCode').disabled = false;
@@ -1013,4 +1020,4 @@ wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-  </html>
+</html>
