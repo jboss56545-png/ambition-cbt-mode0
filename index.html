@@ -7,10 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ambition CBT Mode</title>
 
-<!-- Google Site Verification -->
 <meta name="google-site-verification" content="BPY__4U3V_3ojViyn2vqneUaRpdIJ2gAgIkAEyvUxdo" />
 
-<!-- LOGIN CHECK (Security) -->
 <script>
   document.documentElement.style.display = 'none';
   fetch('/api/auth/session')
@@ -21,9 +19,7 @@
         document.documentElement.style.display = 'block';
       }
     })
-    .catch(function() {
-      window.location.replace('/login.html');
-    });
+    .catch(function() { window.location.replace('/login.html'); });
 </script>
 
 <link rel="manifest" href="/manifest.json" />
@@ -31,7 +27,6 @@
 
 <style>
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
-[data-theme="light"]{--bg:#f5f6fb;--bg-2:#fff;--card:#fff;--card-2:#f2f4fa;--border:#e4e7f0;--text:#0f172a;--muted:#6b7280;--grey:#cbd5e1;--shadow:0 10px 30px rgba(15,23,42,.10);--shadow-sm:0 4px 14px rgba(15,23,42,.07)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;overscroll-behavior-y:none}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
@@ -43,11 +38,10 @@ a{color:var(--accent-2);text-decoration:none}
 .screen{display:none}.screen.active{display:block;animation:fadeUp .28s ease}
 #screen-test.active{display:flex}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.wrap{max-width:940px;margin:0 auto;padding:18px 16px 60px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-bottom:max(60px,calc(40px + env(safe-area-inset-bottom)))}
+.wrap{max-width:940px;margin:0 auto;padding:18px 16px 60px;padding-bottom:max(60px,calc(40px + env(safe-area-inset-bottom)))}
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0 18px}
 .appbar-title{font-weight:700;font-size:16px;text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px}
-.logo-dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 16px rgba(139,92,246,.7)}
 .ambition-brand{gap:10px;letter-spacing:-.02em}.ambition-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:var(--card-2);border:1px solid var(--border);flex-shrink:0}.ambition-mark svg{width:25px;height:25px;display:block}.brand-light{font-weight:500;color:var(--muted);letter-spacing:0}
 .analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}.analysis-stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px}.analysis-stat .value{font-size:23px;font-weight:850;line-height:1.2}.analysis-stat .label{font-size:11px;color:var(--muted);margin-top:5px}
 .icon-btn{width:var(--tap);height:var(--tap);border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--border);font-size:17px;transition:.16s;flex-shrink:0}
@@ -93,7 +87,7 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .test-topbar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg-2);flex-shrink:0}
 .test-title{flex:1;font-weight:650;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .marking-badge{font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;background:var(--card);border:1px solid var(--border);color:var(--muted);flex-shrink:0}
-.timer{font-weight:700;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;flex-shrink:0}
+.timer{font-weight:700;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;flex-shrink:0;color:var(--text);transition:color 0.3s;}
 .test-body{flex:1;display:flex;overflow:hidden;position:relative}
 .q-area{flex:1;overflow-y:auto;padding:18px 16px 40px}
 .q-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
@@ -107,10 +101,8 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .option.selected{border-color:transparent;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.22));box-shadow:0 0 0 1.5px var(--accent) inset}
 .opt-key{width:28px;height:28px;min-width:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:var(--card-2);border:1px solid var(--border);flex-shrink:0;margin-top:2px}
 .option.selected .opt-key{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
-
 .option-text{flex:1;overflow-x:auto;word-wrap:break-word;scrollbar-width:none;-ms-overflow-style:none}
 .option-text::-webkit-scrollbar{display:none}
-
 .palette{width:290px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg-2);padding:16px;overflow-y:auto}
 .palette-head{font-size:12px;text-transform:uppercase;font-weight:750;color:var(--muted);margin-bottom:12px}
 .palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
@@ -132,8 +124,7 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .scr-meta-val{font-size:16px;font-weight:800}
 .scr-meta-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;margin-top:4px}
 .asviro-footer{margin-top:40px;padding:20px 0;text-align:center;font-size:12.5px;color:var(--muted);border-top:1px solid var(--border)}
-.asviro-footer a{color:#a855f7;font-weight:700;text-decoration:none;transition:0.15s;display:inline-flex;align-items:center;gap:5px}
-.asviro-footer a:hover{color:#6366f1;text-decoration:underline}
+.asviro-footer a{color:#a855f7;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
 mjx-container{color:var(--text)!important;max-width:100%;overflow-x:auto}
 mjx-container svg{fill:var(--text)!important;stroke:var(--text)!important}
 mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
@@ -164,7 +155,6 @@ window.MathJax = {
     <h2 class="section-title">Choose your CUET practice mode</h2>
     <div class="exam-grid" id="examGrid"></div>
     <div id="analysisWrap"></div>
-    <div id="historyWrap"></div>
     <footer class="asviro-footer">
       Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
     </footer>
@@ -187,17 +177,17 @@ window.MathJax = {
       <button type="button" class="mode-card" id="btnModeBook">
         <div class="mode-icon">📄</div>
         <div class="mode-title">Extract from Question Paper</div>
-        <div class="mode-sub">Upload PDF / DOCX question papers</div>
+        <div class="mode-sub">Upload PDF up to 500 MB — text or scanned</div>
       </button>
       <button type="button" class="mode-card" id="btnModeNotes">
         <div class="mode-icon">📝</div>
         <div class="mode-title">Generate from Notes</div>
-        <div class="mode-sub">AI converts theoretical notes into MCQs</div>
+        <div class="mode-sub">AI converts notes (text/photo) into MCQs</div>
       </button>
       <button type="button" class="mode-card" id="btnModeImage">
         <div class="mode-icon">📷</div>
         <div class="mode-title">Extract from Photo / Image</div>
-        <div class="mode-sub">Textbook photos, exercise problems & PYQs solved into MCQs</div>
+        <div class="mode-sub">Phone photos of question papers → MCQs</div>
       </button>
     </div>
   </div>
@@ -213,7 +203,7 @@ window.MathJax = {
     <h2 class="section-title">Select Subject</h2>
     <div class="chip-grid" id="subjectGrid"></div>
     <div id="setupPanel" class="hidden">
-      <h2 class="section-title">Select Chapters <span class="muted" id="chCount"></span></h2>
+      <h2 class="section-title">Select Chapters</h2>
       <div class="btn-row" style="margin-bottom:12px">
         <button type="button" class="btn small" id="btnFullSubject">✓ Full Subject</button>
         <button type="button" class="btn small" id="btnClearChapters">Clear</button>
@@ -239,14 +229,14 @@ window.MathJax = {
     </header>
     <div class="card">
       <h3 id="uploadCardTitle">📄 Add a file or photo</h3>
-      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, PDF, and TXT.</p>
+      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, PDF, TXT.</p>
       <input type="file" id="fileInput" accept=".pdf,.txt,.jpg,.jpeg,.png,.webp,image/*,application/pdf,text/plain">
       <div id="uploadProgress" class="hidden" style="margin-top:14px">
         <div class="small muted" id="uploadProgressText">Reading file…</div>
         <div class="progress-outer"><div class="progress-inner" id="uploadProgressBar" style="width:0%"></div></div>
       </div>
     </div>
-    <h2 class="section-title">Your Question Banks</h2>
+    <h2 class="section-title" id="bankListTitle">Your Question Banks</h2>
     <div id="bankList"><p class="muted small">No banks uploaded yet.</p></div>
   </div>
 </section>
@@ -297,7 +287,6 @@ window.MathJax = {
   <div class="spinner"></div>
   <div id="loaderText">AI is generating questions…</div>
   <div id="loaderSub"></div>
-  <div id="loaderActions" class="btn-row hidden" style="justify-content:center"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -341,9 +330,7 @@ function renderMath(el){
       if(MathJax.typesetClear) MathJax.typesetClear([el]);
       MathJax.typesetPromise([el]).catch(function(){});
     }catch(e){}
-  } else {
-    setTimeout(function(){ renderMath(el); }, 350);
-  }
+  } else { setTimeout(function(){ renderMath(el); }, 350); }
 }
 
 function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
@@ -352,13 +339,11 @@ function dialog(opts){return new Promise(function(resolve){var ov=document.creat
 
 async function aiCall(message, context, opts) {
   opts = opts || {};
-  var timeoutMs = opts.timeoutMs || 60000;
+  var timeoutMs = opts.timeoutMs || 90000;
   var retries = opts.retries === undefined ? 0 : opts.retries;
-
   var payload = { message: message, context: context ? Object.assign({}, context) : {} };
   if (context && context.image) { payload.image = context.image; delete payload.context.image; }
   if (context && context.images) { payload.images = context.images; delete payload.context.images; }
-
   var lastErr;
   for (var attempt = 0; attempt <= retries; attempt++) {
     var ctrl = new AbortController();
@@ -397,8 +382,8 @@ async function aiCall(message, context, opts) {
 
 function fixLatexEscapesInJSON(jsonStr) {
   return jsonStr
-    .replace(/(?<!\\)\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '\\\\$1')
-    .replace(/(?<!\\)\\(?![/\"\\bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\');
+    .replace(/(^|[^\\])\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '$1\\\\$2')
+    .replace(/(^|[^\\])\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})/g, '$1\\\\');
 }
 
 function safeParseJSON(text){
@@ -480,23 +465,30 @@ function normaliseList(raw){
 }
 
 function compressImage(file, maxDim, quality){
-  maxDim = maxDim || 1600; quality = quality || 0.8;
+  maxDim = maxDim || 2500;
+  quality = quality || 0.88;
   return new Promise(function(resolve, reject){
     var reader = new FileReader();
     reader.onload = function(e){
       var img = new Image();
       img.onload = function(){
         var w = img.width, h = img.height;
-        if(w > maxDim || h > maxDim){ if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; } else { w = Math.round((w * maxDim)/h); h = maxDim; } }
-        var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+        if(w > maxDim || h > maxDim){
+          if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; }
+          else { w = Math.round((w * maxDim)/h); h = maxDim; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         var dataUrl = canvas.toDataURL('image/jpeg', quality);
         canvas.width = 0; canvas.height = 0;
         resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
       };
-      img.onerror = reject; img.src = e.target.result;
+      img.onerror = reject;
+      img.src = e.target.result;
     };
-    reader.onerror = reject; reader.readAsDataURL(file);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 
@@ -514,18 +506,19 @@ async function extractPDFText(file, onProgress) {
 }
 
 async function renderPDFPages(file, maxPages) {
-  maxPages = maxPages || 10;
+  maxPages = maxPages || 30;
   var buf = await file.arrayBuffer();
   var pdf = await pdfjsLib.getDocument({ data: buf }).promise;
   var total = Math.min(pdf.numPages, maxPages);
   var images = [];
   for (var i = 1; i <= total; i++) {
     var page = await pdf.getPage(i);
-    var viewport = page.getViewport({ scale: 1.2 });
+    var viewport = page.getViewport({ scale: 2.0 });
     var canvas = document.createElement('canvas');
-    canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height);
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
     await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-    var dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+    var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
     images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
     canvas.width = 0; canvas.height = 0;
   }
@@ -535,15 +528,17 @@ async function renderPDFPages(file, maxPages) {
 var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up'};
 var uploadMode='extract';
 var T=null,timerHandle=null;
+var startTime=0, totalDuration=0;
 
 function renderHome(){
   var grid=$('examGrid');grid.innerHTML='';
   var b=document.createElement('button');
   b.className='exam-card';
   b.innerHTML='<div style="font-size:26px">🎓</div><div style="font-weight:700;font-size:16px">CUET UG 2026</div><div class="muted small">Practice • PYQs • Image Solver</div><div style="color:var(--accent);font-weight:700;font-size:12px;margin-top:4px">+5 Correct | -1 Negative</div>';
-  b.onclick=function(){openExam('CUET')};
+  b.onclick=function(){showScreen('screen-exam')};
   grid.appendChild(b);
   renderHistory();
+  renderResumeBanner();
 }
 function openExam(){showScreen('screen-exam')}
 
@@ -560,13 +555,35 @@ function renderHistory(){
     '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average accuracy</div></div></div>';
 }
 
+function renderResumeBanner(){
+  var active = LS.get(K.ACTIVE, null);
+  var banner = $('resumeBanner');
+  if(active && active.questions && active.questions.length > 0){
+    banner.innerHTML = '<div class="card" style="border-color:var(--accent);margin-bottom:18px;"><div style="font-weight:700;color:var(--accent);margin-bottom:6px;">⚠️ Test in progress</div><div class="muted small" style="margin-bottom:12px;">Unfinished test: <b>'+esc(active.name)+'</b></div><div class="btn-row"><button class="btn small primary" id="btnResumeTest">▶ Resume Test</button><button class="btn small danger" id="btnDiscardTest">Discard</button></div></div>';
+    $('btnResumeTest').onclick=function(){
+      T = active;
+      startTime = Date.now() - (T.elapsed * 1000);
+      showScreen('screen-test');
+      startTimer();
+      renderQuestion();
+      renderPalette();
+    };
+    $('btnDiscardTest').onclick=function(){
+      LS.del(K.ACTIVE);
+      renderResumeBanner();
+    };
+  } else {
+    banner.innerHTML='';
+  }
+}
+
 function openSetup(){state.subject=null;state.chapters=[];state.count=10;renderSubjects();renderChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
 function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
 function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
 function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)})}
 function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}}
 function renderChips(){
-  var nc=$('numChips');nc.innerHTML='';[10,15,20].forEach(function(n){var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;b.onclick=function(){state.count=n;renderChips()};nc.appendChild(b)});
+  var nc=$('numChips');nc.innerHTML='';[10,15,20,25,30].forEach(function(n){var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;b.onclick=function(){state.count=n;renderChips()};nc.appendChild(b)});
   var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d;b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b)});
   var tc=$('timerChips');tc.innerHTML='';[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min'}].forEach(function(tm){var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;b.onclick=function(){state.timerMode=tm.k;renderChips()};tc.appendChild(b)});
 }
@@ -589,9 +606,15 @@ function startAITest(){
 
 function openUpload(mode){
   uploadMode=mode;
-  $('uploadTitle').textContent=mode==='image'?'📷 Upload Question Photo':(mode==='notes'?'📝 Upload Notes':'📄 Upload Document');
-  $('uploadCardTitle').textContent=mode==='image'?'📷 Add a photo':(mode==='notes'?'📝 Add notes file':'📄 Add a file');
-  $('uploadCardHint').textContent=mode==='image'?'JPG, PNG, WEBP supported. Max 20 MB.':(mode==='notes'?'PDF / TXT up to 100 pages.':'PDF / TXT up to 100 pages. Auto OCR for scanned files.');
+  var config = {
+    image: { title:'📷 Upload Question Photo', card:'📷 Add a phone photo', hint:'JPG, PNG, WEBP — max 20 MB. Take a clear photo of the question paper.', bank:'Image Question Banks' },
+    extract: { title:'📄 Upload Question Paper', card:'📄 Add PDF / TXT file', hint:'PDF / TXT up to 500 MB. Text-based or scanned — both supported.', bank:'PDF Question Banks' },
+    notes: { title:'📝 Upload Notes', card:'📝 Add notes (PDF / TXT / Photo)', hint:'AI will GENERATE new MCQs from your notes. Max 500 MB.', bank:'Notes Question Banks' }
+  }[mode];
+  $('uploadTitle').textContent = config.title;
+  $('uploadCardTitle').textContent = config.card;
+  $('uploadCardHint').textContent = config.hint;
+  $('bankListTitle').textContent = config.bank;
   renderBanks();
   showScreen('screen-upload');
 }
@@ -599,9 +622,10 @@ function openUpload(mode){
 function renderBanks(){
   var host=$('bankList');
   IDB.all().then(function(banks){
-    if(!banks.length){host.innerHTML='<p class="muted small">No banks uploaded yet.</p>';return}
+    var filtered = banks.filter(function(b){ return (b.category || 'extract') === uploadMode; });
+    if(!filtered.length){host.innerHTML='<p class="muted small">No '+(uploadMode==='image'?'image':uploadMode==='notes'?'notes':'PDF')+' banks yet.</p>';return}
     host.innerHTML='';
-    banks.forEach(function(b){
+    filtered.forEach(function(b){
       var d=document.createElement('div');d.className='bank-item';
       d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions saved</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
       d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'up'})};
@@ -618,33 +642,52 @@ async function handleFileUpload(file){
   var isPDF = file.type === 'application/pdf' || fname.endsWith('.pdf');
   var isText = file.type === 'text/plain' || fname.endsWith('.txt');
 
-  if(file.size > 100*1024*1024){dialog({title:'File too large',message:'Max 100 MB allowed.'});return;}
-  if(isImage && file.size > 20*1024*1024){dialog({title:'Image too large',message:'Max 20 MB allowed for images.'});return;}
+  if(file.size > 500*1024*1024){
+    dialog({title:'File too large',message:'Max 500 MB allowed.'});
+    return;
+  }
+  if(isImage && file.size > 30*1024*1024){
+    dialog({title:'Image too large',message:'Max 30 MB allowed for images.'});
+    return;
+  }
 
   var progressWrap=$('uploadProgress');
   var progressBar=$('uploadProgressBar');
   var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden'); progressBar.style.width='5%'; progressText.textContent='Reading file…';
-  var startTime=Date.now();
+  progressWrap.classList.remove('hidden');
+  progressBar.style.width='5%';
+  progressText.textContent='Reading file…';
+  var startTs=Date.now();
 
   try {
     var questions;
-    if(isImage){ questions = await processImageFile(file, progressBar, progressText); } 
-    else if(isPDF){ questions = await processPDFFile(file, progressBar, progressText); } 
-    else if(isText){ questions = await processTextFile(file, progressBar, progressText); } 
+    if(isImage){ questions = await processImageFile(file, progressBar, progressText); }
+    else if(isPDF){ questions = await processPDFFile(file, progressBar, progressText); }
+    else if(isText){ questions = await processTextFile(file, progressBar, progressText); }
     else { throw new Error('Unsupported file type.'); }
 
     if(!questions || !questions.length) throw new Error('No valid questions found. Please upload a clearer image or a text-based PDF.');
 
-    progressBar.style.width='100%'; progressText.textContent='Saving '+questions.length+' questions…';
+    progressBar.style.width='100%';
+    progressText.textContent='Saving '+questions.length+' questions…';
 
-    var bank={id:'bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),name:file.name,questions:questions,created:Date.now()};
+    var bank={
+      id:'bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+      name:file.name,
+      category: uploadMode,
+      questions:questions,
+      created:Date.now()
+    };
     await IDB.put(bank);
 
     progressWrap.classList.add('hidden');
     renderBanks();
-    var elapsed=((Date.now()-startTime)/1000).toFixed(1);
-    dialog({title:'✅ Done in '+elapsed+'s',message:questions.length+' questions extracted from '+file.name,buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]}).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
+    var elapsed=((Date.now()-startTs)/1000).toFixed(1);
+    dialog({
+      title:'✅ Done in '+elapsed+'s',
+      message:questions.length+' questions extracted from '+file.name,
+      buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]
+    }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
   } catch(err){
     progressWrap.classList.add('hidden');
     dialog({title:'Upload failed',message:(err.message||'Unknown error')});
@@ -652,59 +695,100 @@ async function handleFileUpload(file){
 }
 
 async function processImageFile(file, bar, text){
-  bar.style.width='15%'; text.textContent='Compressing image…';
-  var img = await compressImage(file, 1600, 0.8);
-  bar.style.width='40%'; text.textContent='AI is reading the image…';
-  var raw = await aiCall('Extract ALL questions from this image. If MCQ, copy options exactly. If direct question, solve it and create 4 options. "ans" = 0-based index of correct option. Wrap ALL math in $...$ and double-escape backslashes (\\\\frac, \\\\sqrt, \\\\cos). Return raw JSON array only.',{source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'image-extract', image: img},{timeoutMs: 60000});
+  bar.style.width='15%';
+  text.textContent='Compressing photo (high-res)…';
+  var img = await compressImage(file, 2500, 0.88);
+
+  bar.style.width='40%';
+  text.textContent='AI is reading the photo…';
+
+  var mode = uploadMode==='notes' ? 'notes' : 'image-extract';
+  var raw = await aiCall(
+    'Extract every single question from this photo. Reply with raw JSON array only.',
+    {source:'ambition-cuet-cbt', mode: mode, image: img},
+    {timeoutMs: 90000}
+  );
+
   bar.style.width='90%';
   return normaliseList(safeParseJSON(raw));
 }
 
 async function processTextFile(file, bar, text){
-  bar.style.width='15%'; text.textContent='Reading text…';
+  bar.style.width='15%';
+  text.textContent='Reading text…';
   var content = await file.text();
   if(!content.trim()) throw new Error('Empty file.');
-  bar.style.width='40%'; text.textContent='AI is extracting questions from text…';
+
+  bar.style.width='40%';
+  text.textContent='AI is extracting questions from text…';
+
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),{source:'ambition-cuet-cbt', mode: mode},{timeoutMs: 60000});
+  var raw = await aiCall(
+    (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),
+    {source:'ambition-cuet-cbt', mode: mode},
+    {timeoutMs: 90000}
+  );
+
   bar.style.width='90%';
   return normaliseList(safeParseJSON(raw));
 }
 
 async function processPDFFile(file, bar, text){
-  bar.style.width='10%'; text.textContent='Loading PDF…';
+  bar.style.width='10%';
+  text.textContent='Loading PDF…';
+
   var extracted;
-  try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); } 
-  catch(e) { extracted = { text: '', pageCount: 0 }; }
+  try {
+    extracted = await extractPDFText(file, function(page, total){
+      bar.style.width = (10 + (page/total)*15) + '%';
+      text.textContent = 'Extracting text… page '+page+'/'+total;
+    });
+  } catch(e) { extracted = { text: '', pageCount: 0 }; }
 
   var textLen = (extracted.text || '').trim().length;
+
   if(textLen > 500){
-    bar.style.width='30%'; text.textContent='Text extracted. AI is reading…';
+    bar.style.width='30%';
+    text.textContent='Text extracted. AI is reading…';
     var chunks = chunkText(extracted.text, 25000);
     var mode = uploadMode === 'notes' ? 'notes' : 'extract';
     var collected = [];
-    var concurrency = 2; 
+    var concurrency = 2;
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
       bar.style.width = (30 + (b/chunks.length)*60) + '%';
       text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions collected…';
-      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,{source:'ambition-cuet-cbt', mode: mode},{timeoutMs: 60000, retries: 1}).catch(function(e){ return ''; }); }));
+      var results = await Promise.all(group.map(function(chunk){
+        return aiCall(
+          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,
+          {source:'ambition-cuet-cbt', mode: mode},
+          {timeoutMs: 90000, retries: 1}
+        ).catch(function(e){ return ''; });
+      }));
       results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){} } });
     }
     return collected;
   }
 
-  bar.style.width='25%'; text.textContent='Scanned PDF — rendering pages…';
-  var rendered = await renderPDFPages(file, 10);
+  bar.style.width='25%';
+  text.textContent='Scanned PDF — rendering pages…';
+  var rendered = await renderPDFPages(file, 30);
   if(!rendered.images.length) throw new Error('Could not render PDF pages.');
 
-  bar.style.width='40%'; text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
+  bar.style.width='40%';
+  text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
+
   var collected = [];
   for(var i=0; i<rendered.images.length; i++){
     bar.style.width = (40 + (i/rendered.images.length)*50) + '%';
-    text.textContent = 'Processing page '+(i+1)+'/'+rendered.images.length+'…';
+    text.textContent = 'Page '+(i+1)+'/'+rendered.images.length+' — '+collected.length+' questions collected…';
     try {
-      var raw = await aiCall('Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Wrap ALL math in $...$. Return raw JSON array only.',{source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', image: rendered.images[i]},{timeoutMs: 60000, retries: 1});
+      var mode2 = uploadMode==='notes' ? 'notes' : 'scanned-extract';
+      var raw = await aiCall(
+        'Extract every single question on this page. Raw JSON array only.',
+        {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]},
+        {timeoutMs: 90000, retries: 1}
+      );
       collected = collected.concat(normaliseList(safeParseJSON(raw)));
     } catch(e) {}
   }
@@ -728,16 +812,36 @@ function chunkText(text, size){
 
 function launchTest(cfg){
   T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'up',answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
+  LS.set(K.ACTIVE, T);
   $('testTitle').textContent=T.name;
-  showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette();
+  $('timerDisplay').style.color = 'var(--text)';
+  startTime = Date.now(); totalDuration = 0;
+  showScreen('screen-test');
+  startTimer();
+  renderQuestion();
+  renderPalette();
 }
 
 function startTimer(){
   if(timerHandle) clearInterval(timerHandle);
+  if(T.timerMode === 'down' && totalDuration === 0) totalDuration = 15 * 60;
   timerHandle=setInterval(function(){
     if(!T) return;
-    T.elapsed++;
-    $('timerDisplay').textContent=fmtTime(T.elapsed);
+    var now = Date.now();
+    T.elapsed = Math.floor((now - startTime) / 1000);
+    if (T.timerMode === 'down') {
+      var remaining = totalDuration - T.elapsed;
+      if (remaining <= 0) {
+        clearInterval(timerHandle);
+        $('timerDisplay').textContent = '00:00';
+        dialog({title:'Time Up!',message:'Auto-submitting your test.'}).then(function(){ submitTest(); });
+        return;
+      }
+      $('timerDisplay').textContent=fmtTime(remaining);
+      $('timerDisplay').style.color = remaining < 60 ? 'var(--red)' : 'var(--text)';
+    } else {
+      $('timerDisplay').textContent=fmtTime(T.elapsed);
+    }
   },1000);
 }
 
@@ -747,19 +851,17 @@ function renderQuestion(){
   $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length;
   $('qTopic').textContent=q.topic;
   $('qDiff').textContent=q.diff;
-  $('qText').innerHTML=autoWrapMath(q.q);
-
+  $('qText').innerHTML=autoWrapMath(esc(q.q));
   var box=$('optionsBox');box.innerHTML='';
   var letters=['A','B','C','D'];
   q.options.forEach(function(opt,i){
     var b=document.createElement('button');
     b.className='option'+(T.answers[T.cur]===i?' selected':'');
-    var formattedOpt = autoWrapMath(cleanOptionText(opt));
+    var formattedOpt = autoWrapMath(esc(cleanOptionText(opt)));
     b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+formattedOpt+'</span>';
-    b.onclick=function(){T.answers[T.cur]=i;renderQuestion();renderPalette()};
+    b.onclick=function(){T.answers[T.cur]=i; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette();};
     box.appendChild(b);
   });
-
   $('btnPrev').disabled=(T.cur===0);
   $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
   renderMath($('qText')); renderMath(box);
@@ -780,13 +882,14 @@ function renderPalette(){
   });
 }
 
-function goNext(){ if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); } else submitTest(); }
+function goNext(){ if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); } else { dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest();}); } }
 function goPrev(){ if(T.cur > 0){ T.cur--; renderQuestion(); renderPalette(); } }
-function toggleMark(){ T.marked[T.cur]=!T.marked[T.cur]; renderQuestion(); renderPalette(); }
-function clearAns(){ T.answers[T.cur]=null; renderQuestion(); renderPalette(); }
+function toggleMark(){ T.marked[T.cur]=!T.marked[T.cur]; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
+function clearAns(){ T.answers[T.cur]=null; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
 
 function submitTest(){
   if(timerHandle) clearInterval(timerHandle);
+  LS.del(K.ACTIVE);
   var correct=0,wrong=0,skipped=0;
   T.questions.forEach(function(q,i){
     if(T.answers[i]===null) { skipped++; return; }
@@ -796,10 +899,8 @@ function submitTest(){
   var score=(correct*5)-(wrong*1);
   var max=T.questions.length*5;
   var pct=Math.max(0,Math.round((score/max)*100));
-
   var record={name:T.name,score:score,max:max,pct:pct,correct:correct,wrong:wrong,skipped:skipped,date:new Date().toLocaleString()};
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
-
   $('resultBody').innerHTML='<div class="scorecard">'+
     '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
     '<div class="scorecard-score">'+score+'</div>'+
@@ -810,9 +911,9 @@ function submitTest(){
     '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
     '</div></div>'+
     '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
-
   $('btnResHome').onclick=function(){renderHome();showScreen('screen-home')};
   showScreen('screen-result');
+  T = null;
 }
 
 function wireEvents(){
@@ -860,4 +961,4 @@ function wireEvents(){
 })();
 </script>
 </body>
-  </html>
+</html>
