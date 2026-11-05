@@ -232,11 +232,23 @@ window.MathJax = {
       </div>
 
       <div id="teacherDashboard" class="hidden">
-        <h2 class="section-title">Teacher Actions</h2>
+        <h2 class="section-title">Create & Assign Tests</h2>
         <div class="exam-grid">
           <button class="exam-card" id="btnTeacherCreateTest">
-            <div style="font-size:26px">📝</div><div style="font-weight:700;font-size:16px">Create & Assign Test</div>
-            <div class="muted small">Generate AI test and assign to students</div>
+            <div style="font-size:26px">🧪</div><div style="font-weight:700;font-size:16px">AI Practice Test</div>
+            <div class="muted small">Generate AI test and assign</div>
+          </button>
+          <button class="exam-card" id="btnTeacherBook">
+            <div style="font-size:26px">📄</div><div style="font-weight:700;font-size:16px">Extract from PDF</div>
+            <div class="muted small">Upload PDF and assign</div>
+          </button>
+          <button class="exam-card" id="btnTeacherNotes">
+            <div style="font-size:26px">📝</div><div style="font-weight:700;font-size:16px">Generate from Notes</div>
+            <div class="muted small">AI generates MCQs from notes</div>
+          </button>
+          <button class="exam-card" id="btnTeacherImage">
+            <div style="font-size:26px">📷</div><div style="font-weight:700;font-size:16px">Extract from Photo</div>
+            <div class="muted small">Photo → MCQs</div>
           </button>
         </div>
         
@@ -351,7 +363,7 @@ let currentUser = null;
 let currentUserData = null;
 let testType = 'self'; 
 
-// 2. AUTH LOGIC (2-Step Flow with Prefix Check)
+// 2. AUTH LOGIC
 let tempEmail = null;
 let tempRole = null;
 let tempCode = null;
@@ -404,11 +416,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
 
     const codeData = docSnap.data();
     
-    if (codeData.used === true) {
-      throw new Error("This Access Code has already been used by someone else.");
-    }
-
-    // 2. MAGIC LOGIC: Role comes from the Prefix (TEACHER vs STUDENT)
+    // 2. MAGIC LOGIC: Role comes from the Prefix
     let firestoreRole = '';
     if (code.startsWith('TEACHER')) {
         firestoreRole = 'teacher';
@@ -444,11 +452,13 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
       lastLogin: serverTimestamp()
     }, { merge: true });
 
-    // 5. Mark Code as Used
-    await updateDoc(doc(db, "access_codes", code), {
-        used: true,
-        usedByEmail: tempEmail
-    });
+    // 5. Mark Code as Used (If it was previously false)
+    if (codeData.used !== true) {
+        await updateDoc(doc(db, "access_codes", code), {
+            used: true,
+            usedByEmail: tempEmail
+        });
+    }
 
   } catch (err) {
     errDiv.textContent = err.message;
@@ -510,6 +520,18 @@ onAuthStateChanged(auth, async (user) => {
 async function loadStudentDashboard() {
     renderHistoryChart();
     const listDiv = document.getElementById('assignedTestsList');
+    
+    // Get completed tests for this student
+    const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
+    const resultsSnap = await getDocs(resultsQ);
+    const completedTestIds = new Set();
+    const completedTestNames = new Set();
+    resultsSnap.forEach(doc => {
+        completedTestIds.add(doc.data().testId);
+        completedTestNames.add(doc.data().testName);
+    });
+
+    // Get all tests assigned to "all"
     const q = query(collection(db, "tests"), where("assignedTo", "==", "all"));
     const querySnapshot = await getDocs(q);
     
@@ -520,10 +542,18 @@ async function loadStudentDashboard() {
     listDiv.innerHTML = '';
     querySnapshot.forEach((docSnap) => {
         const t = docSnap.data();
+        const testId = docSnap.id;
+        const isDone = completedTestIds.has(testId) || completedTestNames.has(t.name);
+
         const d = document.createElement('div');
         d.className = 'bank-item';
-        d.innerHTML = `<div style="font-weight:700">📄 ${t.name}</div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div><div class="btn-row"><button class="btn small primary">▶ Start Test</button></div>`;
-        d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned'});
+        
+        if (isDone) {
+            d.innerHTML = `<div style="font-weight:700; color:var(--muted)">📄 ${t.name} <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span></div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>`;
+        } else {
+            d.innerHTML = `<div style="font-weight:700">📄 ${t.name}</div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div><div class="btn-row"><button class="btn small primary">▶ Start Test</button></div>`;
+            d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: testId});
+        }
         listDiv.appendChild(d);
     });
 }
@@ -681,7 +711,7 @@ function startAITest(){
     if(!list.length) throw new Error('No questions generated');
     
     if (currentUserData.role === 'teacher') {
-        saveTeacherTest(list);
+        saveTeacherTest(list, state.subject + ' Test');
     } else {
         launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self'});
     }
@@ -691,15 +721,15 @@ function startAITest(){
   });
 }
 
-async function saveTeacherTest(questions) {
+async function saveTeacherTest(questions, testName) {
     showLoader('Saving test for students…', '');
     try {
         await addDoc(collection(db, "tests"), {
-            name: state.subject + ' Test',
+            name: testName || 'New Test',
             questions: questions,
             teacherName: currentUserData.name,
             assignedTo: 'all',
-            timeLimit: state.timerMins,
+            timeLimit: state.timerMins || 15,
             timestamp: serverTimestamp()
         });
         hideLoader();
@@ -754,12 +784,18 @@ async function handleFileUpload(file){
     else if(isText){ questions = await processTextFile(file, progressBar, progressText); }
     else { throw new Error('Unsupported file type.'); }
     if(!questions || !questions.length) throw new Error('No valid questions found.');
-    progressBar.style.width='100%'; progressText.textContent='Saving '+questions.length+' questions…';
-    var bank={ id:'bank_'+Date.now(), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
-    await IDB.put(bank);
-    progressWrap.classList.add('hidden'); renderBanks();
-    var elapsed=((Date.now()-startTs)/1000).toFixed(1);
-    dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self'}); });
+    
+    progressBar.style.width='100%'; progressText.textContent='Saving…';
+
+    if (currentUserData && currentUserData.role === 'teacher') {
+        saveTeacherTest(questions, file.name);
+    } else {
+        var bank={ id:'bank_'+Date.now(), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
+        await IDB.put(bank);
+        progressWrap.classList.add('hidden'); renderBanks();
+        var elapsed=((Date.now()-startTs)/1000).toFixed(1);
+        dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self'}); });
+    }
   } catch(err){ progressWrap.classList.add('hidden'); dialog({title:'Upload failed',message:(err.message||'Unknown error')}); }
 }
 
@@ -821,7 +857,7 @@ function chunkText(text, size){
 }
 
 function launchTest(cfg){
-  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
+  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}), testId: cfg.testId || null};
   testType = cfg.type || 'self';
   LS.set(K.ACTIVE, T);
   $('testTitle').textContent=T.name;
@@ -897,6 +933,7 @@ async function submitTest(){
               studentId: currentUser.uid,
               studentName: currentUserData.name,
               testName: T.name,
+              testId: T.testId,
               type: testType,
               score: score,
               pct: pct,
@@ -963,7 +1000,7 @@ async function submitTest(){
   
   $('btnResHome').onclick=function(){
     showScreen('screen-home');
-    renderHome();
+    if (currentUserData.role === 'student') loadStudentDashboard(); else loadTeacherDashboard();
   };
   
   showScreen('screen-result'); T = null;
@@ -977,19 +1014,13 @@ function wireEvents(){
   $('btnModeImage').onclick=function(){openUpload('image')};
   
   $('btnSetupBack').onclick=function(){
-    if (currentUserData && currentUserData.role === 'teacher') {
-        showScreen('screen-home');
-    } else {
-        showScreen('screen-exam');
-    }
+    if (currentUserData && currentUserData.role === 'teacher') { showScreen('screen-home'); } 
+    else { showScreen('screen-exam'); }
   };
   
   $('btnUploadBack').onclick=function(){
-    if (currentUserData && currentUserData.role === 'teacher') {
-        showScreen('screen-home');
-    } else {
-        showScreen('screen-exam');
-    }
+    if (currentUserData && currentUserData.role === 'teacher') { showScreen('screen-home'); } 
+    else { showScreen('screen-exam'); }
   };
   
   $('btnFullSubject').onclick=function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); };
@@ -1011,11 +1042,16 @@ function wireEvents(){
 
   $('btnSelfPractice').onclick = () => { openSetup(); };
   $('btnSelfUpload').onclick = () => { openUpload('extract'); };
+  
+  // Teacher Buttons
   $('btnTeacherCreateTest').onclick = () => { openSetup(); };
+  $('btnTeacherBook').onclick = () => { openUpload('extract'); };
+  $('btnTeacherNotes').onclick = () => { openUpload('notes'); };
+  $('btnTeacherImage').onclick = () => { openUpload('image'); };
 }
 
 wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-</html>
+  </html>
