@@ -191,88 +191,81 @@ module.exports = async function handler(req, res) {
 
   const compactRule = 'COMPACT RULE: Set "explain" to empty string "" to save space. This is CRITICAL so all questions fit in the output.\n\n';
 
-  // ============ NOTES MODE (Generate MCQs) ============
+  // 🔥 NEW RULE: Randomize correct option position
+  const shuffleRule = 'CRITICAL SHUFFLE RULE: If you have to SOLVE a direct question and create options yourself, you MUST randomly place the correct answer at index 0, 1, 2, or 3. Do NOT always put the correct answer at index 0 (Option A). Randomize it properly so answers are evenly distributed across A, B, C, and D.\n\n';
+
   if (mode === 'notes') {
     if (hasImages) {
       system =
         'You are a senior CUET UG paper setter.\n' +
-        'The image contains STUDY NOTES (theory, not questions). Your job is to GENERATE high-quality MCQs FROM these notes.\n\n' +
+        'The image contains STUDY NOTES. Your job is to GENERATE high-quality MCQs FROM these notes.\n\n' +
         'RULES:\n' +
-        '1. Read the notes carefully. Do NOT extract questions (there are none).\n' +
-        '2. GENERATE new CUET-style MCQs based on the concepts in the notes.\n' +
-        '3. 4 options per question, only 1 correct. Remove any (a)/(b)/1./2. prefixes.\n' +
+        '1. GENERATE new CUET-style MCQs based on the concepts.\n' +
+        '2. 4 options per question, only 1 correct.\n' +
         '"ans" = 0-based index of correct option.\n' +
-        noDupRule + mathRule + compactRule +
+        noDupRule + mathRule + compactRule + shuffleRule +
         'FORMAT — Reply with ONLY a valid JSON array:\n' +
         '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
         'USER REQUEST:\n' + JSON.stringify(ctx);
     } else {
       system =
         'You are a senior CUET UG paper setter.\n' +
-        'Generate high-yield NCERT MCQs from these notes. 4 options, 1 correct. Remove prefixes.\n' +
-        noDupRule + mathRule + compactRule +
+        'Generate high-yield NCERT MCQs from these notes.\n' +
+        noDupRule + mathRule + compactRule + shuffleRule +
         'FORMAT — Reply with ONLY a valid JSON array:\n' +
         '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
         'USER REQUEST:\n' + JSON.stringify(ctx);
     }
 
-  // ============ IMAGE EXTRACT (Phone Photo) ============
   } else if (hasImages && mode === 'image-extract') {
     system =
       'You are an expert Indian exam question extractor. This is a PHOTO of a question paper.\n\n' +
       'MISSION: Extract EVERY SINGLE question visible in this photo.\n\n' +
       'CRITICAL RULES:\n' +
-      '1. FIRST: silently COUNT all questions you can see (numbered 1., 2., 3...). There may be 20, 30, or more.\n' +
-      '2. THEN: extract ALL of them, every single one. Do NOT skip any. Do NOT stop early.\n' +
-      '3. If a question has statements (A), (B), (C), (D) or Roman numerals, put each on a NEW LINE using \\n.\n' +
-      '4. REMOVE all option prefixes from options array — no (a), (b), (A), 1., 2., etc.\n' +
+      '1. FIRST: silently COUNT all questions you can see. There may be 20, 30, or more.\n' +
+      '2. THEN: extract ALL of them, every single one. Do NOT skip any.\n' +
+      '3. If a question has statements, put each on a NEW LINE using \\n.\n' +
+      '4. REMOVE all option prefixes from options array.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0-based index (0,1,2,3).\n' +
-      '6. If the photo is blurry, extract what you CAN see. Only return [] if there is no text at all.\n' +
-      '7. If direct question without options, solve and create 4 options.\n' +
-      noDupRule + mathRule + compactRule +
-      'EXAMPLE: If you see 27 numbered questions, your JSON array must have 27 objects.\n\n' +
+      '6. If direct question without options, SOLVE carefully and create 4 options.\n' +
+      noDupRule + mathRule + compactRule + shuffleRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
 
-  // ============ SCANNED PDF PAGE ============
   } else if (hasImages && mode === 'scanned-extract') {
     system =
-      'You are an expert exam question extractor. This is a SCANNED PAGE from a question paper PDF.\n\n' +
+      'You are an expert exam question extractor. This is a SCANNED PAGE from a PDF.\n\n' +
       'MISSION: Extract EVERY SINGLE question on this page.\n\n' +
       'CRITICAL RULES:\n' +
-      '1. FIRST: silently COUNT all numbered questions (1., 2., 3...) on this page.\n' +
+      '1. FIRST: silently COUNT all numbered questions.\n' +
       '2. THEN: extract ALL of them. Do NOT skip any.\n' +
-      '3. Statements (A), (B), (C), (D) on NEW LINES using \\n.\n' +
-      '4. REMOVE all option prefixes from options array.\n' +
-      '5. Exactly 4 options, ONE correct. "ans" = 0-based index.\n' +
-      '6. If direct question without options, solve and create 4 options.\n' +
-      noDupRule + mathRule + compactRule +
+      '3. REMOVE all option prefixes.\n' +
+      '4. Exactly 4 options, ONE correct. "ans" = 0-based index.\n' +
+      '5. If direct question without options, SOLVE and create 4 options.\n' +
+      noDupRule + mathRule + compactRule + shuffleRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
 
-  // ============ TEXT PDF EXTRACT ============
   } else if (isCBT && mode === 'extract') {
     system =
       'You are an expert CUET exam question extractor.\n\n' +
       'CRITICAL RULES:\n' +
       '1. Extract ONLY the questions present in the text. Do NOT invent.\n' +
       '2. If no questions found, return [].\n' +
-      '3. Question text EXACT. Statements (A, B, C, D) on new lines using \\n.\n' +
-      '4. REMOVE option prefixes (a), (b), (A), 1. from array items.\n' +
-      '5. Exactly 4 options, ONE correct. "ans" = 0 to 3.\n' +
-      noDupRule + mathRule + compactRule +
+      '3. Exactly 4 options, ONE correct. "ans" = 0 to 3.\n' +
+      '4. If direct question without options, SOLVE and create 4 options.\n' +
+      noDupRule + mathRule + compactRule + shuffleRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
 
-  // ============ AI GENERATE ============
   } else if (isCBT && mode === 'ai') {
     system =
       'You are an expert CUET UG paper setter. Generate MCQs matching Oswaal/Arihant style.\n' +
       '4 options, 1 correct. Remove any prefixes from options array.\n' +
-      noDupRule + mathRule + compactRule +
+      noDupRule + mathRule + compactRule + shuffleRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
       '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
@@ -327,7 +320,7 @@ module.exports = async function handler(req, res) {
       try {
         const genConfig = {
           maxOutputTokens: 8192,
-          temperature: isCBT ? 0.15 : 0.85
+          temperature: isCBT ? 0.15 : 0.85 // Keeping temp slightly low for accuracy
         };
         if (isCBT) genConfig.responseMimeType = 'application/json';
 
