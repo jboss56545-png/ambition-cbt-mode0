@@ -1,4 +1,4 @@
-// Ambition CBT Mode 2.0 — AI Backend (Multi-Model Auto-Discovery + Groq Failover)
+// Ambition CBT Mode 2.0 — AI Backend (Dynamic Model Discovery + Groq Failover)
 // Powered by ASVIRO STUDIO
 'use strict';
 
@@ -8,9 +8,8 @@ const session = require('../lib/session');
 const MAX_MESSAGE_CHARS = 60000;
 const MAX_CONTEXT_CHARS = 60000;
 const MAX_IMAGES = 10;
-const MAX_IMAGE_B64 = 6 * 1024 * 1024; // ~4.5 MB decoded
+const MAX_IMAGE_B64 = 6 * 1024 * 1024;
 
-// Cache discovered models per warm serverless instance
 let cachedModels = null;
 
 async function fetchGemini(model, key, body, timeoutMs) {
@@ -50,7 +49,6 @@ async function getLiveGeminiModels(key) {
       })
       .map(function (m) { return m.name.replace(/^models\//, ''); });
 
-    // Prioritize Flash models first for speed & high quota
     valid.sort(function (a, b) {
       const score = function (name) {
         if (/gemini-3.*flash/i.test(name)) return 1;
@@ -69,16 +67,16 @@ async function getLiveGeminiModels(key) {
   }
 }
 
-async function fetchGroqFallback(groqKey, system, message, isCBT, hasImages, allImages) {
+async function fetchGroqFallback(groqKey, system, userMsg, isCBT, hasImages, allImages) {
   const controller = new AbortController();
-  const timer = setTimeout(function () { controller.abort(); }, 20000);
+  const timer = setTimeout(function () { controller.abort(); }, 25000);
   try {
     const model = hasImages ? 'meta-llama/llama-4-scout-17b-16e-instruct' : 'llama-3.3-70b-versatile';
     const userContent = hasImages
-      ? [{ type: 'text', text: message }].concat(allImages.slice(0, 4).map(function (img) {
+      ? [{ type: 'text', text: userMsg }].concat(allImages.slice(0, 4).map(function (img) {
           return { type: 'image_url', image_url: { url: 'data:' + img.mime + ';base64,' + img.data } };
         }))
-      : message;
+      : userMsg;
 
     const payload = {
       model: model,
@@ -87,7 +85,8 @@ async function fetchGroqFallback(groqKey, system, message, isCBT, hasImages, all
         { role: 'user', content: userContent }
       ],
       temperature: isCBT ? 0.15 : 0.7,
-      max_tokens: 6000
+      max_tokens: 8192,
+      ...(isCBT && !hasImages && { response_format: { type: 'json_object' } })
     };
 
     const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -116,9 +115,9 @@ function isSafeImage(img) {
   if (typeof img.data !== 'string' || typeof img.mime !== 'string') return false;
   const cleanData = img.data.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, '').trim();
   if (cleanData.length === 0 || cleanData.length > MAX_IMAGE_B64) return false;
-  if (!/^image\/(jpeg|jpg|png|webp)$/i.test(img.mime)) return false;
+  if (!/^image\/(jpeg|jpg|png|webp|heic|heif)$/i.test(img.mime)) return false;
   img.data = cleanData;
-  img.mime = img.mime.toLowerCase() === 'image/jpg' ? 'image/jpeg' : img.mime.toLowerCase();
+  img.mime = img.mime.toLowerCase().replace(/^image\/jpg$/, 'image/jpeg');
   return /^[A-Za-z0-9+/=\r\n]+$/.test(cleanData.slice(0, 200));
 }
 
@@ -128,6 +127,15 @@ function cleanCBTJson(text) {
   const lb = clean.lastIndexOf(']');
   if (fb >= 0 && lb > fb) clean = clean.slice(fb, lb + 1);
   return clean;
+}
+
+function isJsonComplete(text) {
+  let depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '[' || text[i] === '{') depth++;
+    else if (text[i] === ']' || text[i] === '}') depth--;
+  }
+  return depth === 0;
 }
 
 module.exports = async function handler(req, res) {
@@ -166,8 +174,8 @@ module.exports = async function handler(req, res) {
   }
 
   const mode = typeof ctx.mode === 'string' ? ctx.mode : 'chat';
-  const isExtractMode = (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes' || mode === 'ai');
-  const isCBT = ctx.source === 'cbt-test-studio' || ctx.source === 'ambition-cuet-cbt' || isExtractMode;
+  const isCBT = ctx.source === 'cbt-test-studio' || ctx.source === 'ambition-cuet-cbt' ||
+    ['scanned-extract', 'image-extract', 'extract', 'notes', 'ai'].indexOf(mode) !== -1;
 
   let allImages = [];
   const rawImages = Array.isArray(body.images) ? body.images : (body.image ? [body.image] : []);
@@ -177,54 +185,96 @@ module.exports = async function handler(req, res) {
   let system = '';
 
   const mathRule =
-    '7. CRITICAL MATH RULE: Wrap ALL math expressions and formulas (in both "q" and every item in "options") inside `$ ... $` delimiters (e.g. "$-x \\\\cos^{-1} x + \\\\sqrt{1 - x^2} + C$"). Do NOT leave raw LaTeX outside `$ ... $`. Inside JSON strings, ALWAYS escape backslashes as `\\\\` (e.g. `\\\\frac`, `\\\\sqrt`, `\\\\tan`, `\\\\cos`).\n\n';
+    'MATH RULE: Wrap ALL math in `$ ... $` delimiters. Inside JSON strings, ALWAYS escape backslashes as `\\\\` (e.g. `\\\\frac`, `\\\\sqrt`).\n\n';
 
-  if (hasImages && (mode === 'scanned-extract' || mode === 'image-extract' || mode === 'extract' || mode === 'notes')) {
+  const noDupRule = 'DUPLICATE RULE: Before returning, check for duplicate questions. Keep only the first occurrence.\n\n';
+
+  const compactRule = 'COMPACT RULE: Set "explain" to empty string "" to save space. This is CRITICAL so all questions fit in the output.\n\n';
+
+  // ============ NOTES MODE (Generate MCQs) ============
+  if (mode === 'notes') {
+    if (hasImages) {
+      system =
+        'You are a senior CUET UG paper setter.\n' +
+        'The image contains STUDY NOTES (theory, not questions). Your job is to GENERATE high-quality MCQs FROM these notes.\n\n' +
+        'RULES:\n' +
+        '1. Read the notes carefully. Do NOT extract questions (there are none).\n' +
+        '2. GENERATE new CUET-style MCQs based on the concepts in the notes.\n' +
+        '3. 4 options per question, only 1 correct. Remove any (a)/(b)/1./2. prefixes.\n' +
+        '"ans" = 0-based index of correct option.\n' +
+        noDupRule + mathRule + compactRule +
+        'FORMAT — Reply with ONLY a valid JSON array:\n' +
+        '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
+        'USER REQUEST:\n' + JSON.stringify(ctx);
+    } else {
+      system =
+        'You are a senior CUET UG paper setter.\n' +
+        'Generate high-yield NCERT MCQs from these notes. 4 options, 1 correct. Remove prefixes.\n' +
+        noDupRule + mathRule + compactRule +
+        'FORMAT — Reply with ONLY a valid JSON array:\n' +
+        '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
+        'USER REQUEST:\n' + JSON.stringify(ctx);
+    }
+
+  // ============ IMAGE EXTRACT (Phone Photo) ============
+  } else if (hasImages && mode === 'image-extract') {
     system =
-      'You are an expert Indian exam question extractor.\n\n' +
-      'MISSION: Extract ALL valid exam questions from the image and convert to standard 4-option MCQ format.\n\n' +
+      'You are an expert Indian exam question extractor. This is a PHOTO of a question paper.\n\n' +
+      'MISSION: Extract EVERY SINGLE question visible in this photo.\n\n' +
       'CRITICAL RULES:\n' +
-      '1. Extract questions that are ACTUALLY PRESENT in the image. Do NOT invent questions from different subjects.\n' +
-      '2. If the image is blurry, try your best to read it. ONLY return [] if the image has absolutely no text/questions.\n' +
-      '3. Question text must be EXACT. If it has statements (A, B, C, D), put EACH statement on a NEW LINE using \\n.\n' +
-      '4. REMOVE all option prefixes from the options array! Do NOT include (a), (b), (A), 1, 2. Just the raw text.\n' +
+      '1. FIRST: silently COUNT all questions you can see (numbered 1., 2., 3...). There may be 20, 30, or more.\n' +
+      '2. THEN: extract ALL of them, every single one. Do NOT skip any. Do NOT stop early.\n' +
+      '3. If a question has statements (A), (B), (C), (D) or Roman numerals, put each on a NEW LINE using \\n.\n' +
+      '4. REMOVE all option prefixes from options array — no (a), (b), (A), 1., 2., etc.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0-based index (0,1,2,3).\n' +
-      '6. If direct question without options, SOLVE carefully. Only 1 option must be 100% correct.\n' +
-      mathRule +
+      '6. If the photo is blurry, extract what you CAN see. Only return [] if there is no text at all.\n' +
+      '7. If direct question without options, solve and create 4 options.\n' +
+      noDupRule + mathRule + compactRule +
+      'EXAMPLE: If you see 27 numbered questions, your JSON array must have 27 objects.\n\n' +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
+      '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
 
+  // ============ SCANNED PDF PAGE ============
+  } else if (hasImages && mode === 'scanned-extract') {
+    system =
+      'You are an expert exam question extractor. This is a SCANNED PAGE from a question paper PDF.\n\n' +
+      'MISSION: Extract EVERY SINGLE question on this page.\n\n' +
+      'CRITICAL RULES:\n' +
+      '1. FIRST: silently COUNT all numbered questions (1., 2., 3...) on this page.\n' +
+      '2. THEN: extract ALL of them. Do NOT skip any.\n' +
+      '3. Statements (A), (B), (C), (D) on NEW LINES using \\n.\n' +
+      '4. REMOVE all option prefixes from options array.\n' +
+      '5. Exactly 4 options, ONE correct. "ans" = 0-based index.\n' +
+      '6. If direct question without options, solve and create 4 options.\n' +
+      noDupRule + mathRule + compactRule +
+      'FORMAT — Reply with ONLY a valid JSON array:\n' +
+      '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
+      'USER REQUEST:\n' + JSON.stringify(ctx);
+
+  // ============ TEXT PDF EXTRACT ============
   } else if (isCBT && mode === 'extract') {
     system =
       'You are an expert CUET exam question extractor.\n\n' +
       'CRITICAL RULES:\n' +
-      '1. Extract ONLY the questions present in the text.\n' +
-      '2. If the text doesn\'t have questions, return [].\n' +
+      '1. Extract ONLY the questions present in the text. Do NOT invent.\n' +
+      '2. If no questions found, return [].\n' +
       '3. Question text EXACT. Statements (A, B, C, D) on new lines using \\n.\n' +
-      '4. REMOVE option prefixes (a), (b), (A), 1. from the array items.\n' +
+      '4. REMOVE option prefixes (a), (b), (A), 1. from array items.\n' +
       '5. Exactly 4 options, ONE correct. "ans" = 0 to 3.\n' +
-      mathRule +
+      noDupRule + mathRule + compactRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
+      '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
 
-  } else if (isCBT && mode === 'notes') {
-    system =
-      'You are a senior CUET UG paper setter.\n' +
-      'Generate high-yield NCERT MCQs. 4 options, 1 correct. REMOVE any prefixes from options array.\n' +
-      mathRule +
-      'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
-      'USER REQUEST:\n' + JSON.stringify(ctx);
-
+  // ============ AI GENERATE ============
   } else if (isCBT && mode === 'ai') {
     system =
       'You are an expert CUET UG paper setter. Generate MCQs matching Oswaal/Arihant style.\n' +
-      '4 options, 1 correct. REMOVE any prefixes from options array.\n' +
-      mathRule +
+      '4 options, 1 correct. Remove any prefixes from options array.\n' +
+      noDupRule + mathRule + compactRule +
       'FORMAT — Reply with ONLY a valid JSON array:\n' +
-      '[{"q":"...","options":["text1","text2","text3","text4"],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
+      '[{"q":"...","options":["...","...","...","..."],"ans":0,"topic":"...","diff":"easy","explain":""}]\n\n' +
       'USER REQUEST:\n' + JSON.stringify(ctx);
 
   } else {
@@ -264,31 +314,28 @@ module.exports = async function handler(req, res) {
   let authError = '';
 
   if (key) {
-    // 1. Query Google directly for whatever models are active on this key right now
     const liveModels = await getLiveGeminiModels(key);
     const fallbackList = [
-      'gemini-3-flash-preview',
-      'gemini-3.1-flash-lite-preview',
       'gemini-2.5-flash',
+      'gemini-2.5-flash-lite',
       'gemini-2.0-flash'
     ];
     const models = liveModels.length > 0 ? liveModels : fallbackList;
 
-    if (liveModels.length === 0) {
-      errors.push('NoLiveModels');
-    }
-
     for (let i = 0; i < models.length; i++) {
       const model = models[i];
       try {
-        const genConfig = { maxOutputTokens: 8192, temperature: isCBT ? 0.15 : 0.85 };
+        const genConfig = {
+          maxOutputTokens: 8192,
+          temperature: isCBT ? 0.15 : 0.85
+        };
         if (isCBT) genConfig.responseMimeType = 'application/json';
 
         const r = await fetchGemini(model, key, {
           systemInstruction: { parts: [{ text: system }] },
           contents: contents,
           generationConfig: genConfig
-        }, 18000);
+        }, 30000);
 
         const data = await r.json().catch(function () { return {}; });
 
@@ -297,7 +344,14 @@ module.exports = async function handler(req, res) {
             data.candidates[0].content && data.candidates[0].content.parts;
           let text = parts ? parts.map(function (p) { return p.text || ''; }).join('').trim() : '';
           if (text) {
-            if (isCBT) text = cleanCBTJson(text);
+            if (isCBT) {
+              text = cleanCBTJson(text);
+              if (!isJsonComplete(text)) {
+                console.warn('[Gemini] ' + model + ' returned truncated JSON');
+                errors.push(model + ':Truncated');
+                continue;
+              }
+            }
             return reply(text);
           }
           errors.push(model + ':Empty');
@@ -307,7 +361,7 @@ module.exports = async function handler(req, res) {
         const msg = (data.error && data.error.message) || ('HTTP ' + r.status);
         errors.push(model + ':' + r.status);
 
-        if (r.status === 401 || r.status === 403 || (r.status === 400 && /API_KEY_INVALID|key not valid/i.test(msg))) {
+        if (r.status === 401 || r.status === 403 || (r.status === 400 && /API_KEY_INVALID/i.test(msg))) {
           authError = msg.slice(0, 50);
           break;
         }
@@ -319,11 +373,12 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // 2. Automatic Failover to Groq if Gemini failed and GROQ_API_KEY is configured
   if (groqKey) {
     const gRes = await fetchGroqFallback(groqKey, system, message, isCBT, hasImages, allImages);
     if (gRes.ok && gRes.text) {
-      return reply(isCBT ? cleanCBTJson(gRes.text) : gRes.text);
+      let gText = gRes.text;
+      if (isCBT) gText = cleanCBTJson(gText);
+      return reply(gText);
     }
     errors.push(gRes.err);
   }
@@ -331,7 +386,7 @@ module.exports = async function handler(req, res) {
   const errSummary = errors.slice(0, 3).join(' | ');
   console.error('[ai-coach] failed:', errSummary);
   if (authError) return http.json(res, 401, { error: 'AUTH_ERROR', message: 'Invalid Key: ' + authError });
-  if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'Quota hit (' + errSummary + ')' });
+  if (sawQuota) return http.json(res, 429, { error: 'QUOTA_EXCEEDED', message: 'Quota hit. Retry in 1 min.' });
   return http.json(res, 502, { error: 'AI_UNAVAILABLE', message: errSummary });
 };
 
