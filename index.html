@@ -179,7 +179,7 @@ window.MathJax = {
       </div>
       
       <label class="small muted" style="color:var(--accent);">Access Code</label>
-      <input type="text" id="authAccessCode" placeholder="e.g. AT-ARPIT" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
+      <input type="text" id="authAccessCode" placeholder="e.g. TEACHER-XXXX or STUDENT-XXXX" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
       
       <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify &amp; Login</button>
       <div style="text-align:center; margin-top:16px;">
@@ -351,7 +351,7 @@ let currentUser = null;
 let currentUserData = null;
 let testType = 'self'; 
 
-// 2. AUTH LOGIC (2-Step Flow)
+// 2. AUTH LOGIC (2-Step Flow with Prefix Check)
 let tempEmail = null;
 let tempRole = null;
 let tempCode = null;
@@ -383,7 +383,7 @@ document.getElementById('btnNextStep').addEventListener('click', () => {
 });
 
 document.getElementById('btnVerifyCode').addEventListener('click', async () => {
-  const code = document.getElementById('authAccessCode').value.trim();
+  const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
   const errDiv = document.getElementById('authError');
   
   errDiv.textContent = '';
@@ -394,7 +394,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   btn.textContent = 'Verifying...';
 
   try {
-    // 1. Query Firestore using Document ID (Habit Tracker style)
+    // 1. Query Firestore using Document ID
     const docRef = doc(db, "access_codes", code);
     const docSnap = await getDoc(docRef);
 
@@ -408,12 +408,20 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
       throw new Error("This Access Code has already been used by someone else.");
     }
 
-    // 2. Robust Role Check (Fixes the space/capital letter issue)
-    const firestoreRole = (codeData.role || '').trim().toLowerCase();
+    // 2. MAGIC LOGIC: Role comes from the Prefix (TEACHER vs STUDENT)
+    let firestoreRole = '';
+    if (code.startsWith('TEACHER')) {
+        firestoreRole = 'teacher';
+    } else if (code.startsWith('STUDENT')) {
+        firestoreRole = 'student';
+    } else {
+        throw new Error("Invalid Code Format. Code must start with TEACHER or STUDENT.");
+    }
+
     const selectedRole = tempRole.trim().toLowerCase();
     
     if (firestoreRole !== selectedRole) {
-      throw new Error(`This code is for a ${firestoreRole.toUpperCase()}, not ${selectedRole.toUpperCase()}.`);
+      throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${selectedRole.toUpperCase()}.`);
     }
 
     // 3. Login / Register
@@ -441,8 +449,6 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
         used: true,
         usedByEmail: tempEmail
     });
-
-    // Auth state listener handles the redirect
 
   } catch (err) {
     errDiv.textContent = err.message;
