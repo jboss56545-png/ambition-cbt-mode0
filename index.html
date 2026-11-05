@@ -7,7 +7,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ambition CBT Mode</title>
 
-<!-- Google Site Verification -->
 <meta name="google-site-verification" content="BPY__4U3V_3ojViyn2vqneUaRpdIJ2gAgIkAEyvUxdo" />
 
 <link rel="manifest" href="/manifest.json" />
@@ -135,7 +134,6 @@ window.MathJax = {
 </head>
 <body>
 
-<!-- AUTH SCREEN (Shows if not logged in) -->
 <section id="screen-auth" class="screen active">
   <div class="wrap" style="display:flex; flex-direction:column; justify-content:center; min-height:100vh; max-width:400px;">
     <div class="logo ambition-brand" style="justify-content:center; margin-bottom:20px;">
@@ -153,8 +151,12 @@ window.MathJax = {
         <label class="small muted">I am a</label>
         <select id="authRole">
           <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
+          <option value="teacher">Teacher (Requires Code)</option>
         </select>
+      </div>
+      <div id="teacherCodeGroup" class="hidden">
+        <label class="small muted">Teacher Invite Code</label>
+        <input type="password" id="authTeacherCode" placeholder="Enter code from Admin">
       </div>
 
       <label class="small muted">Email</label>
@@ -173,7 +175,6 @@ window.MathJax = {
   </div>
 </section>
 
-<!-- MAIN APP (Shown after login) -->
 <div id="mainApp" class="hidden">
   
   <section id="screen-home" class="screen active">
@@ -237,7 +238,6 @@ window.MathJax = {
     </div>
   </section>
 
-  <!-- Setup & Upload & Test Screens -->
   <section id="screen-exam" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnBackHome">←</button><div class="appbar-title" id="examTitle">CUET UG 2026</div><div style="width:44px"></div></header>
@@ -320,7 +320,7 @@ window.MathJax = {
 // 1. IMPORT FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBI5-BN0V5SNOLUCNzZ8ffC8y-mf_6sYqs",
@@ -337,17 +337,27 @@ const db = getFirestore(app);
 
 let currentUser = null;
 let currentUserData = null;
-let testType = 'self'; // 'self' or 'assigned'
+let testType = 'self'; 
 
-// 2. AUTH LOGIC
+// 2. AUTH LOGIC (One-Time Code System)
 let isSignUp = false;
 const authTitle = document.getElementById('authTitle');
 const authSub = document.getElementById('authSub');
 const nameGroup = document.getElementById('nameGroup');
 const roleGroup = document.getElementById('roleGroup');
+const teacherCodeGroup = document.getElementById('teacherCodeGroup');
 const toggleAuth = document.getElementById('toggleAuth');
 const btnAuth = document.getElementById('btnAuth');
 const authError = document.getElementById('authError');
+const authRole = document.getElementById('authRole');
+
+authRole.addEventListener('change', (e) => {
+    if (e.target.value === 'teacher') {
+        teacherCodeGroup.classList.remove('hidden');
+    } else {
+        teacherCodeGroup.classList.add('hidden');
+    }
+});
 
 toggleAuth.addEventListener('click', (e) => {
     e.preventDefault();
@@ -357,6 +367,7 @@ toggleAuth.addEventListener('click', (e) => {
         authSub.textContent = "Join Ambition CBT to start learning.";
         nameGroup.classList.remove('hidden');
         roleGroup.classList.remove('hidden');
+        if(authRole.value === 'teacher') teacherCodeGroup.classList.remove('hidden');
         btnAuth.textContent = "Sign Up";
         toggleAuth.textContent = "Already have an account? Sign in";
     } else {
@@ -364,6 +375,7 @@ toggleAuth.addEventListener('click', (e) => {
         authSub.textContent = "Sign in to continue to your dashboard.";
         nameGroup.classList.add('hidden');
         roleGroup.classList.add('hidden');
+        teacherCodeGroup.classList.add('hidden');
         btnAuth.textContent = "Sign In";
         toggleAuth.textContent = "Don't have an account? Sign up";
     }
@@ -379,7 +391,25 @@ btnAuth.addEventListener('click', async () => {
     try {
         if (isSignUp) {
             const name = document.getElementById('authName').value || 'User';
-            const role = document.getElementById('authRole').value;
+            const role = authRole.value;
+
+            if (role === 'teacher') {
+                const code = document.getElementById('authTeacherCode').value;
+                if(!code) throw new Error("Invite code required for Teacher.");
+                
+                // Verify One-Time Code from Firestore
+                const invQ = query(collection(db, "invites"), where("email", "==", email), where("code", "==", code), where("used", "==", false));
+                const invSnap = await getDocs(invQ);
+                
+                if (invSnap.empty) {
+                    throw new Error("Invalid email/code OR code already used.");
+                }
+                
+                // Mark code as used
+                const inviteId = invSnap.docs[0].id;
+                await updateDoc(doc(db, "invites", inviteId), { used: true, usedBy: email });
+            }
+
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 name: name, email: email, role: role, createdAt: serverTimestamp()
@@ -388,7 +418,7 @@ btnAuth.addEventListener('click', async () => {
             await signInWithEmailAndPassword(auth, email, password);
         }
     } catch (error) {
-        authError.textContent = error.message.replace('Firebase: ', '');
+        authError.textContent = error.message.replace('Firebase: ', '').replace('Firebase:', '');
         btnAuth.disabled = false;
         btnAuth.textContent = isSignUp ? "Sign Up" : "Sign In";
     }
@@ -541,8 +571,10 @@ var startTime=0, totalDuration=0;
 var myChart=null;
 
 function renderHome(){
-  renderHistory();
   renderResumeBanner();
+  if (currentUserData && currentUserData.role === 'student') {
+      renderHistoryChart();
+  }
 }
 
 function renderHistoryChart() {
@@ -631,8 +663,9 @@ async function saveTeacherTest(questions) {
             timestamp: serverTimestamp()
         });
         hideLoader();
-        dialog({title:'✅ Test Assigned', message:'Test saved successfully! Students can now see this test on their dashboard.'});
-        showScreen('screen-home');
+        dialog({title:'✅ Test Assigned', message:'Test saved successfully! Students can now see this test on their dashboard.'}).then(() => {
+            showScreen('screen-home');
+        });
     } catch(e) {
         hideLoader();
         dialog({title:'Error', message: 'Could not save test: ' + e.message});
@@ -815,11 +848,9 @@ async function submitTest(){
   });
   var score=(correct*5)-(wrong*1); var max=T.questions.length*5; var pct=Math.max(0,Math.round((score/max)*100));
   
-  // 1. Save to LocalStorage
   var record={ name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats };
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
 
-  // 2. Save to Firestore (If Student)
   if (currentUserData && currentUserData.role === 'student') {
       try {
           await addDoc(collection(db, "results"), {
@@ -836,7 +867,6 @@ async function submitTest(){
       } catch(e) { console.error("Error saving result:", e); }
   }
 
-  // 3. UI Generation
   var strongHtml = '', weakHtml = '';
   for (var t in topicStats) {
     var stats = topicStats[t]; var acc = Math.round((stats.correct / stats.total) * 100);
@@ -890,7 +920,12 @@ async function submitTest(){
     if (rev.style.display === 'none') { rev.style.display = 'block'; this.textContent = '🙈 Hide Answers & Explanations'; renderMath(rev); } 
     else { rev.style.display = 'none'; this.textContent = '👁️ Review Answers & Explanations'; }
   };
-  $('btnResHome').onclick=function(){renderHome();showScreen('screen-home')};
+  
+  $('btnResHome').onclick=function(){
+    showScreen('screen-home');
+    renderHome();
+  };
+  
   showScreen('screen-result'); T = null;
 }
 
@@ -900,8 +935,23 @@ function wireEvents(){
   $('btnModeBook').onclick=function(){openUpload('extract')};
   $('btnModeNotes').onclick=function(){openUpload('notes')};
   $('btnModeImage').onclick=function(){openUpload('image')};
-  $('btnSetupBack').onclick=function(){showScreen('screen-exam')};
-  $('btnUploadBack').onclick=function(){showScreen('screen-exam')};
+  
+  // Fix Back Button for Setup (Teacher -> Home, Student -> Exam Selection)
+  $('btnSetupBack').onclick=function(){
+    if (currentUserData && currentUserData.role === 'teacher') {
+        showScreen('screen-home');
+    } else {
+        showScreen('screen-exam');
+    }
+  };
+  
+  $('btnUploadBack').onclick=function(){
+    if (currentUserData && currentUserData.role === 'teacher') {
+        showScreen('screen-home');
+    } else {
+        showScreen('screen-exam');
+    }
+  };
   
   $('btnFullSubject').onclick=function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); };
   $('btnClearChapters').onclick=function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); };
@@ -914,10 +964,13 @@ function wireEvents(){
   $('btnPaletteToggle').onclick=function(){$('palette').classList.toggle('open')};
   $('btnNext').onclick=goNext; $('btnPrev').onclick=goPrev; $('btnMark').onclick=toggleMark; $('btnClear').onclick=clearAns;
   $('btnSubmit').onclick=function(){dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})};
-  $('btnResultHome').onclick=function(){renderHome();showScreen('screen-home')};
+  
+  $('btnResultHome').onclick=function(){
+    showScreen('screen-home');
+    renderHome();
+  };
 
-  // Dashboard buttons
-  $('btnSelfPractice').onclick = () => { showScreen('screen-exam'); };
+  $('btnSelfPractice').onclick = () => { openSetup(); };
   $('btnSelfUpload').onclick = () => { openUpload('extract'); };
   $('btnTeacherCreateTest').onclick = () => { openSetup(); };
 }
