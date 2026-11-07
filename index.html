@@ -62,6 +62,8 @@ a{color:var(--accent-2);text-decoration:none}
 .btn.danger{border-color:var(--red);color:var(--red)}
 .btn.big{width:100%;padding:15px;font-size:15.5px;margin-top:26px;min-height:52px}
 .btn.small{padding:8px 14px;font-size:12.5px;border-radius:9px;min-height:38px}
+.btn.google { background: #fff; color: #333; border: 1px solid #ddd; font-weight: 600; }
+.btn.google:hover { background: #f1f1f1; }
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
 input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed var(--border);background:var(--bg-2);font-size:13px;cursor:pointer;color:var(--text)}
 input[type=number], input[type=email], input[type=password], input[type=text], select {width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;margin-top:8px;margin-bottom:12px;}
@@ -147,13 +149,19 @@ window.MathJax = {
       <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
     
-    <!-- STEP 1: Details -->
+    <!-- STEP 1: Google or Manual -->
     <div class="card" id="authStep1">
       <div class="vip-header">
         <div class="vip-title">Welcome to Ambition CBT</div>
-        <p class="vip-sub">Enter your basic details to proceed to the secure login gateway.</p>
+        <p class="vip-sub">Sign in with Google for quick access, or use your details.</p>
       </div>
       
+      <button class="btn big google" id="btnGoogleLogin" style="margin-bottom: 20px; margin-top:0;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width: 20px; margin-right: 8px;"> Continue with Google
+      </button>
+
+      <div style="text-align: center; color: var(--muted); margin-bottom: 20px; font-size: 13px;">OR</div>
+
       <label class="small muted">Full Name</label>
       <input type="text" id="authName" placeholder="Your Name">
       
@@ -179,7 +187,7 @@ window.MathJax = {
       </div>
       
       <label class="small muted" style="color:var(--accent);">Access Code</label>
-      <input type="text" id="authAccessCode" placeholder="e.g. TEACHER-XXXX or STUDENT-XXXX" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
+      <input type="text" id="authAccessCode" placeholder="e.g. ATT-XXXX or ATS-XXXX" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
       
       <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify &amp; Login</button>
       <div style="text-align:center; margin-top:16px;">
@@ -341,9 +349,9 @@ window.MathJax = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script type="module">
-// 1. IMPORT FIREBASE
+// 1. IMPORT FIREBASE (With Google Auth)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -362,13 +370,38 @@ const db = getFirestore(app);
 let currentUser = null;
 let currentUserData = null;
 let testType = 'self'; 
-
-// 2. AUTH LOGIC
 let tempEmail = null;
 let tempRole = null;
 let tempCode = null;
 let tempName = null;
 
+// --- GOOGLE LOGIN FLOW ---
+document.getElementById('btnGoogleLogin').addEventListener('click', async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    
+    // Check if user exists in Firestore
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      // User exists -> Auth state listener will handle the rest (Dashboard load)
+    } else {
+      // New User -> Ask for Access Code
+      tempEmail = user.email;
+      tempName = user.displayName || 'User';
+      document.getElementById('authStep1').classList.add('hidden');
+      document.getElementById('authStep2').classList.remove('hidden');
+      document.getElementById('displayEmail').textContent = tempEmail;
+    }
+  } catch (error) {
+    alert("Google Login Failed: " + error.message);
+  }
+});
+
+// --- MANUAL LOGIN FLOW ---
 document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('authStep2').classList.add('hidden');
@@ -406,53 +439,52 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   btn.textContent = 'Verifying...';
 
   try {
-    // 1. Query Firestore using Document ID
+    // 1. Check Firestore for code
     const docRef = doc(db, "access_codes", code);
     const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists()) {
-      throw new Error("Invalid Access Code. Please check spelling.");
-    }
-
+    if (!docSnap.exists()) throw new Error("Invalid Access Code.");
+    
     const codeData = docSnap.data();
     
-    // 2. MAGIC LOGIC: Role comes from the Prefix
+    // 2. Determine Role from Prefix (ATT for Teacher, ATS for Student)
     let firestoreRole = '';
-    if (code.startsWith('TEACHER')) {
+    if (code.startsWith('ATT')) {
         firestoreRole = 'teacher';
-    } else if (code.startsWith('STUDENT')) {
+    } else if (code.startsWith('ATS')) {
         firestoreRole = 'student';
     } else {
-        throw new Error("Invalid Code Format. Code must start with TEACHER or STUDENT.");
+        throw new Error("Invalid Code Format. Code must start with ATT or ATS.");
     }
 
-    const selectedRole = tempRole.trim().toLowerCase();
-    
-    if (firestoreRole !== selectedRole) {
-      throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${selectedRole.toUpperCase()}.`);
+    if (firestoreRole !== tempRole && tempRole) {
+       throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
     }
 
-    // 3. Login / Register
-    let userCredential;
-    try {
-      userCredential = await signInWithEmailAndPassword(auth, tempEmail, code);
-    } catch (err) {
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        userCredential = await createUserWithEmailAndPassword(auth, tempEmail, code);
-      } else {
-        throw err;
-      }
+    // 3. Handle Authentication (If Google Login was NOT used)
+    let user = auth.currentUser;
+    if (!user) {
+       // Manual Email/Password Login
+       try {
+         const userCredential = await signInWithEmailAndPassword(auth, tempEmail, code);
+         user = userCredential.user;
+       } catch (err) {
+         if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+           const userCredential = await createUserWithEmailAndPassword(auth, tempEmail, code);
+           user = userCredential.user;
+         } else { throw err; }
+       }
     }
 
-    // 4. Save User Profile
-    await setDoc(doc(db, "users", userCredential.user.uid), {
+    // 4. Save User Profile in Firestore
+    await setDoc(doc(db, "users", user.uid), {
       name: tempName,
       email: tempEmail,
       role: firestoreRole,
       lastLogin: serverTimestamp()
     }, { merge: true });
 
-    // 5. Mark Code as Used (If it was previously false)
+    // 5. Mark Code as Used
     if (codeData.used !== true) {
         await updateDoc(doc(db, "access_codes", code), {
             used: true,
@@ -469,6 +501,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
 
 document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
 
+// --- AUTH STATE LISTENER (AUTO LOGIN) ---
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
@@ -495,10 +528,10 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('mainApp').classList.remove('hidden');
             renderHome();
         } else {
-            await setDoc(doc(db, "users", user.uid), {
-                name: user.email.split('@')[0], email: user.email, role: 'student', createdAt: serverTimestamp()
-            });
-            window.location.reload();
+            // User authenticated but no Firestore doc (New Google User)
+            document.getElementById('authStep1').classList.add('hidden');
+            document.getElementById('authStep2').classList.remove('hidden');
+            document.getElementById('displayEmail').textContent = user.email;
         }
     } else {
         currentUser = null; currentUserData = null;
@@ -521,7 +554,6 @@ async function loadStudentDashboard() {
     renderHistoryChart();
     const listDiv = document.getElementById('assignedTestsList');
     
-    // Get completed tests for this student
     const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
     const resultsSnap = await getDocs(resultsQ);
     const completedTestIds = new Set();
@@ -531,7 +563,6 @@ async function loadStudentDashboard() {
         completedTestNames.add(doc.data().testName);
     });
 
-    // Get all tests assigned to "all"
     const q = query(collection(db, "tests"), where("assignedTo", "==", "all"));
     const querySnapshot = await getDocs(q);
     
