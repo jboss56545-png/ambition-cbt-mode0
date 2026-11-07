@@ -149,24 +149,15 @@ window.MathJax = {
       <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
     
-    <!-- STEP 1: Google or Manual -->
+    <!-- STEP 1: Details & Google Login -->
     <div class="card" id="authStep1">
       <div class="vip-header">
         <div class="vip-title">Welcome to Ambition CBT</div>
-        <p class="vip-sub">Sign in with Google for quick access, or use your details.</p>
+        <p class="vip-sub">Enter your details and continue with Google.</p>
       </div>
       
-      <button class="btn big google" id="btnGoogleLogin" style="margin-bottom: 20px; margin-top:0;">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width: 20px; margin-right: 8px;"> Continue with Google
-      </button>
-
-      <div style="text-align: center; color: var(--muted); margin-bottom: 20px; font-size: 13px;">OR</div>
-
       <label class="small muted">Full Name</label>
       <input type="text" id="authName" placeholder="Your Name">
-      
-      <label class="small muted">Email Address</label>
-      <input type="email" id="authEmail" placeholder="you@example.com">
       
       <label class="small muted">I am a</label>
       <select id="authRole">
@@ -174,7 +165,10 @@ window.MathJax = {
         <option value="teacher">Teacher</option>
       </select>
 
-      <button class="btn primary big" id="btnNextStep" style="margin-top:10px;">Next Step →</button>
+      <button class="btn big google" id="btnGoogleLogin" style="margin-top:20px;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width: 20px; margin-right: 8px;"> Continue with Google
+      </button>
+      <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
 
     <!-- STEP 2: VIP Code -->
@@ -193,7 +187,7 @@ window.MathJax = {
       <div style="text-align:center; margin-top:16px;">
         <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">← Edit Details</a>
       </div>
-      <div id="authError" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
+      <div id="authError2" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
   </div>
 </section>
@@ -349,7 +343,7 @@ window.MathJax = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script type="module">
-// 1. IMPORT FIREBASE (With Google Auth)
+// 1. IMPORT FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
@@ -377,59 +371,50 @@ let tempName = null;
 
 // --- GOOGLE LOGIN FLOW ---
 document.getElementById('btnGoogleLogin').addEventListener('click', async () => {
+  const name = document.getElementById('authName').value.trim();
+  const role = document.getElementById('authRole').value;
+  const errDiv = document.getElementById('authError1');
+  
+  errDiv.textContent = '';
+  if(!name) { errDiv.textContent = "Please enter your name first."; return; }
+
+  tempName = name;
+  tempRole = role;
+
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+    tempEmail = user.email;
     
-    // Check if user exists in Firestore
+    // Check if user already exists in Firestore
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
-      // User exists -> Auth state listener will handle the rest (Dashboard load)
+      // User exists -> Auto-login handled by Auth State Listener
     } else {
-      // New User -> Ask for Access Code
-      tempEmail = user.email;
-      tempName = user.displayName || 'User';
+      // New User -> Show Access Code Screen
+      document.getElementById('displayEmail').textContent = tempEmail;
       document.getElementById('authStep1').classList.add('hidden');
       document.getElementById('authStep2').classList.remove('hidden');
-      document.getElementById('displayEmail').textContent = tempEmail;
     }
   } catch (error) {
-    alert("Google Login Failed: " + error.message);
+    errDiv.textContent = "Google Login Failed. Try again or use manual login.";
+    console.error(error);
   }
 });
 
-// --- MANUAL LOGIN FLOW ---
 document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('authStep2').classList.add('hidden');
   document.getElementById('authStep1').classList.remove('hidden');
-  document.getElementById('authError').textContent = '';
-});
-
-document.getElementById('btnNextStep').addEventListener('click', () => {
-  const name = document.getElementById('authName').value.trim();
-  const email = document.getElementById('authEmail').value.trim();
-  const role = document.getElementById('authRole').value;
-  
-  if(!name) { alert("Please enter your name."); return; }
-  if(!email) { alert("Please enter your email."); return; }
-
-  tempName = name;
-  tempEmail = email;
-  tempRole = role;
-
-  document.getElementById('displayEmail').textContent = tempEmail;
-  document.getElementById('authStep1').classList.add('hidden');
-  document.getElementById('authStep2').classList.remove('hidden');
-  document.getElementById('authAccessCode').focus();
+  document.getElementById('authError2').textContent = '';
 });
 
 document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
-  const errDiv = document.getElementById('authError');
+  const errDiv = document.getElementById('authError2');
   
   errDiv.textContent = '';
   if(!code) { errDiv.textContent = "Please enter access code."; return; }
@@ -447,7 +432,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
     
     const codeData = docSnap.data();
     
-    // 2. Determine Role from Prefix (ATT for Teacher, ATS for Student)
+    // 2. Determine Role from Prefix
     let firestoreRole = '';
     if (code.startsWith('ATT')) {
         firestoreRole = 'teacher';
@@ -457,26 +442,14 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
         throw new Error("Invalid Code Format. Code must start with ATT or ATS.");
     }
 
-    if (firestoreRole !== tempRole && tempRole) {
+    if (firestoreRole !== tempRole) {
        throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
     }
 
-    // 3. Handle Authentication (If Google Login was NOT used)
-    let user = auth.currentUser;
-    if (!user) {
-       // Manual Email/Password Login
-       try {
-         const userCredential = await signInWithEmailAndPassword(auth, tempEmail, code);
-         user = userCredential.user;
-       } catch (err) {
-         if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-           const userCredential = await createUserWithEmailAndPassword(auth, tempEmail, code);
-           user = userCredential.user;
-         } else { throw err; }
-       }
-    }
+    // 3. Save User Profile to Firestore
+    const user = auth.currentUser;
+    if (!user) throw new Error("Session expired. Please login with Google again.");
 
-    // 4. Save User Profile in Firestore
     await setDoc(doc(db, "users", user.uid), {
       name: tempName,
       email: tempEmail,
@@ -484,13 +457,13 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
       lastLogin: serverTimestamp()
     }, { merge: true });
 
-    // 5. Mark Code as Used
-    if (codeData.used !== true) {
-        await updateDoc(doc(db, "access_codes", code), {
-            used: true,
-            usedByEmail: tempEmail
-        });
-    }
+    // 4. Mark Code as Used
+    await updateDoc(doc(db, "access_codes", code), {
+        used: true,
+        usedByEmail: tempEmail
+    });
+
+    // Auth State Listener will automatically redirect to Dashboard
 
   } catch (err) {
     errDiv.textContent = err.message;
@@ -528,10 +501,11 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('mainApp').classList.remove('hidden');
             renderHome();
         } else {
-            // User authenticated but no Firestore doc (New Google User)
+            // User logged in but no Firestore doc
+            if (!tempEmail) tempEmail = user.email;
+            document.getElementById('displayEmail').textContent = tempEmail;
             document.getElementById('authStep1').classList.add('hidden');
             document.getElementById('authStep2').classList.remove('hidden');
-            document.getElementById('displayEmail').textContent = user.email;
         }
     } else {
         currentUser = null; currentUserData = null;
@@ -541,11 +515,11 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('authStep1').classList.remove('hidden');
         document.getElementById('authStep2').classList.add('hidden');
         document.getElementById('authAccessCode').value = '';
-        document.getElementById('authEmail').value = '';
         document.getElementById('authName').value = '';
         document.getElementById('btnVerifyCode').disabled = false;
         document.getElementById('btnVerifyCode').textContent = 'Verify & Login';
-        document.getElementById('authError').textContent = '';
+        document.getElementById('authError1').textContent = '';
+        document.getElementById('authError2').textContent = '';
     }
 });
 
@@ -1085,4 +1059,4 @@ wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-  </html>
+</html>
