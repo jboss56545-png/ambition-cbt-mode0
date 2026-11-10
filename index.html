@@ -132,6 +132,13 @@ mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
 .vip-title { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
 .vip-sub { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
 .signed-in-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-2); border: 1px solid var(--green); padding: 8px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 16px; }
+
+/* PREVIEW BANNER */
+.preview-banner { background: var(--orange); color: #000; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
+.preview-banner button { background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; }
+
+/* SPINNING ANIMATION FOR REFRESH */
+.spinning { animation: spin 0.8s linear infinite; }
 </style>
 
 <script>
@@ -202,6 +209,7 @@ window.MathJax = {
         <div class="logo ambition-brand"><span>Ambition <span class="brand-light">CBT</span></span></div>
         <div style="display:flex; gap:8px;">
           <span class="badge topic" id="userRoleBadge" style="align-self:center;">ROLE</span>
+          <button type="button" class="icon-btn" id="btnRefreshDash" title="Refresh Data">🔄</button>
           <button type="button" class="icon-btn" id="btnLogout" title="Log Out">🚪</button>
         </div>
       </header>
@@ -209,6 +217,12 @@ window.MathJax = {
       <div class="hero">
         <h1>Hello, <span id="userNameDisplay">User</span>.</h1>
         <p id="userGreeting">Ready to practice today?</p>
+      </div>
+
+      <!-- PREVIEW BANNER -->
+      <div id="previewBanner" class="preview-banner hidden">
+        <span>👀 Viewing as Student</span>
+        <button id="btnExitPreview">Return to Teacher</button>
       </div>
 
       <div id="studentDashboard" class="hidden">
@@ -249,7 +263,10 @@ window.MathJax = {
       </div>
 
       <div id="teacherDashboard" class="hidden">
-        <h2 class="section-title">Create & Assign Tests</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2 class="section-title" style="margin:0;">Create Tests</h2>
+            <button class="btn small" id="btnPreviewAsStudent" style="font-size:11px; padding:6px 12px;">👁️ Preview as Student</button>
+        </div>
         <div class="animated-grid">
           <button class="action-card" id="btnTeacherCreateTest">
             <div style="font-size:28px">🧪</div>
@@ -375,6 +392,7 @@ let tempEmail = null;
 let tempRole = null;
 let tempCode = null;
 let tempName = null;
+let isStudentPreview = false;
 
 // --- GOOGLE LOGIN FLOW ---
 document.getElementById('btnGoogleLogin').addEventListener('click', async () => {
@@ -473,6 +491,30 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
 
 document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
 
+// --- NEW: Dashboard Switching Logic ---
+function loadDashboards() {
+    if (!currentUserData) return;
+    
+    document.getElementById('studentDashboard').classList.add('hidden');
+    document.getElementById('teacherDashboard').classList.add('hidden');
+    document.getElementById('previewBanner').classList.add('hidden');
+    
+    if (currentUserData.role === 'student' || isStudentPreview) {
+        document.getElementById('studentDashboard').classList.remove('hidden');
+        if (currentUserData.role === 'teacher') {
+            document.getElementById('previewBanner').classList.remove('hidden');
+            document.getElementById('userRoleBadge').textContent = 'STUDENT (PREVIEW)';
+        } else {
+            document.getElementById('userRoleBadge').textContent = 'STUDENT';
+        }
+        loadStudentDashboard();
+    } else if (currentUserData.role === 'teacher') {
+        document.getElementById('teacherDashboard').classList.remove('hidden');
+        document.getElementById('userRoleBadge').textContent = 'TEACHER';
+        loadTeacherDashboard();
+    }
+}
+
 // --- AUTH STATE LISTENER (AUTO LOGIN) ---
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -483,18 +525,9 @@ onAuthStateChanged(auth, async (user) => {
         if (docSnap.exists()) {
             currentUserData = docSnap.data();
             document.getElementById('userNameDisplay').textContent = currentUserData.name;
-            document.getElementById('userRoleBadge').textContent = currentUserData.role.toUpperCase();
             
-            document.getElementById('studentDashboard').classList.add('hidden');
-            document.getElementById('teacherDashboard').classList.add('hidden');
-            
-            if (currentUserData.role === 'student') {
-                document.getElementById('studentDashboard').classList.remove('hidden');
-                loadStudentDashboard();
-            } else if (currentUserData.role === 'teacher') {
-                document.getElementById('teacherDashboard').classList.remove('hidden');
-                loadTeacherDashboard();
-            }
+            isStudentPreview = false;
+            loadDashboards();
             
             document.getElementById('screen-auth').classList.remove('active');
             document.getElementById('mainApp').classList.remove('hidden');
@@ -526,6 +559,7 @@ async function loadStudentDashboard() {
     renderHistoryChart();
     const listDiv = document.getElementById('assignedTestsList');
     
+    // Get completed tests for this student
     const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
     const resultsSnap = await getDocs(resultsQ);
     const completedTestIds = new Set();
@@ -645,7 +679,7 @@ var myChart=null;
 
 function renderHome(){
   renderResumeBanner();
-  if (currentUserData && currentUserData.role === 'student') {
+  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
       renderHistoryChart();
   }
 }
@@ -713,7 +747,7 @@ function startAITest(){
     hideLoader();
     if(!list.length) throw new Error('No questions generated');
     
-    if (currentUserData.role === 'teacher') {
+    if (currentUserData.role === 'teacher' && !isStudentPreview) {
         saveTeacherTest(list, state.subject + ' Test');
     } else {
         launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self'});
@@ -790,7 +824,7 @@ async function handleFileUpload(file){
     
     progressBar.style.width='100%'; progressText.textContent='Saving…';
 
-    if (currentUserData && currentUserData.role === 'teacher') {
+    if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
         saveTeacherTest(questions, file.name);
     } else {
         var bank={ id:'bank_'+Date.now(), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
@@ -930,11 +964,11 @@ async function submitTest(){
   var record={ name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats };
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
 
-  if (currentUserData && currentUserData.role === 'student') {
+  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
       try {
           await addDoc(collection(db, "results"), {
               studentId: currentUser.uid,
-              studentName: currentUserData.name,
+              studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
               testName: T.name,
               testId: T.testId,
               type: testType,
@@ -1003,7 +1037,7 @@ async function submitTest(){
   
   $('btnResHome').onclick=function(){
     showScreen('screen-home');
-    if (currentUserData.role === 'student') loadStudentDashboard(); else loadTeacherDashboard();
+    if (currentUserData.role === 'student' || isStudentPreview) loadStudentDashboard(); else loadTeacherDashboard();
   };
   
   showScreen('screen-result'); T = null;
@@ -1056,6 +1090,37 @@ function wireEvents(){
   safeClick('btnTeacherBook', () => { openUpload('extract'); });
   safeClick('btnTeacherNotes', () => { openUpload('notes'); });
   safeClick('btnTeacherImage', () => { openUpload('image'); });
+
+  // Preview Mode Buttons
+  safeClick('btnPreviewAsStudent', () => {
+      isStudentPreview = true;
+      loadDashboards();
+  });
+  safeClick('btnExitPreview', () => {
+      isStudentPreview = false;
+      loadDashboards();
+  });
+
+  // NEW REFRESH BUTTON LOGIC
+  safeClick('btnRefreshDash', async () => {
+      var btn = document.getElementById('btnRefreshDash');
+      if(btn) btn.classList.add('spinning');
+      
+      try {
+          if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
+              await loadStudentDashboard();
+              renderHistoryChart();
+          } else if (currentUserData && currentUserData.role === 'teacher') {
+              await loadTeacherDashboard();
+          }
+      } catch (e) {
+          console.error("Refresh error:", e);
+      } finally {
+          setTimeout(() => {
+              if(btn) btn.classList.remove('spinning');
+          }, 600);
+      }
+  });
 }
 
 wireEvents();
