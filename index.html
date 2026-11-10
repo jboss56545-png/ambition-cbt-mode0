@@ -39,7 +39,7 @@ a{color:var(--accent-2);text-decoration:none}
 .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:520px}
 .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:700;margin:26px 0 12px}
 
-/* NEW ANIMATED GRID */
+/* ANIMATED GRID */
 .animated-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
 @media(min-width:620px){.animated-grid{grid-template-columns:repeat(4,1fr)}}
 .action-card { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 14px; text-align: left; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 8px; cursor: pointer; opacity: 0; transform: translateY(15px); animation: slideUpFade 0.5s forwards; }
@@ -394,14 +394,12 @@ document.getElementById('btnGoogleLogin').addEventListener('click', async () => 
     const user = result.user;
     tempEmail = user.email;
     
-    // Check if user already exists in Firestore
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
-      // User exists -> Auto-login handled by Auth State Listener
+      // User exists -> Auto-login
     } else {
-      // New User -> Show Access Code Screen
       document.getElementById('displayEmail').textContent = tempEmail;
       document.getElementById('authStep1').classList.add('hidden');
       document.getElementById('authStep2').classList.remove('hidden');
@@ -431,7 +429,6 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   btn.textContent = 'Verifying...';
 
   try {
-    // 1. Check Firestore for code
     const docRef = doc(db, "access_codes", code);
     const docSnap = await getDoc(docRef);
 
@@ -439,7 +436,6 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
     
     const codeData = docSnap.data();
     
-    // 2. Determine Role from Prefix
     let firestoreRole = '';
     if (code.startsWith('ATT')) {
         firestoreRole = 'teacher';
@@ -453,7 +449,6 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
        throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
     }
 
-    // 3. Save User Profile to Firestore
     const user = auth.currentUser;
     if (!user) throw new Error("Session expired. Please login with Google again.");
 
@@ -464,13 +459,10 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
       lastLogin: serverTimestamp()
     }, { merge: true });
 
-    // 4. Mark Code as Used
     await updateDoc(doc(db, "access_codes", code), {
         used: true,
         usedByEmail: tempEmail
     });
-
-    // Auth State Listener will automatically redirect to Dashboard
 
   } catch (err) {
     errDiv.textContent = err.message;
@@ -508,7 +500,6 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('mainApp').classList.remove('hidden');
             renderHome();
         } else {
-            // User logged in but no Firestore doc
             if (!tempEmail) tempEmail = user.email;
             document.getElementById('displayEmail').textContent = tempEmail;
             document.getElementById('authStep1').classList.add('hidden');
@@ -1018,43 +1009,53 @@ async function submitTest(){
   showScreen('screen-result'); T = null;
 }
 
-function wireEvents(){
-  $('btnModeAI').onclick=openSetup;
-  $('btnModeBook').onclick=function(){openUpload('extract')};
-  $('btnModeNotes').onclick=function(){openUpload('notes')};
-  $('btnModeImage').onclick=function(){openUpload('image')};
-  
-  $('btnSetupBack').onclick=function(){showScreen('screen-home')};
-  $('btnUploadBack').onclick=function(){showScreen('screen-home')};
-  
-  $('btnFullSubject').onclick=function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); };
-  $('btnClearChapters').onclick=function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); };
-  
-  $('customNumInput').oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 100) { state.count = v; renderChips(); } };
-  $('customTimerInput').oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 180) { state.timerMins = v; } };
+// Fix for the crash: Use a safe function to attach events so missing IDs don't break the app
+function safeClick(id, fn) {
+  var el = document.getElementById(id);
+  if (el) el.onclick = fn;
+}
 
-  $('btnStartTest').onclick=startAITest;
-  $('fileInput').onchange=function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
-  $('btnPaletteToggle').onclick=function(){$('palette').classList.toggle('open')};
-  $('btnNext').onclick=goNext; $('btnPrev').onclick=goPrev; $('btnMark').onclick=toggleMark; $('btnClear').onclick=clearAns;
-  $('btnSubmit').onclick=function(){dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})};
+function wireEvents(){
+  safeClick('btnBackHome', function(){showScreen('screen-home')});
+  safeClick('btnModeAI', openSetup);
+  safeClick('btnModeBook', function(){openUpload('extract')});
+  safeClick('btnModeNotes', function(){openUpload('notes')});
+  safeClick('btnModeImage', function(){openUpload('image')});
   
-  $('btnResultHome').onclick=function(){
+  safeClick('btnSetupBack', function(){showScreen('screen-home')});
+  safeClick('btnUploadBack', function(){showScreen('screen-home')});
+  
+  safeClick('btnFullSubject', function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); });
+  safeClick('btnClearChapters', function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); });
+  
+  var ci = $('customNumInput'); if(ci) ci.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 100) { state.count = v; renderChips(); } };
+  var ti = $('customTimerInput'); if(ti) ti.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 180) { state.timerMins = v; } };
+
+  safeClick('btnStartTest', startAITest);
+  var fi = $('fileInput'); if(fi) fi.onchange = function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
+  safeClick('btnPaletteToggle', function(){$('palette').classList.toggle('open')});
+  safeClick('btnNext', goNext); 
+  safeClick('btnPrev', goPrev); 
+  safeClick('btnMark', toggleMark); 
+  safeClick('btnClear', clearAns);
+  safeClick('btnSubmit', function(){dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})});
+  
+  safeClick('btnResultHome', function(){
     showScreen('screen-home');
     renderHome();
-  };
+  });
 
   // Student Dashboard Buttons
-  $('btnSelfPractice').onclick = () => { openSetup(); };
-  $('btnSelfBook').onclick = () => { openUpload('extract'); };
-  $('btnSelfNotes').onclick = () => { openUpload('notes'); };
-  $('btnSelfImage').onclick = () => { openUpload('image'); };
+  safeClick('btnSelfPractice', () => { openSetup(); });
+  safeClick('btnSelfBook', () => { openUpload('extract'); });
+  safeClick('btnSelfNotes', () => { openUpload('notes'); });
+  safeClick('btnSelfImage', () => { openUpload('image'); });
   
   // Teacher Dashboard Buttons
-  $('btnTeacherCreateTest').onclick = () => { openSetup(); };
-  $('btnTeacherBook').onclick = () => { openUpload('extract'); };
-  $('btnTeacherNotes').onclick = () => { openUpload('notes'); };
-  $('btnTeacherImage').onclick = () => { openUpload('image'); };
+  safeClick('btnTeacherCreateTest', () => { openSetup(); });
+  safeClick('btnTeacherBook', () => { openUpload('extract'); });
+  safeClick('btnTeacherNotes', () => { openUpload('notes'); });
+  safeClick('btnTeacherImage', () => { openUpload('image'); });
 }
 
 wireEvents();
