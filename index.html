@@ -38,15 +38,18 @@ a{color:var(--accent-2);text-decoration:none}
 .hero h1{margin:0 0 10px;font-size:30px;line-height:1.12;font-weight:800;background:linear-gradient(120deg,var(--text) 20%,var(--accent) 65%,var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:520px}
 .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:700;margin:26px 0 12px}
-.exam-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-@media(min-width:620px){.exam-grid{grid-template-columns:repeat(3,1fr)}}
-.exam-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;min-height:120px;cursor:pointer}
-.mode-grid{display:grid;gap:14px;margin-top:8px}
-@media(min-width:640px){.mode-grid{grid-template-columns:1fr 1fr}}
-.mode-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 18px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;cursor:pointer;min-height:var(--tap)}
-.mode-icon{font-size:32px;pointer-events:none}
-.mode-title{font-weight:750;font-size:18px;pointer-events:none}
-.mode-sub{font-size:13px;color:var(--muted);pointer-events:none}
+
+/* NEW ANIMATED GRID */
+.animated-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+@media(min-width:620px){.animated-grid{grid-template-columns:repeat(4,1fr)}}
+.action-card { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 14px; text-align: left; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 8px; cursor: pointer; opacity: 0; transform: translateY(15px); animation: slideUpFade 0.5s forwards; }
+.action-card:hover { transform: translateY(-3px) scale(1.02); border-color: var(--accent); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15); }
+@keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+.action-card:nth-child(1) { animation-delay: 0.05s; }
+.action-card:nth-child(2) { animation-delay: 0.1s; }
+.action-card:nth-child(3) { animation-delay: 0.15s; }
+.action-card:nth-child(4) { animation-delay: 0.2s; }
+
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
 .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff}
@@ -63,7 +66,6 @@ a{color:var(--accent-2);text-decoration:none}
 .btn.big{width:100%;padding:15px;font-size:15.5px;margin-top:26px;min-height:52px}
 .btn.small{padding:8px 14px;font-size:12.5px;border-radius:9px;min-height:38px}
 .btn.google { background: #fff; color: #333; border: 1px solid #ddd; font-weight: 600; }
-.btn.google:hover { background: #f1f1f1; }
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
 input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed var(--border);background:var(--bg-2);font-size:13px;cursor:pointer;color:var(--text)}
 input[type=number], input[type=email], input[type=password], input[type=text], select {width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;margin-top:8px;margin-bottom:12px;}
@@ -211,18 +213,31 @@ window.MathJax = {
 
       <div id="studentDashboard" class="hidden">
         <div id="resumeBanner"></div>
+        
         <h2 class="section-title">Assigned Tests</h2>
         <div id="assignedTestsList"><p class="muted small">No tests assigned yet.</p></div>
 
         <h2 class="section-title">Self Practice</h2>
-        <div class="exam-grid">
-          <button class="exam-card" id="btnSelfPractice">
-            <div style="font-size:26px">🧪</div><div style="font-weight:700;font-size:16px">AI Practice Test</div>
-            <div class="muted small">Take a custom test on any topic</div>
+        <div class="animated-grid">
+          <button class="action-card" id="btnSelfPractice">
+            <div style="font-size:28px">🧪</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
+            <div class="muted small">Generate custom test</div>
           </button>
-          <button class="exam-card" id="btnSelfUpload">
-            <div style="font-size:26px">📄</div><div style="font-weight:700;font-size:16px">Upload & Solve</div>
-            <div class="muted small">Upload PDF/Image to extract questions</div>
+          <button class="action-card" id="btnSelfBook">
+            <div style="font-size:28px">📄</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
+            <div class="muted small">Extract from PDF</div>
+          </button>
+          <button class="action-card" id="btnSelfNotes">
+            <div style="font-size:28px">📝</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
+            <div class="muted small">AI generates MCQs</div>
+          </button>
+          <button class="action-card" id="btnSelfImage">
+            <div style="font-size:28px">📷</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
+            <div class="muted small">Extract from image</div>
           </button>
         </div>
 
@@ -235,22 +250,26 @@ window.MathJax = {
 
       <div id="teacherDashboard" class="hidden">
         <h2 class="section-title">Create & Assign Tests</h2>
-        <div class="exam-grid">
-          <button class="exam-card" id="btnTeacherCreateTest">
-            <div style="font-size:26px">🧪</div><div style="font-weight:700;font-size:16px">AI Practice Test</div>
-            <div class="muted small">Generate AI test and assign</div>
+        <div class="animated-grid">
+          <button class="action-card" id="btnTeacherCreateTest">
+            <div style="font-size:28px">🧪</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
+            <div class="muted small">Generate custom test</div>
           </button>
-          <button class="exam-card" id="btnTeacherBook">
-            <div style="font-size:26px">📄</div><div style="font-weight:700;font-size:16px">Extract from PDF</div>
-            <div class="muted small">Upload PDF and assign</div>
+          <button class="action-card" id="btnTeacherBook">
+            <div style="font-size:28px">📄</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
+            <div class="muted small">Extract from PDF</div>
           </button>
-          <button class="exam-card" id="btnTeacherNotes">
-            <div style="font-size:26px">📝</div><div style="font-weight:700;font-size:16px">Generate from Notes</div>
-            <div class="muted small">AI generates MCQs from notes</div>
+          <button class="action-card" id="btnTeacherNotes">
+            <div style="font-size:28px">📝</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
+            <div class="muted small">AI generates MCQs</div>
           </button>
-          <button class="exam-card" id="btnTeacherImage">
-            <div style="font-size:26px">📷</div><div style="font-weight:700;font-size:16px">Extract from Photo</div>
-            <div class="muted small">Photo → MCQs</div>
+          <button class="action-card" id="btnTeacherImage">
+            <div style="font-size:28px">📷</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
+            <div class="muted small">Extract from image</div>
           </button>
         </div>
         
@@ -261,18 +280,6 @@ window.MathJax = {
       <footer class="asviro-footer">
         Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
       </footer>
-    </div>
-  </section>
-
-  <section id="screen-exam" class="screen">
-    <div class="wrap">
-      <header class="appbar"><button type="button" class="icon-btn" id="btnBackHome">←</button><div class="appbar-title" id="examTitle">CUET UG 2026</div><div style="width:44px"></div></header>
-      <div class="mode-grid">
-        <button type="button" class="mode-card" id="btnModeAI"><div class="mode-icon">🧪</div><div class="mode-title">AI Practice Test</div><div class="mode-sub">NCERT-based PYQ pattern mock tests</div></button>
-        <button type="button" class="mode-card" id="btnModeBook"><div class="mode-icon">📄</div><div class="mode-title">Extract from Question Paper</div><div class="mode-sub">Upload PDF up to 500 MB</div></button>
-        <button type="button" class="mode-card" id="btnModeNotes"><div class="mode-icon">📝</div><div class="mode-title">Generate from Notes</div><div class="mode-sub">AI converts notes into MCQs</div></button>
-        <button type="button" class="mode-card" id="btnModeImage"><div class="mode-icon">📷</div><div class="mode-title">Extract from Photo</div><div class="mode-sub">Phone photos → MCQs</div></button>
-      </div>
     </div>
   </section>
 
@@ -1012,21 +1019,13 @@ async function submitTest(){
 }
 
 function wireEvents(){
-  $('btnBackHome').onclick=function(){showScreen('screen-home')};
   $('btnModeAI').onclick=openSetup;
   $('btnModeBook').onclick=function(){openUpload('extract')};
   $('btnModeNotes').onclick=function(){openUpload('notes')};
   $('btnModeImage').onclick=function(){openUpload('image')};
   
-  $('btnSetupBack').onclick=function(){
-    if (currentUserData && currentUserData.role === 'teacher') { showScreen('screen-home'); } 
-    else { showScreen('screen-exam'); }
-  };
-  
-  $('btnUploadBack').onclick=function(){
-    if (currentUserData && currentUserData.role === 'teacher') { showScreen('screen-home'); } 
-    else { showScreen('screen-exam'); }
-  };
+  $('btnSetupBack').onclick=function(){showScreen('screen-home')};
+  $('btnUploadBack').onclick=function(){showScreen('screen-home')};
   
   $('btnFullSubject').onclick=function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); };
   $('btnClearChapters').onclick=function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); };
@@ -1045,10 +1044,13 @@ function wireEvents(){
     renderHome();
   };
 
+  // Student Dashboard Buttons
   $('btnSelfPractice').onclick = () => { openSetup(); };
-  $('btnSelfUpload').onclick = () => { openUpload('extract'); };
+  $('btnSelfBook').onclick = () => { openUpload('extract'); };
+  $('btnSelfNotes').onclick = () => { openUpload('notes'); };
+  $('btnSelfImage').onclick = () => { openUpload('image'); };
   
-  // Teacher Buttons
+  // Teacher Dashboard Buttons
   $('btnTeacherCreateTest').onclick = () => { openSetup(); };
   $('btnTeacherBook').onclick = () => { openUpload('extract'); };
   $('btnTeacherNotes').onclick = () => { openUpload('notes'); };
