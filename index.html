@@ -211,7 +211,6 @@ window.MathJax = {
           <span class="badge topic" id="userRoleBadge" style="align-self:center;">ROLE</span>
           <button type="button" class="icon-btn hidden" id="btnInstallApp" title="Install App">📥</button>
           <button type="button" class="icon-btn" id="btnRefreshDash" title="Refresh Data">🔄</button>
-          <button type="button" class="icon-btn" id="btnOpenSettings" title="Settings">⚙️</button>
           <button type="button" class="icon-btn" id="btnLogout" title="Log Out">🚪</button>
         </div>
       </header>
@@ -452,7 +451,7 @@ document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
   document.getElementById('authError2').textContent = '';
 });
 
-// FIXED: Verify Code Logic
+// Verify Code Logic
 document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
   const errDiv = document.getElementById('authError2');
@@ -501,7 +500,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
         usedByEmail: tempEmail
     });
 
-    // FIX: Immediately load dashboard instead of waiting for Auth state change
+    // Immediately load dashboard
     const updatedDocSnap = await getDoc(doc(db, "users", user.uid));
     if (updatedDocSnap.exists()) {
         currentUserData = updatedDocSnap.data();
@@ -523,7 +522,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
 
 document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
 
-// --- NEW: Dashboard Switching Logic ---
+// --- Dashboard Switching Logic ---
 function loadDashboards() {
     if (!currentUserData) return;
     
@@ -1161,7 +1160,7 @@ function wireEvents(){
       loadDashboards();
   });
 
-  // NEW REFRESH BUTTON LOGIC
+  // REFRESH BUTTON LOGIC
   safeClick('btnRefreshDash', async () => {
       var btn = document.getElementById('btnRefreshDash');
       if(btn) btn.classList.add('spinning');
@@ -1182,38 +1181,11 @@ function wireEvents(){
       }
   });
 
-  // SETTINGS & RESET LOGIC
-  safeClick('btnOpenSettings', function(){
-    dialog({
-      title: 'Settings',
-      message: 'Manage your app data. Reset will clear local history and offline banks.',
-      buttons:[
-        {text:'Cancel', value: false},
-        {text:'Reset Data', primary: false, value: 'reset'},
-        {text:'Log Out', primary: true, value: 'logout'}
-      ]
-    }).then(async function(res){
-      if(res === 'logout') {
-          signOut(auth);
-      } else if (res === 'reset') {
-          var confirmReset = await dialog({
-              title: 'Reset App?',
-              message: 'This will permanently delete all your local test history and offline question banks. This action cannot be undone.',
-              buttons: [{text:'Cancel', value: false}, {text:'Yes, Reset', primary: true, value: true}]
-          });
-          if(confirmReset) {
-              localStorage.clear();
-              const req = indexedDB.deleteDatabase('ambition_db');
-              req.onsuccess = () => { location.reload(); };
-              req.onerror = () => { location.reload(); };
-          }
-      }
-    });
-  });
+  // REMOVED SETTINGS BUTTON LOGIC
 }
 
 wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-  </html>
+</html>
