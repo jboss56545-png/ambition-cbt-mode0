@@ -1,6 +1,6 @@
 {
-  "name": "Ambition CBT Mode",
-  "short_name": "Ambition CBT",
+  "name": "Ambition CBT",
+  "short_name": "Ambition",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0d12",
@@ -8,9 +8,16 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3404/3404134.png",
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
