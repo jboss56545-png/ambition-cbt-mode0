@@ -211,6 +211,7 @@ window.MathJax = {
           <span class="badge topic" id="userRoleBadge" style="align-self:center;">ROLE</span>
           <button type="button" class="icon-btn hidden" id="btnInstallApp" title="Install App">📥</button>
           <button type="button" class="icon-btn" id="btnRefreshDash" title="Refresh Data">🔄</button>
+          <button type="button" class="icon-btn" id="btnOpenSettings" title="Settings">⚙️</button>
           <button type="button" class="icon-btn" id="btnLogout" title="Log Out">🚪</button>
         </div>
       </header>
@@ -320,7 +321,22 @@ window.MathJax = {
   <section id="screen-upload" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnUploadBack">←</button><div class="appbar-title" id="uploadTitle">Upload File</div><div style="width:44px"></div></header>
+      
       <div class="card">
+        <div id="teacherUploadFields" class="hidden" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+            <label class="small muted">Test Title</label>
+            <input type="text" id="uploadTestTitle" placeholder="e.g. Biology Chapter 1">
+            <label class="small muted" style="margin-top:8px; display:block;">Subject</label>
+            <select id="uploadTestSubject">
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="English">English</option>
+                <option value="General Test">General Test</option>
+            </select>
+        </div>
+
         <h3 id="uploadCardTitle">📄 Add a file or photo</h3>
         <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, PDF, TXT.</p>
         <input type="file" id="fileInput" accept=".pdf,.txt,.jpg,.jpeg,.png,.webp,image/*,application/pdf,text/plain">
@@ -596,14 +612,17 @@ async function loadStudentDashboard() {
         const t = docSnap.data();
         const testId = docSnap.id;
         const isDone = completedTestIds.has(testId) || completedTestNames.has(t.name);
+        
+        // Display Subject tag if available
+        const subjectTag = t.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${t.subject}</span>` : '';
 
         const d = document.createElement('div');
         d.className = 'bank-item';
         
         if (isDone) {
-            d.innerHTML = `<div style="font-weight:700; color:var(--muted)">📄 ${t.name} <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span></div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>`;
+            d.innerHTML = `<div style="font-weight:700; color:var(--muted)">📄 ${t.name} ${subjectTag} <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span></div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>`;
         } else {
-            d.innerHTML = `<div style="font-weight:700">📄 ${t.name}</div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div><div class="btn-row"><button class="btn small primary">▶ Start Test</button></div>`;
+            d.innerHTML = `<div style="font-weight:700">📄 ${t.name} ${subjectTag}</div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div><div class="btn-row"><button class="btn small primary">▶ Start Test</button></div>`;
             d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: testId});
         }
         listDiv.appendChild(d);
@@ -763,7 +782,7 @@ function startAITest(){
     if(!list.length) throw new Error('No questions generated');
     
     if (currentUserData.role === 'teacher' && !isStudentPreview) {
-        saveTeacherTest(list, state.subject + ' Test');
+        saveTeacherTest(list, state.subject + ' Test', state.subject);
     } else {
         launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self'});
     }
@@ -773,11 +792,12 @@ function startAITest(){
   });
 }
 
-async function saveTeacherTest(questions, testName) {
+async function saveTeacherTest(questions, testName, subjectName) {
     showLoader('Saving test for students…', '');
     try {
         await addDoc(collection(db, "tests"), {
             name: testName || 'New Test',
+            subject: subjectName || 'General',
             questions: questions,
             teacherName: currentUserData.name,
             assignedTo: 'all',
@@ -797,7 +817,19 @@ async function saveTeacherTest(questions, testName) {
 function openUpload(mode){
   uploadMode=mode;
   var config = { image: { title:'📷 Upload Photo', card:'📷 Add photo', hint:'JPG, PNG, WEBP — max 30 MB.', bank:'Image Banks' }, extract: { title:'📄 Upload PDF', card:'📄 Add PDF / TXT', hint:'PDF / TXT up to 500 MB.', bank:'PDF Banks' }, notes: { title:'📝 Upload Notes', card:'📝 Add notes', hint:'AI will GENERATE new MCQs from your notes.', bank:'Notes Banks' } }[mode];
-  $('uploadTitle').textContent = config.title; $('uploadCardTitle').textContent = config.card; $('uploadCardHint').textContent = config.hint; $('bankListTitle').textContent = config.bank;
+  $('uploadTitle').textContent = config.title; 
+  $('uploadCardTitle').textContent = config.card; 
+  $('uploadCardHint').textContent = config.hint; 
+  $('bankListTitle').textContent = config.bank;
+  
+  // Show/Hide teacher custom fields
+  if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
+      document.getElementById('teacherUploadFields').classList.remove('hidden');
+      document.getElementById('uploadTestTitle').value = ''; // Reset field
+  } else {
+      document.getElementById('teacherUploadFields').classList.add('hidden');
+  }
+
   renderBanks(); showScreen('screen-upload');
 }
 
@@ -819,6 +851,19 @@ function renderBanks(){
 
 async function handleFileUpload(file){
   if(!file) return;
+  
+  // Custom Title & Subject validation for Teachers
+  let customName = "";
+  let customSubject = "";
+  if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
+      customName = document.getElementById('uploadTestTitle').value.trim();
+      customSubject = document.getElementById('uploadTestSubject').value;
+      if(!customName) {
+          dialog({title: 'Missing Title', message: 'Please enter a test title before uploading.'});
+          return;
+      }
+  }
+
   var fname=(file.name||'').toLowerCase();
   var isImage = (file.type && file.type.indexOf('image/')===0) || /\.(jpg|jpeg|png|webp|heic|heif|bmp|gif)$/i.test(fname);
   var isPDF = file.type === 'application/pdf' || fname.endsWith('.pdf');
@@ -840,7 +885,7 @@ async function handleFileUpload(file){
     progressBar.style.width='100%'; progressText.textContent='Saving…';
 
     if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
-        saveTeacherTest(questions, file.name);
+        saveTeacherTest(questions, customName, customSubject);
     } else {
         var bank={ id:'bank_'+Date.now(), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
         await IDB.put(bank);
@@ -1135,6 +1180,35 @@ function wireEvents(){
               if(btn) btn.classList.remove('spinning');
           }, 600);
       }
+  });
+
+  // SETTINGS & RESET LOGIC
+  safeClick('btnOpenSettings', function(){
+    dialog({
+      title: 'Settings',
+      message: 'Manage your app data. Reset will clear local history and offline banks.',
+      buttons:[
+        {text:'Cancel', value: false},
+        {text:'Reset Data', primary: false, value: 'reset'},
+        {text:'Log Out', primary: true, value: 'logout'}
+      ]
+    }).then(async function(res){
+      if(res === 'logout') {
+          signOut(auth);
+      } else if (res === 'reset') {
+          var confirmReset = await dialog({
+              title: 'Reset App?',
+              message: 'This will permanently delete all your local test history and offline question banks. This action cannot be undone.',
+              buttons: [{text:'Cancel', value: false}, {text:'Yes, Reset', primary: true, value: true}]
+          });
+          if(confirmReset) {
+              localStorage.clear();
+              const req = indexedDB.deleteDatabase('ambition_db');
+              req.onsuccess = () => { location.reload(); };
+              req.onerror = () => { location.reload(); };
+          }
+      }
+    });
   });
 }
 
