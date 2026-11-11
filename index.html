@@ -10,7 +10,7 @@
 <meta name="google-site-verification" content="BPY__4U3V_3ojViyn2vqneUaRpdIJ2gAgIkAEyvUxdo" />
 
 <link rel="manifest" href="/manifest.json" />
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
+<link rel="apple-touch-icon" href="https://ambition-cbt-v2.vercel.app/icon.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -209,6 +209,7 @@ window.MathJax = {
         <div class="logo ambition-brand"><span>Ambition <span class="brand-light">CBT</span></span></div>
         <div style="display:flex; gap:8px;">
           <span class="badge topic" id="userRoleBadge" style="align-self:center;">ROLE</span>
+          <button type="button" class="icon-btn hidden" id="btnInstallApp" title="Install App">📥</button>
           <button type="button" class="icon-btn" id="btnRefreshDash" title="Refresh Data">🔄</button>
           <button type="button" class="icon-btn" id="btnLogout" title="Log Out">🚪</button>
         </div>
@@ -435,6 +436,7 @@ document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
   document.getElementById('authError2').textContent = '';
 });
 
+// FIXED: Verify Code Logic
 document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
   const errDiv = document.getElementById('authError2');
@@ -470,6 +472,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
     const user = auth.currentUser;
     if (!user) throw new Error("Session expired. Please login with Google again.");
 
+    // Save Data
     await setDoc(doc(db, "users", user.uid), {
       name: tempName,
       email: tempEmail,
@@ -481,6 +484,19 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
         used: true,
         usedByEmail: tempEmail
     });
+
+    // FIX: Immediately load dashboard instead of waiting for Auth state change
+    const updatedDocSnap = await getDoc(doc(db, "users", user.uid));
+    if (updatedDocSnap.exists()) {
+        currentUserData = updatedDocSnap.data();
+        document.getElementById('userNameDisplay').textContent = currentUserData.name;
+        isStudentPreview = false;
+        loadDashboards();
+        
+        document.getElementById('screen-auth').classList.remove('active');
+        document.getElementById('mainApp').classList.remove('hidden');
+        renderHome();
+    }
 
   } catch (err) {
     errDiv.textContent = err.message;
@@ -559,7 +575,6 @@ async function loadStudentDashboard() {
     renderHistoryChart();
     const listDiv = document.getElementById('assignedTestsList');
     
-    // Get completed tests for this student
     const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
     const resultsSnap = await getDocs(resultsQ);
     const completedTestIds = new Set();
@@ -1127,4 +1142,4 @@ wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-</html>
+  </html>
