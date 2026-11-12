@@ -6,9 +6,7 @@
 <meta name="theme-color" content="#0b0d12">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ambition CBT Mode</title>
-
 <meta name="google-site-verification" content="BPY__4U3V_3ojViyn2vqneUaRpdIJ2gAgIkAEyvUxdo" />
-
 <link rel="manifest" href="/manifest.json" />
 <link rel="apple-touch-icon" href="https://ambition-cbt-v2.vercel.app/icon.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -38,8 +36,6 @@ a{color:var(--accent-2);text-decoration:none}
 .hero h1{margin:0 0 10px;font-size:30px;line-height:1.12;font-weight:800;background:linear-gradient(120deg,var(--text) 20%,var(--accent) 65%,var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:520px}
 .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:700;margin:26px 0 12px}
-
-/* ANIMATED GRID */
 .animated-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
 @media(min-width:620px){.animated-grid{grid-template-columns:repeat(4,1fr)}}
 .action-card { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 14px; text-align: left; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 8px; cursor: pointer; opacity: 0; transform: translateY(15px); animation: slideUpFade 0.5s forwards; }
@@ -49,7 +45,6 @@ a{color:var(--accent-2);text-decoration:none}
 .action-card:nth-child(2) { animation-delay: 0.1s; }
 .action-card:nth-child(3) { animation-delay: 0.15s; }
 .action-card:nth-child(4) { animation-delay: 0.2s; }
-
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
 .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff}
@@ -125,145 +120,40 @@ mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
 .review-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; text-align: left; }
 .review-q { font-size: 14.5px; font-weight: 600; margin-bottom: 10px; white-space: pre-wrap; }
 .review-exp { font-size: 13px; margin-top: 8px; padding: 8px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--border); }
-
-/* VIP AUTH SCREEN STYLES */
 .vip-header { text-align: center; margin-bottom: 24px; }
 .vip-icon { width: 60px; height: 60px; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
 .vip-title { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
 .vip-sub { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
 .signed-in-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-2); border: 1px solid var(--green); padding: 8px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 16px; }
-
-/* PREVIEW BANNER */
 .preview-banner { background: var(--orange); color: #000; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
 .preview-banner button { background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; }
-
-/* SPINNING ANIMATION FOR REFRESH */
 .spinning { animation: spin 0.8s linear infinite; }
 
-/* NEW STUDENT DASHBOARD STYLES */
-.folder-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.folder-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.1);
-}
-.folder-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-.folder-icon {
-    width: 50px;
-    height: 50px;
-    background: var(--bg-2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    border: 1px solid var(--border);
-}
-.folder-details h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-}
-.folder-details p {
-    margin: 4px 0 0;
-    font-size: 13px;
-    color: var(--muted);
-}
-.notification-dot {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 24px;
-    height: 24px;
-    background: var(--red);
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 800;
-    border: 2px solid var(--bg);
-    z-index: 10;
-    animation: pulse 2s infinite;
-}
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-.sub-folder-view {
-    display: none; /* Hidden by default */
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--border);
-}
-.tab-nav {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 10px;
-}
-.tab-btn {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-weight: 600;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-}
-.tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-}
-.weak-topic-group {
-    background: var(--bg-2);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
-}
-.weak-topic-header {
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--orange);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.weak-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.weak-chip {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: var(--red);
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-}
+/* FOLDER CARDS */
+.folder-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; position: relative; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; }
+.folder-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.1); }
+.folder-card.open { border-color: var(--accent); }
+.folder-info { display: flex; align-items: center; gap: 15px; flex: 1; }
+.folder-icon { width: 50px; height: 50px; background: var(--bg-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid var(--border); flex-shrink: 0;}
+.folder-details h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--text); }
+.folder-details p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+.folder-arrow { font-size: 18px; color: var(--muted); transition: transform 0.25s; flex-shrink: 0; margin-left: 8px;}
+.folder-card.open .folder-arrow { transform: rotate(180deg); }
+.notification-dot { position: absolute; top: -6px; right: -6px; min-width: 24px; height: 24px; background: var(--red); color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2px solid var(--bg); z-index: 10; padding: 0 6px; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+.sub-folder-view { display: none; margin: 0 0 16px; padding: 4px 0 16px; }
+.sub-folder-view.open { display: block; animation: fadeUp .25s ease; }
+.tab-nav { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+.tab-btn { background: none; border: none; color: var(--muted); font-weight: 700; padding: 10px 14px; cursor: pointer; border-bottom: 2px solid transparent; font-size: 13.5px; margin-bottom: -1px; transition: .15s;}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.weak-topic-group { background: var(--bg-2); border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid; }
+.weak-topic-header { font-weight: 800; font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.weak-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.weak-chip { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;}
+.quick-action-mini { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; transition: .2s; display: flex; flex-direction: column; align-items: center; gap: 6px;}
+.quick-action-mini:hover { border-color: var(--accent); background: var(--card-2); transform: translateY(-2px);}
+.quick-action-mini .qa-icon { font-size: 22px; }
+.quick-action-mini .qa-label { font-weight: 700; font-size: 12px; color: var(--text); }
 </style>
 
 <script>
@@ -282,41 +172,32 @@ window.MathJax = {
     <div class="logo ambition-brand" style="justify-content:center; margin-bottom:20px;">
       <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
-    
-    <!-- STEP 1: Details & Google Login -->
     <div class="card" id="authStep1">
       <div class="vip-header">
         <div class="vip-title">Welcome to Ambition CBT</div>
         <p class="vip-sub">Enter your details and continue with Google.</p>
       </div>
-      
       <label class="small muted">Full Name</label>
       <input type="text" id="authName" placeholder="Your Name">
-      
       <label class="small muted">I am a</label>
       <select id="authRole">
         <option value="student">Student</option>
         <option value="teacher">Teacher</option>
       </select>
-
       <button class="btn big google" id="btnGoogleLogin" style="margin-top:20px;">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width: 20px; margin-right: 8px;"> Continue with Google
       </button>
       <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
-
-    <!-- STEP 2: VIP Code -->
     <div class="card hidden" id="authStep2">
       <div class="vip-header">
         <div class="vip-icon">🔑</div>
         <div class="vip-title">VIP Access Required</div>
-        <p class="vip-sub">Ambition CBT is an invite-only private ecosystem. Enter your access code to unlock the dashboard.</p>
+        <p class="vip-sub">Enter your access code to unlock the dashboard.</p>
         <div class="signed-in-badge">✔ Signed in as <span id="displayEmail" style="color:var(--text)">...</span></div>
       </div>
-      
       <label class="small muted" style="color:var(--accent);">Access Code</label>
       <input type="text" id="authAccessCode" placeholder="e.g. ATT-XXXX or ATS-XXXX" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
-      
       <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify &amp; Login</button>
       <div style="text-align:center; margin-top:16px;">
         <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">← Edit Details</a>
@@ -327,106 +208,96 @@ window.MathJax = {
 </section>
 
 <div id="mainApp" class="hidden">
-  
   <section id="screen-home" class="screen active">
     <div class="wrap">
       <header class="appbar">
         <div class="logo ambition-brand"><span>Ambition <span class="brand-light">CBT</span></span></div>
         <div style="display:flex; gap:8px;">
           <span class="badge topic" id="userRoleBadge" style="align-self:center;">ROLE</span>
-          <button type="button" class="icon-btn hidden" id="btnInstallApp" title="Install App">📥</button>
           <button type="button" class="icon-btn" id="btnRefreshDash" title="Refresh Data">🔄</button>
           <button type="button" class="icon-btn" id="btnLogout" title="Log Out">🚪</button>
         </div>
       </header>
-      
       <div class="hero">
         <h1>Hello, <span id="userNameDisplay">User</span>.</h1>
         <p id="userGreeting">Ready to practice today?</p>
       </div>
-
-      <!-- PREVIEW BANNER -->
       <div id="previewBanner" class="preview-banner hidden">
         <span>👀 Viewing as Student</span>
         <button id="btnExitPreview">Return to Teacher</button>
       </div>
 
+      <!-- ===== STUDENT DASHBOARD ===== -->
       <div id="studentDashboard" class="hidden">
-        
-        <!-- FOLDER 1: TEACHER ASSIGNMENTS -->
-        <div class="folder-card" id="folderAssignments" onclick="toggleFolder('assignments')">
+        <div id="resumeBanner"></div>
+        <div style="margin-top:8px;">
+
+          <!-- Folder 1: Teacher Assignments -->
+          <div class="folder-card" id="folderAssignments" onclick="toggleFolder('assignments')">
             <div class="notification-dot hidden" id="assignDot">0</div>
             <div class="folder-info">
-                <div class="folder-icon">📂</div>
-                <div class="folder-details">
-                    <h3>Teacher Assignments</h3>
-                    <p>Tests sent by teachers</p>
-                </div>
+              <div class="folder-icon">📂</div>
+              <div class="folder-details">
+                <h3>Teacher Assignments</h3>
+                <p>Tests sent by teachers</p>
+              </div>
             </div>
-            <div style="font-size:20px; color:var(--muted);">▼</div>
-        </div>
-        <div id="viewAssignments" class="sub-folder-view">
+            <div class="folder-arrow">▼</div>
+          </div>
+          <div id="viewAssignments" class="sub-folder-view">
             <div class="tab-nav">
-                <button class="tab-btn active" onclick="switchTab('pending')">Pending (<span id="countPending">0</span>)</button>
-                <button class="tab-btn" onclick="switchTab('completed')">Completed (<span id="countCompleted">0</span>)</button>
+              <button class="tab-btn active" data-tab="pending" onclick="switchTab('pending')">Pending (<span id="countPending">0</span>)</button>
+              <button class="tab-btn" data-tab="completed" onclick="switchTab('completed')">Completed (<span id="countCompleted">0</span>)</button>
             </div>
-            <div id="listPending" style="display:block;"></div>
+            <div id="listPending"><p class="muted small">Loading...</p></div>
             <div id="listCompleted" style="display:none;"></div>
-        </div>
+          </div>
 
-        <!-- FOLDER 2: MY PRACTICE & WEAKNESS -->
-        <div class="folder-card" id="folderPractice" onclick="toggleFolder('practice')">
+          <!-- Folder 2: My Practice & Analysis -->
+          <div class="folder-card" id="folderPractice" onclick="toggleFolder('practice')">
             <div class="folder-info">
-                <div class="folder-icon">🧠</div>
-                <div class="folder-details">
-                    <h3>My Practice & Analysis</h3>
-                    <p>Self-generated tests & Weak topics</p>
-                </div>
+              <div class="folder-icon">🧠</div>
+              <div class="folder-details">
+                <h3>My Practice & Analysis</h3>
+                <p>Self tests &amp; weak topics</p>
+              </div>
             </div>
-            <div style="font-size:20px; color:var(--muted);">▼</div>
-        </div>
-        <div id="viewPractice" class="sub-folder-view">
-            
-            <!-- Quick Actions Grid inside Folder -->
-            <div class="animated-grid" style="margin-bottom: 20px;">
-                <button class="action-card" id="btnSelfPracticeSmall" style="padding:12px;">
-                  <div style="font-size:20px">🧪</div>
-                  <div style="font-weight:700;font-size:13px;">AI Test</div>
-                </button>
-                <button class="action-card" id="btnSelfBookSmall" style="padding:12px;">
-                  <div style="font-size:20px">📄</div>
-                  <div style="font-weight:700;font-size:13px;">PDF Extract</div>
-                </button>
-                <button class="action-card" id="btnSelfNotesSmall" style="padding:12px;">
-                  <div style="font-size:20px">📝</div>
-                  <div style="font-weight:700;font-size:13px;">From Notes</div>
-                </button>
-                <button class="action-card" id="btnSelfImageSmall" style="padding:12px;">
-                  <div style="font-size:20px">📷</div>
-                  <div style="font-weight:700;font-size:13px;">From Photo</div>
-                </button>
+            <div class="folder-arrow">▼</div>
+          </div>
+          <div id="viewPractice" class="sub-folder-view">
+            <div class="section-title" style="margin-top:0;">Quick Start</div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:18px;">
+              <button class="quick-action-mini" id="btnQuickAITest">
+                <span class="qa-icon">🧪</span><span class="qa-label">AI Test</span>
+              </button>
+              <button class="quick-action-mini" id="btnQuickPDF">
+                <span class="qa-icon">📄</span><span class="qa-label">PDF</span>
+              </button>
+              <button class="quick-action-mini" id="btnQuickNotes">
+                <span class="qa-icon">📝</span><span class="qa-label">Notes</span>
+              </button>
+              <button class="quick-action-mini" id="btnQuickPhoto">
+                <span class="qa-icon">📷</span><span class="qa-label">Photo</span>
+              </button>
             </div>
-
-            <!-- History Chart -->
             <div id="analysisWrap"></div>
             <div class="card hidden" id="chartContainer" style="margin-top: 14px; padding: 18px;">
               <div style="height: 220px; width: 100%; position: relative;"><canvas id="progressChart"></canvas></div>
             </div>
-
-            <!-- Weak Topics Section -->
-            <h2 class="section-title" style="margin-top:20px;">⚠️ Focus Areas (Weak Topics)</h2>
-            <div id="weakTopicsContainer">
-                <p class="muted small">Take some tests to identify your weak areas.</p>
-            </div>
+            <h2 class="section-title" style="margin-top:22px; color:var(--orange);">⚠️ Weak Topics by Subject</h2>
+            <p class="muted" style="margin:-8px 0 12px;font-size:12.5px;">Topics where you scored below 60%. Subjects are kept separate.</p>
+            <div id="weakTopicsContainer"><p class="muted small">Give a test to see your weak topics.</p></div>
+          </div>
 
         </div>
-
       </div>
+      <!-- ===== END STUDENT DASHBOARD ===== -->
 
+      <!-- ===== TEACHER DASHBOARD ===== -->
       <div id="teacherDashboard" class="hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h2 class="section-title" style="margin:0;">Create Tests</h2>
-            <button class="btn small" id="btnPreviewAsStudent" style="font-size:11px; padding:6px 12px;">👁️ Preview as Student</button>
+          <h2 class="section-title" style="margin:0;">Create Tests</h2>
+          <button class="btn small" id="btnPreviewAsStudent" style="font-size:11px; padding:6px 12px;">👁️ Preview as Student</button>
         </div>
         <div class="animated-grid">
           <button class="action-card" id="btnTeacherCreateTest">
@@ -450,7 +321,6 @@ window.MathJax = {
             <div class="muted small">Extract from image</div>
           </button>
         </div>
-        
         <h2 class="section-title">Student Results</h2>
         <div id="teacherResultsList"><p class="muted small">Loading results...</p></div>
       </div>
@@ -467,7 +337,7 @@ window.MathJax = {
       <h2 class="section-title">Select Subject</h2><div class="chip-grid" id="subjectGrid"></div>
       <div id="setupPanel" class="hidden">
         <h2 class="section-title">Select Chapters</h2>
-        <div class="btn-row" style="margin-bottom:12px"><button type="button" class="btn small" id="btnFullSubject">✓ Full Subject</button><button type="button" class="btn small" id="btnClearChapters">Clear</button></div>
+        <div style="margin-bottom:12px"><button type="button" class="btn small" id="btnFullSubject">✓ Full Subject</button><button type="button" class="btn small" id="btnClearChapters">Clear</button></div>
         <div class="check-list" id="chapterList"></div>
         <h2 class="section-title">Number of Questions</h2><div class="chip-row" id="numChips" style="margin-bottom:8px;"></div><input type="number" id="customNumInput" min="1" max="100" placeholder="Ya type karo (jaise 50)" value="10">
         <h2 class="section-title">Difficulty</h2><div class="chip-row" id="diffChips"></div>
@@ -480,22 +350,31 @@ window.MathJax = {
   <section id="screen-upload" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnUploadBack">←</button><div class="appbar-title" id="uploadTitle">Upload File</div><div style="width:44px"></div></header>
-      
       <div class="card">
         <div id="teacherUploadFields" class="hidden" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-            <label class="small muted">Test Title</label>
-            <input type="text" id="uploadTestTitle" placeholder="e.g. Biology Chapter 1">
-            <label class="small muted" style="margin-top:8px; display:block;">Subject</label>
-            <select id="uploadTestSubject">
-                <option value="Mathematics">Mathematics</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
-                <option value="English">English</option>
-                <option value="General Test">General Test</option>
-            </select>
+          <label class="small muted">Test Title</label>
+          <input type="text" id="uploadTestTitle" placeholder="e.g. Biology Chapter 1">
+          <label class="small muted" style="margin-top:8px; display:block;">Subject</label>
+          <select id="uploadTestSubject">
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+            <option value="English">English</option>
+            <option value="General Test">General Test</option>
+          </select>
         </div>
-
+        <div id="studentSubjectField" class="hidden" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+          <label class="small muted">Which subject are these questions from?</label>
+          <select id="studentUploadSubject">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="English">English</option>
+            <option value="General">General</option>
+          </select>
+        </div>
         <h3 id="uploadCardTitle">📄 Add a file or photo</h3>
         <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, PDF, TXT.</p>
         <input type="file" id="fileInput" accept=".pdf,.txt,.jpg,.jpeg,.png,.webp,image/*,application/pdf,text/plain">
@@ -531,22 +410,20 @@ window.MathJax = {
 
   <section id="screen-result" class="screen">
     <div class="wrap">
-      <header class="appbar"><button type="button" class="icon-btn" id="btnResultHome">←</button><div class="appbar-title">Scorecard</div><div style="width:44px"></div></header>
+      <header class="appbar"><button type="button" class="icon-btn" id="btnResultHome">←</button><div class="appbar-title" id="resultTitle">Scorecard</div><div style="width:44px"></div></header>
       <div id="resultBody"></div>
     </div>
   </section>
-
-</div> <!-- End Main App -->
+</div>
 
 <div id="loader" class="overlay hidden"><div class="spinner"></div><div id="loaderText">Working…</div><div id="loaderSub"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script type="module">
-// 1. IMPORT FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBI5-BN0V5SNOLUCNzZ8ffC8y-mf_6sYqs",
@@ -563,18 +440,18 @@ const db = getFirestore(app);
 
 let currentUser = null;
 let currentUserData = null;
-let testType = 'self'; 
-let tempEmail = null;
-let tempRole = null;
-let tempCode = null;
-let tempName = null;
+let testType = 'self';
+let tempEmail = null, tempRole = null, tempName = null;
 let isStudentPreview = false;
-
-// Global State for Assigned Tests Cache
 let cachedAssignedTests = [];
 let cachedStudentResults = [];
+let cachedWeakTopics = {};
+let currentTab = 'pending';
 
-// --- HELPER: Format Date ---
+// -------- HELPERS --------
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtTime(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function formatDate(ts) {
     if (!ts) return 'Just now';
     try {
@@ -582,498 +459,409 @@ function formatDate(ts) {
         return new Date(ts).toLocaleString();
     } catch(e) { return 'N/A'; }
 }
+function normalizeSubject(s) {
+    if (!s) return 'General';
+    const sl = String(s).toLowerCase();
+    if (sl.includes('phys')) return 'Physics';
+    if (sl.includes('chem')) return 'Chemistry';
+    if (sl.includes('bio')) return 'Biology';
+    if (sl.includes('math')) return 'Mathematics';
+    if (sl.includes('eng')) return 'English';
+    return 'General';
+}
+function subjectIcon(s) {
+    switch(s) {
+        case 'Physics': return '⚛️';
+        case 'Chemistry': return '🧪';
+        case 'Biology': return '🧬';
+        case 'Mathematics': return '📐';
+        case 'English': return '📖';
+        default: return '📚';
+    }
+}
+function subjectColor(s) {
+    switch(s) {
+        case 'Physics': return '#3b82f6';
+        case 'Chemistry': return '#f59e0b';
+        case 'Biology': return '#22c55e';
+        case 'Mathematics': return '#a855f7';
+        case 'English': return '#ec4899';
+        default: return '#6366f1';
+    }
+}
+function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('active');var el=$(id);if(el)el.classList.add('active');window.scrollTo(0,0);document.body.classList.toggle('no-scroll',id==='screen-test')}
+function renderMath(el){if(!el) return;if(window.MathJax && MathJax.typesetPromise){try{ if(MathJax.typesetClear) MathJax.typesetClear([el]); MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}} else { setTimeout(function(){ renderMath(el); }, 350); }}
+function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
+function hideLoader(){$('loader').classList.add('hidden')}
+function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p style="margin:12px 0;line-height:1.5;color:var(--muted)">'+esc(opts.message||'')+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.text;btn.onclick=function(){document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);document.body.appendChild(ov)})}
 
-// --- GOOGLE LOGIN FLOW ---
-document.getElementById('btnGoogleLogin').addEventListener('click', async () => {
-  const name = document.getElementById('authName').value.trim();
-  const role = document.getElementById('authRole').value;
-  const errDiv = document.getElementById('authError1');
-  
+// -------- AUTH --------
+$('btnGoogleLogin').addEventListener('click', async () => {
+  const name = $('authName').value.trim();
+  const role = $('authRole').value;
+  const errDiv = $('authError1');
   errDiv.textContent = '';
   if(!name) { errDiv.textContent = "Please enter your name first."; return; }
-
-  tempName = name;
-  tempRole = role;
-
+  tempName = name; tempRole = role;
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
     tempEmail = user.email;
-    
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      // User exists -> Auto-login handled by listener
-    } else {
-      document.getElementById('displayEmail').textContent = tempEmail;
-      document.getElementById('authStep1').classList.add('hidden');
-      document.getElementById('authStep2').classList.remove('hidden');
+    const docSnap = await getDoc(doc(db, "users", user.uid));
+    if (!docSnap.exists()) {
+      $('displayEmail').textContent = tempEmail;
+      $('authStep1').classList.add('hidden');
+      $('authStep2').classList.remove('hidden');
     }
   } catch (error) {
-    errDiv.textContent = "Google Login Failed. Try again or use manual login.";
+    errDiv.textContent = "Google Login Failed. Try again.";
     console.error(error);
   }
 });
 
-document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
+$('btnBackToStep1').addEventListener('click', (e) => {
   e.preventDefault();
-  document.getElementById('authStep2').classList.add('hidden');
-  document.getElementById('authStep1').classList.remove('hidden');
-  document.getElementById('authError2').textContent = '';
+  $('authStep2').classList.add('hidden');
+  $('authStep1').classList.remove('hidden');
+  $('authError2').textContent = '';
 });
 
-// Verify Code Logic
-document.getElementById('btnVerifyCode').addEventListener('click', async () => {
-  const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
-  const errDiv = document.getElementById('authError2');
-  
+$('btnVerifyCode').addEventListener('click', async () => {
+  const code = $('authAccessCode').value.trim().toUpperCase();
+  const errDiv = $('authError2');
   errDiv.textContent = '';
   if(!code) { errDiv.textContent = "Please enter access code."; return; }
-
-  const btn = document.getElementById('btnVerifyCode');
-  btn.disabled = true;
-  btn.textContent = 'Verifying...';
-
+  const btn = $('btnVerifyCode');
+  btn.disabled = true; btn.textContent = 'Verifying...';
   try {
-    const docRef = doc(db, "access_codes", code);
-    const docSnap = await getDoc(docRef);
-
+    const docSnap = await getDoc(doc(db, "access_codes", code));
     if (!docSnap.exists()) throw new Error("Invalid Access Code.");
-    
-    const codeData = docSnap.data();
-    
     let firestoreRole = '';
-    if (code.startsWith('ATT')) {
-        firestoreRole = 'teacher';
-    } else if (code.startsWith('ATS')) {
-        firestoreRole = 'student';
-    } else {
-        throw new Error("Invalid Code Format. Code must start with ATT or ATS.");
-    }
-
-    if (firestoreRole !== tempRole) {
-       throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
-    }
-
+    if (code.startsWith('ATT')) firestoreRole = 'teacher';
+    else if (code.startsWith('ATS')) firestoreRole = 'student';
+    else throw new Error("Invalid Code Format.");
+    if (firestoreRole !== tempRole) throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
     const user = auth.currentUser;
-    if (!user) throw new Error("Session expired. Please login with Google again.");
-
-    // Save Data
+    if (!user) throw new Error("Session expired. Please login again.");
     await setDoc(doc(db, "users", user.uid), {
-      name: tempName,
-      email: tempEmail,
-      role: firestoreRole,
-      lastLogin: serverTimestamp()
+      name: tempName, email: tempEmail, role: firestoreRole, lastLogin: serverTimestamp()
     }, { merge: true });
-
-    await updateDoc(doc(db, "access_codes", code), {
-        used: true,
-        usedByEmail: tempEmail
-    });
-
-    // Immediately load dashboard
-    const updatedDocSnap = await getDoc(doc(db, "users", user.uid));
-    if (updatedDocSnap.exists()) {
-        currentUserData = updatedDocSnap.data();
-        document.getElementById('userNameDisplay').textContent = currentUserData.name;
-        isStudentPreview = false;
-        loadDashboards();
-        
-        document.getElementById('screen-auth').classList.remove('active');
-        document.getElementById('mainApp').classList.remove('hidden');
-        renderHome();
+    await updateDoc(doc(db, "access_codes", code), { used: true, usedByEmail: tempEmail });
+    const updatedDoc = await getDoc(doc(db, "users", user.uid));
+    if (updatedDoc.exists()) {
+      currentUserData = updatedDoc.data();
+      $('userNameDisplay').textContent = currentUserData.name;
+      isStudentPreview = false;
+      loadDashboards();
+      $('screen-auth').classList.remove('active');
+      $('mainApp').classList.remove('hidden');
     }
-
   } catch (err) {
     errDiv.textContent = err.message;
-    btn.disabled = false;
-    btn.textContent = 'Verify & Login';
+    btn.disabled = false; btn.textContent = 'Verify & Login';
   }
 });
 
-document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
+$('btnLogout').addEventListener('click', () => { signOut(auth); });
 
-// --- Dashboard Switching Logic ---
-function loadDashboards() {
-    if (!currentUserData) return;
-    
-    document.getElementById('studentDashboard').classList.add('hidden');
-    document.getElementById('teacherDashboard').classList.add('hidden');
-    document.getElementById('previewBanner').classList.add('hidden');
-    
-    // Reset folders closed
-    document.getElementById('viewAssignments').style.display = 'none';
-    document.getElementById('viewPractice').style.display = 'none';
-
-    if (currentUserData.role === 'student' || isStudentPreview) {
-        document.getElementById('studentDashboard').classList.remove('hidden');
-        if (currentUserData.role === 'teacher') {
-            document.getElementById('previewBanner').classList.remove('hidden');
-            document.getElementById('userRoleBadge').textContent = 'STUDENT (PREVIEW)';
-        } else {
-            document.getElementById('userRoleBadge').textContent = 'STUDENT';
-        }
-        initStudentFolders();
-    } else if (currentUserData.role === 'teacher') {
-        document.getElementById('teacherDashboard').classList.remove('hidden');
-        document.getElementById('userRoleBadge').textContent = 'TEACHER';
-        loadTeacherDashboard();
-    }
-}
-
-// --- AUTH STATE LISTENER (AUTO LOGIN) ---
+// -------- AUTH STATE --------
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        currentUser = user;
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-            currentUserData = docSnap.data();
-            document.getElementById('userNameDisplay').textContent = currentUserData.name;
-            
-            isStudentPreview = false;
-            loadDashboards();
-            
-            document.getElementById('screen-auth').classList.remove('active');
-            document.getElementById('mainApp').classList.remove('hidden');
-            renderHome();
-        } else {
-            if (!tempEmail) tempEmail = user.email;
-            document.getElementById('displayEmail').textContent = tempEmail;
-            document.getElementById('authStep1').classList.add('hidden');
-            document.getElementById('authStep2').classList.remove('hidden');
-        }
+  if (user) {
+    currentUser = user;
+    const docSnap = await getDoc(doc(db, "users", user.uid));
+    if (docSnap.exists()) {
+      currentUserData = docSnap.data();
+      cachedWeakTopics = currentUserData.weakTopics || {};
+      $('userNameDisplay').textContent = currentUserData.name;
+      isStudentPreview = false;
+      loadDashboards();
+      $('screen-auth').classList.remove('active');
+      $('mainApp').classList.remove('hidden');
     } else {
-        currentUser = null; currentUserData = null;
-        document.getElementById('mainApp').classList.add('hidden');
-        document.getElementById('screen-auth').classList.add('active');
-        
-        document.getElementById('authStep1').classList.remove('hidden');
-        document.getElementById('authStep2').classList.add('hidden');
-        document.getElementById('authAccessCode').value = '';
-        document.getElementById('authName').value = '';
-        document.getElementById('btnVerifyCode').disabled = false;
-        document.getElementById('btnVerifyCode').textContent = 'Verify & Login';
-        document.getElementById('authError1').textContent = '';
-        document.getElementById('authError2').textContent = '';
+      if (!tempEmail) tempEmail = user.email;
+      $('displayEmail').textContent = tempEmail;
+      $('authStep1').classList.add('hidden');
+      $('authStep2').classList.remove('hidden');
     }
+  } else {
+    currentUser = null; currentUserData = null; cachedWeakTopics = {};
+    $('mainApp').classList.add('hidden');
+    $('screen-auth').classList.add('active');
+    $('authStep1').classList.remove('hidden');
+    $('authStep2').classList.add('hidden');
+    $('authAccessCode').value = '';
+    $('authName').value = '';
+    $('btnVerifyCode').disabled = false;
+    $('btnVerifyCode').textContent = 'Verify & Login';
+    $('authError1').textContent = '';
+    $('authError2').textContent = '';
+  }
 });
 
-// 3. DASHBOARD LOADERS & LOGIC
+// -------- DASHBOARD SWITCH --------
+function loadDashboards() {
+  if (!currentUserData) return;
+  $('studentDashboard').classList.add('hidden');
+  $('teacherDashboard').classList.add('hidden');
+  $('previewBanner').classList.add('hidden');
+  // Reset folder states
+  $('viewAssignments').classList.remove('open');
+  $('viewPractice').classList.remove('open');
+  $('folderAssignments').classList.remove('open');
+  $('folderPractice').classList.remove('open');
 
-// Toggle Folder Visibility
-window.toggleFolder = function(folderName) {
-    const viewId = folderName === 'assignments' ? 'viewAssignments' : 'viewPractice';
-    const el = document.getElementById(viewId);
-    if(el.style.display === 'block') {
-        el.style.display = 'none';
+  if (currentUserData.role === 'student' || isStudentPreview) {
+    $('studentDashboard').classList.remove('hidden');
+    if (currentUserData.role === 'teacher') {
+      $('previewBanner').classList.remove('hidden');
+      $('userRoleBadge').textContent = 'STUDENT (PREVIEW)';
     } else {
-        el.style.display = 'block';
-        // Refresh data when opening
-        if(folderName === 'assignments') refreshAssignmentsView();
-        if(folderName === 'practice') refreshPracticeView();
+      $('userRoleBadge').textContent = 'STUDENT';
     }
-};
-
-window.switchTab = function(tabName) {
-    const pendingEl = document.getElementById('listPending');
-    const completedEl = document.getElementById('listCompleted');
-    const tabs = document.querySelectorAll('.tab-btn');
-    
-    tabs.forEach(t => t.classList.remove('active'));
-    
-    if(tabName === 'pending') {
-        pendingEl.style.display = 'block';
-        completedEl.style.display = 'none';
-        tabs[0].classList.add('active');
-    } else {
-        pendingEl.style.display = 'none';
-        completedEl.style.display = 'block';
-        tabs[1].classList.add('active');
-    }
-};
-
-async function initStudentFolders() {
-    // Initial Load
-    await fetchAndProcessStudentData();
-    refreshAssignmentsView();
-    refreshPracticeView();
+    initStudentDashboard();
+  } else if (currentUserData.role === 'teacher') {
+    $('teacherDashboard').classList.remove('hidden');
+    $('userRoleBadge').textContent = 'TEACHER';
+    loadTeacherDashboard();
+  }
 }
 
-async function fetchAndProcessStudentData() {
-    if(!currentUser) return;
+// -------- FOLDER TOGGLE --------
+window.toggleFolder = function(name) {
+  const card = name === 'assignments' ? $('folderAssignments') : $('folderPractice');
+  const view = name === 'assignments' ? $('viewAssignments') : $('viewPractice');
+  const isOpen = view.classList.contains('open');
+  if (isOpen) {
+    view.classList.remove('open');
+    card.classList.remove('open');
+  } else {
+    view.classList.add('open');
+    card.classList.add('open');
+    if (name === 'assignments') refreshAssignmentsView();
+    if (name === 'practice') refreshPracticeView();
+  }
+};
 
-    showLoader('Syncing Data...', '');
-    try {
-        // 1. Fetch Assigned Tests
-        const qTests = query(collection(db, "tests"), where("assignedTo", "==", "all"));
-        const snapTests = await getDocs(qTests);
-        cachedAssignedTests = [];
-        snapTests.forEach(doc => cachedAssignedTests.push({ id: doc.id, ...doc.data() }));
-        
-        // Sort newest first
-        cachedAssignedTests.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+window.switchTab = function(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  $('listPending').style.display = tab === 'pending' ? 'block' : 'none';
+  $('listCompleted').style.display = tab === 'completed' ? 'block' : 'none';
+};
 
-        // 2. Fetch Student Results
-        const qRes = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
-        const snapRes = await getDocs(qRes);
-        cachedStudentResults = [];
-        snapRes.forEach(doc => cachedStudentResults.push({ id: doc.id, ...doc.data() }));
-        
-        hideLoader();
-    } catch(e) {
-        console.error(e);
-        hideLoader();
-        dialog({title:'Error', message:'Failed to sync data.'});
-    }
+// -------- STUDENT DASHBOARD --------
+async function initStudentDashboard() {
+  renderResumeBanner();
+  await fetchStudentData();
+  refreshAssignmentsView();
+  refreshPracticeView();
+}
+
+function renderResumeBanner(){
+  var active = LS.get(K.ACTIVE, null);
+  var banner = $('resumeBanner');
+  if(!banner) return;
+  if(active && active.questions && active.questions.length > 0){
+    banner.innerHTML = '<div class="card" style="border-color:var(--accent);margin-bottom:16px;"><div style="font-weight:700;color:var(--accent);margin-bottom:6px;">⚠️ Test in progress</div><div class="muted small" style="margin-bottom:12px;">Unfinished: <b>'+esc(active.name)+'</b></div><div style="display:flex;gap:8px;"><button class="btn small primary" id="btnResumeTest">▶ Resume</button><button class="btn small danger" id="btnDiscardTest">Discard</button></div></div>';
+    $('btnResumeTest').onclick=function(){ T = active; startTime = Date.now() - (T.elapsed * 1000); showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette(); };
+    $('btnDiscardTest').onclick=function(){ LS.del(K.ACTIVE); renderResumeBanner(); };
+  } else { banner.innerHTML=''; }
+}
+
+async function fetchStudentData() {
+  if(!currentUser) return;
+  showLoader('Syncing data...', '');
+  try {
+    // Assigned tests
+    const testsSnap = await getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all")));
+    cachedAssignedTests = [];
+    testsSnap.forEach(d => cachedAssignedTests.push({ id: d.id, ...d.data() }));
+    cachedAssignedTests.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+    // Student results
+    const resultsSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
+    cachedStudentResults = [];
+    resultsSnap.forEach(d => cachedStudentResults.push({ id: d.id, ...d.data() }));
+
+    // Weak topics from user doc (source of truth)
+    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+    cachedWeakTopics = userDoc.data()?.weakTopics || {};
+
+    hideLoader();
+  } catch(e) {
+    console.error(e);
+    hideLoader();
+  }
 }
 
 function refreshAssignmentsView() {
-    const dot = document.getElementById('assignDot');
-    const listPending = document.getElementById('listPending');
-    const listCompleted = document.getElementById('listCompleted');
-    const cntPend = document.getElementById('countPending');
-    const cntComp = document.getElementById('countCompleted');
+  const resultMap = {};
+  cachedStudentResults.forEach(r => { if(r.testId) resultMap[r.testId] = r; });
 
-    // Map results to testIds
-    const resultMap = {};
-    cachedStudentResults.forEach(r => {
-        if(r.testId) resultMap[r.testId] = r;
-    });
+  let pendingCount = 0, completedCount = 0;
+  let htmlPending = '', htmlCompleted = '';
 
-    let pendingCount = 0;
-    let completedCount = 0;
-    let htmlPending = '';
-    let htmlCompleted = '';
+  cachedAssignedTests.forEach(test => {
+    const attempt = resultMap[test.id];
+    const subjectTag = test.subject ? `<span style="font-size:10px;background:${subjectColor(normalizeSubject(test.subject))};color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">${esc(test.subject)}</span>` : '';
+    const createdDate = formatDate(test.timestamp);
 
-    cachedAssignedTests.forEach(test => {
-        const attempt = resultMap[test.id];
-        const subjectTag = test.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${test.subject}</span>` : '';
-        const createdDate = formatDate(test.timestamp);
-
-        if(attempt) {
-            completedCount++;
-            const attDate = formatDate(attempt.timestamp);
-            htmlCompleted += `
-                <div class="bank-item" style="opacity: 0.8;">
-                    <div style="font-weight:700; color:var(--muted)">
-                        ✅ ${test.name} ${subjectTag} 
-                    </div>
-                    <div class="muted small">${test.questions.length} questions • By ${test.teacherName}</div>
-                    <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-                    <div class="muted small" style="color:var(--green); margin-top:4px; font-weight:600;">
-                        🎯 Score: ${attempt.score} Marks | 📅 Attempted: ${attDate}
-                    </div>
-                    <button class="btn small" style="margin-top:8px;" onclick="showResultDetails('${attempt.id}')">View Review</button>
-                </div>`;
-        } else {
-            pendingCount++;
-            htmlPending += `
-                <div class="bank-item" style="border-color: var(--accent);">
-                    <div style="font-weight:700; font-size: 16px;">📄 ${test.name} ${subjectTag}</div>
-                    <div class="muted small">${test.questions.length} questions • By ${test.teacherName}</div>
-                    <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-                    <div class="btn-row" style="margin-top:8px;">
-                        <button class="btn primary" style="width:100%;" onclick="startAssignedTest('${test.id}')">▶ Start Test</button>
-                    </div>
-                </div>`;
-        }
-    });
-
-    // Update Counts
-    cntPend.innerText = pendingCount;
-    cntComp.innerText = completedCount;
-
-    // Show/Hide Dot
-    if(pendingCount > 0) {
-        dot.classList.remove('hidden');
-        dot.innerText = pendingCount;
+    if(attempt) {
+      completedCount++;
+      const attDate = formatDate(attempt.timestamp);
+      htmlCompleted += `
+        <div class="bank-item" style="opacity:0.85;">
+          <div style="font-weight:700;color:var(--muted)">✅ ${esc(test.name)} ${subjectTag}</div>
+          <div class="muted small">${test.questions.length} questions • By ${esc(test.teacherName)}</div>
+          <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
+          <div class="muted small" style="color:var(--green);margin-top:4px;font-weight:600;">🎯 Score: ${attempt.score} Marks | Accuracy: ${attempt.pct}% | ${attDate}</div>
+          <button class="btn small primary" style="margin-top:8px;" onclick="showReview('${attempt.id}')">👁️ View Review</button>
+        </div>`;
     } else {
-        dot.classList.add('hidden');
+      pendingCount++;
+      htmlPending += `
+        <div class="bank-item" style="border-color:var(--accent);">
+          <div style="font-weight:700;font-size:16px;">📄 ${esc(test.name)} ${subjectTag}</div>
+          <div class="muted small">${test.questions.length} questions • By ${esc(test.teacherName)}</div>
+          <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
+          <button class="btn primary" style="width:100%;margin-top:8px;" onclick="startAssignedTest('${test.id}')">▶ Start Test</button>
+        </div>`;
     }
+  });
 
-    // Render Lists
-    listPending.innerHTML = pendingCount > 0 ? htmlPending : '<p class="muted small">No pending tests. All caught up!</p>';
-    listCompleted.innerHTML = completedCount > 0 ? htmlCompleted : '<p class="muted small">No completed tests yet.</p>';
+  $('countPending').textContent = pendingCount;
+  $('countCompleted').textContent = completedCount;
+
+  const dot = $('assignDot');
+  if (pendingCount > 0) {
+    dot.classList.remove('hidden');
+    dot.textContent = pendingCount > 9 ? '9+' : pendingCount;
+  } else {
+    dot.classList.add('hidden');
+  }
+
+  $('listPending').innerHTML = pendingCount > 0 ? htmlPending : '<p class="muted small" style="text-align:center;padding:20px;">✨ No pending tests. You are all caught up!</p>';
+  $('listCompleted').innerHTML = completedCount > 0 ? htmlCompleted : '<p class="muted small" style="text-align:center;padding:20px;">No completed tests yet.</p>';
 }
 
 window.startAssignedTest = function(id) {
-    const t = cachedAssignedTests.find(x => x.id === id);
-    if(t) launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: id, teacherId: t.teacherId});
+  const t = cachedAssignedTests.find(x => x.id === id);
+  if(!t) return;
+  launchTest({
+    name: t.name, questions: t.questions, timerMode: 'timer',
+    timerMins: t.timeLimit || 15, type: 'assigned', testId: id,
+    teacherId: t.teacherId, subject: t.subject || 'General'
+  });
 };
 
-window.showResultDetails = function(resultId) {
-    // Find result in cache
-    const res = cachedStudentResults.find(r => r.id === resultId);
-    if(!res) return;
-    
-    // We need the original test questions to review. 
-    // Since we have them in cachedAssignedTests, find matching testId
-    const test = cachedAssignedTests.find(t => t.id === res.testId);
-    if(!test) {
-        dialog({title:'Info', message:'Original test data not found for review.'});
-        return;
-    }
-    
-    // Reconstruct T object for review screen logic reuse or just simple alert for now
-    // For better UX, we can redirect to a read-only review mode, but for simplicity:
-    dialog({
-        title: 'Review Summary',
-        message: `Test: ${test.name}\nScore: ${res.score}/${res.max}\nAccuracy: ${res.pct}%\n\nDetailed answer-by-answer review coming soon.`
-    });
+window.showReview = function(resultId) {
+  const result = cachedStudentResults.find(r => r.id === resultId);
+  if (!result) { dialog({title: 'Error', message: 'Result not found.'}); return; }
+  if (!result.questions || !result.answers) {
+    dialog({title: 'Review Not Available', message: 'Detailed review is only available for tests taken after this feature was added.'});
+    return;
+  }
+  renderReviewScreen(result);
 };
 
-async function refreshPracticeView() {
-    // 1. Render Local History Chart
-    renderHistoryChart();
-    
-    // 2. Calculate Weak Topics from LOCAL history (Self Practice)
-    calculateAndRenderWeakTopics();
+function refreshPracticeView() {
+  renderHistoryChart();
+  renderWeakTopics();
 }
 
-function calculateAndRenderWeakTopics() {
-    const container = document.getElementById('weakTopicsContainer');
-    const hist = LS.get(K.HISTORY, []);
-    
-    if(hist.length === 0) {
-        container.innerHTML = '<p class="muted small">Take some self-practice tests to analyze weaknesses.</p>';
-        return;
-    }
+function renderHistoryChart() {
+  var hist = LS.get(K.HISTORY, []);
+  var analysis = $('analysisWrap');
+  if (!analysis) return;
+  if(!hist.length){
+    analysis.innerHTML = '<div class="card"><p class="muted small" style="margin:0">Complete a test to see your performance chart here.</p></div>';
+    $('chartContainer').classList.add('hidden');
+    return;
+  }
+  var totalCorrect = 0, totalQs = 0;
+  hist.forEach(h => { totalCorrect += (h.correct || 0); totalQs += ((h.correct || 0) + (h.wrong || 0) + (h.skipped || 0)); });
+  var overallAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
+  analysis.innerHTML = '<div class="analysis-grid"><div class="analysis-stat"><div class="value">' + hist.length + '</div><div class="label">Tests Taken</div></div><div class="analysis-stat"><div class="value">' + overallAcc + '%</div><div class="label">Overall Accuracy</div></div></div>';
+  $('chartContainer').classList.remove('hidden');
+  var recentTests = hist.slice(0, 10).reverse();
+  var labels = recentTests.map((h, i) => h.date ? h.date.split(',')[0] : 'Test ' + (i+1));
+  var dataPts = recentTests.map(h => h.pct);
+  var ctx = $('progressChart').getContext('2d');
+  if(myChart) myChart.destroy();
+  myChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Score %', data: dataPts, borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.15)', borderWidth: 3, pointBackgroundColor: '#a855f7', pointBorderColor: '#fff', pointRadius: 4, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b95ad', font: { size: 11 } } }, x: { grid: { display: false }, ticks: { color: '#8b95ad', font: { size: 11 } } } } } });
+}
 
-    // Structure: { Subject: { Topic: { wrong: int, total: int } } }
-    let weaknessMap = {};
+function renderWeakTopics() {
+  const container = $('weakTopicsContainer');
+  if (!container) return;
+  const subjects = Object.keys(cachedWeakTopics).filter(s => Object.keys(cachedWeakTopics[s] || {}).length > 0);
 
-    hist.forEach(record => {
-        // Only consider Self Practice records that have topicStats
-        if(record.type !== 'assigned' && record.topicStats) {
-            Object.keys(record.topicStats).forEach(topicKey => {
-                const stats = record.topicStats[topicKey];
-                // Determine Subject based on topic string heuristic or stored metadata if available
-                // Assuming topic strings contain hints like "Physics...", "Bio..." or we map manually
-                // For robustness, let's assume the AI returns topics prefixed or grouped.
-                // If not, we'll group by generic "General" unless we parse the question source.
-                
-                // Heuristic: Check common keywords in topic names or store subject in record
-                // Let's check if record has 'subject' field added during generation
-                let subj = record.subject || 'General';
-                
-                // Normalize subject keys
-                if(subj.includes('Phys')) subj = 'Physics';
-                else if(subj.includes('Chem')) subj = 'Chemistry';
-                else if(subj.includes('Bio')) subj = 'Biology';
-                else if(subj.includes('Math')) subj = 'Mathematics';
-                else if(subj.includes('Eng')) subj = 'English';
-                else subj = 'Other';
+  if (subjects.length === 0) {
+    container.innerHTML = '<div class="card"><p class="muted small" style="margin:0;">🎉 Great! No weak topics identified yet. Take more tests to track your progress.</p></div>';
+    return;
+  }
 
-                if(!weaknessMap[subj]) weaknessMap[subj] = {};
-                if(!weaknessMap[subj][topicKey]) weaknessMap[subj][topicKey] = { wrong: 0, total: 0 };
-                
-                weaknessMap[subj][topicKey].wrong += (stats.total - stats.correct);
-                weaknessMap[subj][topicKey].total += stats.total;
-            });
-        }
+  // Order subjects consistently
+  const order = ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'General'];
+  subjects.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+  let html = '';
+  subjects.forEach(subject => {
+    const topics = Object.entries(cachedWeakTopics[subject] || {});
+    if (topics.length === 0) return;
+    topics.sort((a, b) => (a[1].pct || 0) - (b[1].pct || 0));
+
+    const color = subjectColor(subject);
+    html += `<div class="weak-topic-group" style="border-left-color:${color};">
+      <div class="weak-topic-header" style="color:${color};">
+        <span>${subjectIcon(subject)}</span><span>${esc(subject)}</span>
+        <span style="font-size:11px;background:${color};color:#fff;padding:2px 8px;border-radius:99px;margin-left:auto;">${topics.length} weak</span>
+      </div>
+      <div class="weak-chips">`;
+    topics.forEach(([topicName, data]) => {
+      const pct = data.pct != null ? data.pct : 0;
+      html += `<span class="weak-chip">⚠️ ${esc(topicName)} <b style="margin-left:4px;">${pct}%</b></span>`;
     });
-
-    let html = '';
-    let hasWeakness = false;
-
-    Object.keys(weaknessMap).forEach(subject => {
-        const topics = weaknessMap[subject];
-        let weakTopicsHtml = '';
-        
-        Object.keys(topics).forEach(topic => {
-            const data = topics[topic];
-            if(data.total > 0) {
-                const accuracy = Math.round(((data.total - data.wrong) / data.total) * 100);
-                // Consider weak if accuracy < 60% AND at least 2 attempts
-                if(accuracy < 60 && data.total >= 2) {
-                    hasWeakness = true;
-                    weakTopicsHtml += `<span class="weak-chip">${topic} (${accuracy}%)</span>`;
-                }
-            }
-        });
-
-        if(weakTopicsHtml) {
-            html += `
-                <div class="weak-topic-group">
-                    <div class="weak-topic-header">
-                        <span>${getSubjectIcon(subject)}</span> ${subject}
-                    </div>
-                    <div class="weak-chips">
-                        ${weakTopicsHtml}
-                    </div>
-                </div>
-            `;
-        }
-    });
-
-    if(hasWeakness) {
-        container.innerHTML = html;
-    } else {
-        container.innerHTML = '<p class="muted small">Great job! No major weak areas detected in your recent practice.</p>';
-    }
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
 }
 
-function getSubjectIcon(subj) {
-    switch(subj) {
-        case 'Physics': return '⚛️';
-        case 'Chemistry': return '🧪';
-        case 'Biology': return '🌿';
-        case 'Mathematics': return '➗';
-        case 'English': return '📖';
-        default: return '📚';
-    }
-}
-
+// -------- TEACHER DASHBOARD --------
 async function loadTeacherDashboard() {
-    const listDiv = document.getElementById('teacherResultsList');
-    listDiv.innerHTML = '<p class="muted small">Loading results...</p>';
-    
-    try {
-        // Fetch results for THIS teacher WITHOUT orderBy to avoid index error
-        const q = query(
-            collection(db, "results"), 
-            where("teacherId", "==", currentUser.uid)
-        );
-        const querySnapshot = await getDocs(q);
-        
-        let resultsList = [];
-        querySnapshot.forEach((docSnap) => {
-            resultsList.push(docSnap.data());
-        });
-
-        // Sort in JS by timestamp descending
-        resultsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-        if(resultsList.length === 0) {
-            listDiv.innerHTML = '<p class="muted small">No student results yet.</p>';
-            return;
-        }
-        
-        listDiv.innerHTML = '';
-        resultsList.forEach((r) => {
-            const attemptDate = formatDate(r.timestamp);
-            const d = document.createElement('div');
-            d.className = 'bank-item';
-            d.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-weight:700;">
-                    <span>${r.studentName}</span> 
-                    <span style="color:var(--green)">${r.score} Marks</span>
-                </div>
-                <div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>
-                <div class="muted small" style="margin-top:4px;">📅 Attempted: ${attemptDate}</div>`;
-            listDiv.appendChild(d);
-        });
-    } catch(e) {
-        console.error(e);
-        listDiv.innerHTML = '<p class="muted small">Error loading results.</p>';
+  const listDiv = $('teacherResultsList');
+  listDiv.innerHTML = '<p class="muted small">Loading results...</p>';
+  try {
+    const q = query(collection(db, "results"), where("teacherId", "==", currentUser.uid));
+    const querySnapshot = await getDocs(q);
+    let resultsList = [];
+    querySnapshot.forEach(docSnap => resultsList.push(docSnap.data()));
+    resultsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+    if (resultsList.length === 0) {
+      listDiv.innerHTML = '<p class="muted small">No student results yet.</p>';
+      return;
     }
+    listDiv.innerHTML = '';
+    resultsList.forEach(r => {
+      const d = document.createElement('div');
+      d.className = 'bank-item';
+      d.innerHTML = `
+        <div style="display:flex;justify-content:space-between;font-weight:700;">
+          <span>${esc(r.studentName)}</span>
+          <span style="color:var(--green)">${r.score} Marks</span>
+        </div>
+        <div class="muted small">${esc(r.testName)} • Accuracy: ${r.pct}%</div>
+        <div class="muted small" style="margin-top:4px;">📅 ${formatDate(r.timestamp)}</div>`;
+      listDiv.appendChild(d);
+    });
+  } catch(e) {
+    console.error(e);
+    listDiv.innerHTML = '<p class="muted small">Error loading results.</p>';
+  }
 }
 
-// 4. APP CORE LOGIC
+// -------- CONSTANTS --------
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
@@ -1084,15 +872,7 @@ var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JS
 var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
 var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
 
-function $(id){return document.getElementById(id)}
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function fmtTime(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
-function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('active');var el=$(id);if(el)el.classList.add('active');window.scrollTo(0,0);document.body.classList.toggle('no-scroll',id==='screen-test')}
-function renderMath(el){if(!el) return;if(window.MathJax && MathJax.typesetPromise){try{ if(MathJax.typesetClear) MathJax.typesetClear([el]); MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}} else { setTimeout(function(){ renderMath(el); }, 350); }}
-function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
-function hideLoader(){$('loader').classList.add('hidden')}
-function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p style="margin:12px 0;line-height:1.5;color:var(--muted)">'+esc(opts.message||'')+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.text;btn.onclick=function(){document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);document.body.appendChild(ov)})}
-
+// -------- AI HELPERS --------
 async function aiCall(message, context, opts) {
   opts = opts || {};
   var timeoutMs = opts.timeoutMs || 90000;
@@ -1107,12 +887,12 @@ async function aiCall(message, context, opts) {
     try {
       var res = await fetch('/api/ai-coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: ctrl.signal });
       clearTimeout(timer);
-      if (!res.ok) { var body = ''; try { body = await res.text(); } catch (e) {} var err = new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : '')); err.status = res.status; throw err; }
+      if (!res.ok) { var body = ''; try { body = await res.text(); } catch (e) {} throw new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : '')); }
       var data = await res.json(); var text = data && (data.message || data.text);
       if (!text) throw new Error('Empty AI response'); return String(text);
     } catch (e) {
       clearTimeout(timer); lastErr = e;
-      if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) { await new Promise(function(r) { setTimeout(r, 1000); }); continue; }
+      if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) { await new Promise(r => setTimeout(r, 1000)); continue; }
       throw e;
     }
   }
@@ -1125,111 +905,62 @@ function formatStatements(text) { if (!text) return ''; var formatted = text; fo
 function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1'); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; } if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) { var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, ''); if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str; str = str.replace(/\$/g, ''); } var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) { var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i); if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)'; return '\\(' + str + '\\)'; } return str; }
 function cleanOptionText(str) { if (!str) return ''; var s = String(str).trim(); s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, ''); return s.trim(); }
 
-// FIX: Added Deduplication Logic to prevent duplicate options
-function normaliseList(raw){ 
-    var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []); 
-    var out = []; 
-    for(var i=0; i<arr.length; i++){ 
-        var item = arr[i]; 
-        if(!item || typeof item !== 'object') continue; 
-        var q = item.q || item.question || item.text; 
-        var opts = item.options || item.opts || []; 
-        if(!q) continue; 
-        
-        // Deduplicate and clean options
-        var uniqueOpts = [];
-        var seen = new Set();
-        opts.forEach(function(o) {
-            var cleanO = cleanOptionText(o);
-            if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') {
-                seen.add(cleanO.toLowerCase());
-                uniqueOpts.push(cleanO);
-            }
-        });
-        
-        // If deduplication removed options, fill with placeholder
-        while(uniqueOpts.length < 4) {
-            uniqueOpts.push('None of the above');
-        }
-        opts = uniqueOpts.slice(0, 4); 
-        
-        var ans = Number(item.ans); 
-        if(isNaN(ans) || ans < 0 || ans > 3) ans = 0; 
-        
-        out.push({ 
-            q: autoWrapMath(formatStatements(q)), 
-            options: opts.map(function(o) { return autoWrapMath(o); }), 
-            ans: ans, 
-            topic: String(item.topic || 'General'), 
-            diff: String(item.diff || 'medium'), 
-            explain: String(item.explain || ''),
-            subject: String(item.subject || '') // Store subject for weak analysis
-        }); 
-    } 
-    return out; 
+function normaliseList(raw){
+  var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []);
+  var out = [];
+  for (var i = 0; i < arr.length; i++) {
+    var item = arr[i];
+    if (!item || typeof item !== 'object') continue;
+    var q = item.q || item.question || item.text;
+    var opts = item.options || item.opts || [];
+    if (!q) continue;
+    var uniqueOpts = [];
+    var seen = new Set();
+    opts.forEach(function(o) {
+      var cleanO = cleanOptionText(o);
+      if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') {
+        seen.add(cleanO.toLowerCase());
+        uniqueOpts.push(cleanO);
+      }
+    });
+    while (uniqueOpts.length < 4) uniqueOpts.push('None of the above');
+    opts = uniqueOpts.slice(0, 4);
+    var ans = Number(item.ans);
+    if (isNaN(ans) || ans < 0 || ans > 3) ans = 0;
+    out.push({
+      q: autoWrapMath(formatStatements(q)),
+      options: opts.map(o => autoWrapMath(o)),
+      ans: ans,
+      topic: String(item.topic || 'General'),
+      diff: String(item.diff || 'medium'),
+      explain: String(item.explain || '')
+    });
+  }
+  return out;
 }
 
 function compressImage(file, maxDim, quality){ maxDim = maxDim || 2500; quality = quality || 0.88; return new Promise(function(resolve, reject){ var reader = new FileReader(); reader.onload = function(e){ var img = new Image(); img.onload = function(){ var w = img.width, h = img.height; if(w > maxDim || h > maxDim){ if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; } else { w = Math.round((w * maxDim)/h); h = maxDim; } } var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); var dataUrl = canvas.toDataURL('image/jpeg', quality); canvas.width = 0; canvas.height = 0; resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' }); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
 async function extractPDFText(file, onProgress) { var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var pages = []; for (var i = 1; i <= pdf.numPages; i++) { var page = await pdf.getPage(i); var content = await page.getTextContent(); pages.push(content.items.map(function(it){ return it.str; }).join(' ')); if (onProgress) onProgress(i, pdf.numPages); } return { text: pages.join('\n\n'), pageCount: pdf.numPages }; }
 async function renderPDFPages(file, maxPages) { maxPages = maxPages || 30; var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var total = Math.min(pdf.numPages, maxPages); var images = []; for (var i = 1; i <= total; i++) { var page = await pdf.getPage(i); var viewport = page.getViewport({ scale: 2.0 }); var canvas = document.createElement('canvas'); canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height); await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise; var dataUrl = canvas.toDataURL('image/jpeg', 0.85); images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' }); canvas.width = 0; canvas.height = 0; } return { images: images, pageCount: pdf.numPages, renderedCount: total }; }
 
-var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'stopwatch',timerMins:15};
-var uploadMode='extract';
-var T=null,timerHandle=null;
-var startTime=0, totalDuration=0;
-var myChart=null;
-
-function renderHome(){
-  renderResumeBanner();
-  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
-      // Charts are rendered inside the folder view now
-  }
-}
-
-function renderHistoryChart() {
-  var hist=LS.get(K.HISTORY,[]);
-  var analysis=$('analysisWrap');
-  if(!hist.length){
-    analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="card"><p class="muted small" style="margin:0">Completed test scores will appear here.</p></div>';
-    $('chartContainer').classList.add('hidden'); return;
-  }
-  var totalCorrect=0, totalQs=0;
-  hist.forEach(function(h) { totalCorrect += (h.correct || 0); totalQs += ((h.correct || 0) + (h.wrong || 0) + (h.skipped || 0)); });
-  var overallAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
-  analysis.innerHTML='<h2 class="section-title">Your Dashboard</h2><div class="analysis-grid"><div class="analysis-stat"><div class="value">'+hist.length+'</div><div class="label">Tests taken</div></div><div class="analysis-stat"><div class="value">'+overallAcc+'%</div><div class="label">Overall Accuracy</div></div></div>';
-  $('chartContainer').classList.remove('hidden');
-  var recentTests = hist.slice(0, 10).reverse();
-  var labels = recentTests.map(function(h, i) { return h.date ? h.date.split(',')[0] : 'Test '+(i+1); });
-  var dataPts = recentTests.map(function(h) { return h.pct; });
-  var ctx = document.getElementById('progressChart').getContext('2d');
-  if(myChart) myChart.destroy();
-  myChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Score %', data: dataPts, borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.15)', borderWidth: 3, pointBackgroundColor: '#a855f7', pointBorderColor: '#fff', pointRadius: 4, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b95ad', font: { size: 11 } } }, x: { grid: { display: false }, ticks: { color: '#8b95ad', font: { size: 11 } } } } } });
-}
-
-function renderResumeBanner(){
-  var active = LS.get(K.ACTIVE, null);
-  var banner = $('resumeBanner');
-  if(active && active.questions && active.questions.length > 0){
-    banner.innerHTML = '<div class="card" style="border-color:var(--accent);margin-bottom:18px;"><div style="font-weight:700;color:var(--accent);margin-bottom:6px;">⚠️ Test in progress</div><div class="muted small" style="margin-bottom:12px;">Unfinished test: <b>'+esc(active.name)+'</b></div><div class="btn-row"><button class="btn small primary" id="btnResumeTest">▶ Resume Test</button><button class="btn small danger" id="btnDiscardTest">Discard</button></div></div>';
-    $('btnResumeTest').onclick=function(){ T = active; startTime = Date.now() - (T.elapsed * 1000); showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette(); };
-    $('btnDiscardTest').onclick=function(){ LS.del(K.ACTIVE); renderResumeBanner(); };
-  } else { banner.innerHTML=''; }
-}
+var state = {exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'stopwatch',timerMins:15};
+var uploadMode = 'extract';
+var T = null, timerHandle = null;
+var startTime = 0, totalDuration = 0;
+var myChart = null;
 
 function openSetup(){
-  state.subject=null; state.chapters=[]; state.count=10; state.timerMode='stopwatch';
+  state.subject = null; state.chapters = []; state.count = 10; state.timerMode = 'stopwatch';
   renderSubjects(); renderChips(); $('setupPanel').classList.add('hidden'); showScreen('screen-setup');
 }
-
 function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
 function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
 function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)})}
 function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}}
-
 function renderChips(){
-  var nc=$('numChips');nc.innerHTML='';[10,15,20,25,30].forEach(function(n){ var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n; b.onclick=function(){state.count=n; $('customNumInput').value=n; renderChips()};nc.appendChild(b) });
-  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){ var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d; b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b) });
-  var tc=$('timerChips');tc.innerHTML=''; [{k:'stopwatch',t:'⏱ Stopwatch'},{k:'timer',t:'⏳ Timer'}].forEach(function(tm){ var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t; b.onclick=function(){state.timerMode=tm.k; renderChips()};tc.appendChild(b) });
+  var nc=$('numChips');nc.innerHTML='';[10,15,20,25,30].forEach(function(n){var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;b.onclick=function(){state.count=n;$('customNumInput').value=n;renderChips()};nc.appendChild(b)});
+  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d;b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b)});
+  var tc=$('timerChips');tc.innerHTML='';[{k:'stopwatch',t:'⏱ Stopwatch'},{k:'timer',t:'⏳ Timer'}].forEach(function(tm){var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;b.onclick=function(){state.timerMode=tm.k;renderChips()};tc.appendChild(b)});
   if (state.timerMode === 'timer') { $('customTimerWrap').classList.remove('hidden'); } else { $('customTimerWrap').classList.add('hidden'); }
 }
 
@@ -1240,23 +971,18 @@ function startAITest(){
   var tInput = parseInt($('customTimerInput').value);
   if(tInput > 0 && tInput <= 180) state.timerMins = tInput;
   else state.timerMins = 15;
-
-  var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
-  
-  // FIX: Added random seed to force new questions
+  var chapters = state.chapters.length ? state.chapters : ['Full Syllabus'];
   var randomSeed = Math.floor(Math.random() * 999999);
-  var prompt='Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format. Include "subject" field in each question object.';
-  
+  var prompt = 'Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
   showLoader('AI is generating questions…','This might take a few seconds');
   aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai'}).then(function(res){
-    var list=normaliseList(safeParseJSON(res));
+    var list = normaliseList(safeParseJSON(res));
     hideLoader();
     if(!list.length) throw new Error('No questions generated');
-    
     if (currentUserData.role === 'teacher' && !isStudentPreview) {
-        saveTeacherTest(list, state.subject + ' Test', state.subject);
+      saveTeacherTest(list, state.subject + ' Test', state.subject);
     } else {
-        launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: state.subject});
+      launchTest({name:'CUET • '+state.subject, questions:list, timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: state.subject});
     }
   }).catch(function(err){
     hideLoader();
@@ -1265,57 +991,56 @@ function startAITest(){
 }
 
 async function saveTeacherTest(questions, testName, subjectName) {
-    showLoader('Saving test for students…', '');
-    try {
-        await addDoc(collection(db, "tests"), {
-            name: testName || 'New Test',
-            subject: subjectName || 'General',
-            questions: questions,
-            teacherName: currentUserData.name,
-            teacherId: currentUser.uid,
-            assignedTo: 'all',
-            timeLimit: state.timerMins || 15,
-            timestamp: serverTimestamp()
-        });
-        hideLoader();
-        dialog({title:'✅ Test Assigned', message:'Test saved successfully! Students can now see this test on their dashboard.'}).then(() => {
-            showScreen('screen-home');
-        });
-    } catch(e) {
-        hideLoader();
-        dialog({title:'Error', message: 'Could not save test: ' + e.message});
-    }
+  showLoader('Saving test for students…', '');
+  try {
+    await addDoc(collection(db, "tests"), {
+      name: testName || 'New Test',
+      subject: subjectName || 'General',
+      questions: questions,
+      teacherName: currentUserData.name,
+      teacherId: currentUser.uid,
+      assignedTo: 'all',
+      timeLimit: state.timerMins || 15,
+      timestamp: serverTimestamp()
+    });
+    hideLoader();
+    dialog({title:'✅ Test Assigned', message:'Test saved! Students can now see this test.'}).then(() => showScreen('screen-home'));
+  } catch(e) {
+    hideLoader();
+    dialog({title:'Error', message: 'Could not save test: ' + e.message});
+  }
 }
 
 function openUpload(mode){
-  uploadMode=mode;
+  uploadMode = mode;
   var config = { image: { title:'📷 Upload Photo', card:'📷 Add photo', hint:'JPG, PNG, WEBP — max 30 MB.', bank:'Image Banks' }, extract: { title:'📄 Upload PDF', card:'📄 Add PDF / TXT', hint:'PDF / TXT up to 500 MB.', bank:'PDF Banks' }, notes: { title:'📝 Upload Notes', card:'📝 Add notes', hint:'AI will GENERATE new MCQs from your notes.', bank:'Notes Banks' } }[mode];
-  $('uploadTitle').textContent = config.title; 
-  $('uploadCardTitle').textContent = config.card; 
-  $('uploadCardHint').textContent = config.hint; 
+  $('uploadTitle').textContent = config.title;
+  $('uploadCardTitle').textContent = config.card;
+  $('uploadCardHint').textContent = config.hint;
   $('bankListTitle').textContent = config.bank;
-  
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
-      document.getElementById('teacherUploadFields').classList.remove('hidden');
-      document.getElementById('uploadTestTitle').value = ''; 
+    $('teacherUploadFields').classList.remove('hidden');
+    $('studentSubjectField').classList.add('hidden');
+    $('uploadTestTitle').value = '';
   } else {
-      document.getElementById('teacherUploadFields').classList.add('hidden');
+    $('teacherUploadFields').classList.add('hidden');
+    $('studentSubjectField').classList.remove('hidden');
   }
-
   renderBanks(); showScreen('screen-upload');
 }
 
 function renderBanks(){
-  var host=$('bankList');
+  var host = $('bankList');
   IDB.all().then(function(banks){
     var filtered = banks.filter(function(b){ return (b.category || 'extract') === uploadMode; });
     if(!filtered.length){host.innerHTML='<p class="muted small">No banks yet.</p>';return}
-    host.innerHTML='';
+    host.innerHTML = '';
     filtered.forEach(function(b){
-      var d=document.createElement('div');d.className='bank-item';
-      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
-      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch', type: 'self'})};
-      d.querySelector('[data-act="del"]').onclick=function(){IDB.del(b.id).then(renderBanks)};
+      var d = document.createElement('div');
+      d.className = 'bank-item';
+      d.innerHTML = '<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions' + (b.subject ? ' • ' + esc(b.subject) : '') + '</div><div style="display:flex;gap:8px;"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
+      d.querySelector('[data-act="start"]').onclick = function(){ launchTest({name:b.name, questions:b.questions, timerMode:'stopwatch', type:'self', subject: b.subject || 'General'}); };
+      d.querySelector('[data-act="del"]').onclick = function(){ IDB.del(b.id).then(renderBanks); };
       host.appendChild(d);
     });
   });
@@ -1323,46 +1048,40 @@ function renderBanks(){
 
 async function handleFileUpload(file){
   if(!file) return;
-  
-  let customName = "";
-  let customSubject = "";
+  let customName = "", customSubject = "General";
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
-      customName = document.getElementById('uploadTestTitle').value.trim();
-      customSubject = document.getElementById('uploadTestSubject').value;
-      if(!customName) {
-          dialog({title: 'Missing Title', message: 'Please enter a test title before uploading.'});
-          return;
-      }
+    customName = $('uploadTestTitle').value.trim();
+    customSubject = $('uploadTestSubject').value;
+    if(!customName) { dialog({title: 'Missing Title', message: 'Please enter a test title.'}); return; }
+  } else {
+    customName = file.name;
+    customSubject = $('studentUploadSubject').value || 'General';
   }
-
-  var fname=(file.name||'').toLowerCase();
+  var fname = (file.name||'').toLowerCase();
   var isImage = (file.type && file.type.indexOf('image/')===0) || /\.(jpg|jpeg|png|webp|heic|heif|bmp|gif)$/i.test(fname);
   var isPDF = file.type === 'application/pdf' || fname.endsWith('.pdf');
   var isText = file.type === 'text/plain' || fname.endsWith('.txt');
   if(file.size > 500*1024*1024){ dialog({title:'File too large',message:'Max 500 MB allowed.'}); return; }
   if(isImage && file.size > 30*1024*1024){ dialog({title:'Image too large',message:'Max 30 MB allowed.'}); return; }
-
-  var progressWrap=$('uploadProgress'), progressBar=$('uploadProgressBar'), progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden'); progressBar.style.width='5%'; progressText.textContent='Reading file…';
-  var startTs=Date.now();
+  var progressWrap = $('uploadProgress'), progressBar = $('uploadProgressBar'), progressText = $('uploadProgressText');
+  progressWrap.classList.remove('hidden'); progressBar.style.width = '5%'; progressText.textContent = 'Reading file…';
+  var startTs = Date.now();
   try {
     var questions;
     if(isImage){ questions = await processImageFile(file, progressBar, progressText); }
     else if(isPDF){ questions = await processPDFFile(file, progressBar, progressText); }
     else if(isText){ questions = await processTextFile(file, progressBar, progressText); }
-    else { throw new Error('Unsupported file type.'); }
+    else throw new Error('Unsupported file type.');
     if(!questions || !questions.length) throw new Error('No valid questions found.');
-    
-    progressBar.style.width='100%'; progressText.textContent='Saving…';
-
+    progressBar.style.width = '100%'; progressText.textContent = 'Saving…';
     if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
-        saveTeacherTest(questions, customName, customSubject);
+      saveTeacherTest(questions, customName, customSubject);
     } else {
-        var bank={ id:'bank_'+Date.now(), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
-        await IDB.put(bank);
-        progressWrap.classList.add('hidden'); renderBanks();
-        var elapsed=((Date.now()-startTs)/1000).toFixed(1);
-        dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self'}); });
+      var bank = { id:'bank_'+Date.now(), name:customName, category:uploadMode, questions:questions, subject:customSubject, created:Date.now() };
+      await IDB.put(bank);
+      progressWrap.classList.add('hidden'); renderBanks();
+      var elapsed = ((Date.now()-startTs)/1000).toFixed(1);
+      dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type:'self', subject:customSubject}); });
     }
   } catch(err){ progressWrap.classList.add('hidden'); dialog({title:'Upload failed',message:(err.message||'Unknown error')}); }
 }
@@ -1372,7 +1091,7 @@ async function processImageFile(file, bar, text){
   var img = await compressImage(file, 2500, 0.88);
   bar.style.width='40%'; text.textContent='AI is reading…';
   var mode = uploadMode==='notes' ? 'notes' : 'image-extract';
-  var raw = await aiCall('Extract every single question from this photo. Raw JSON array only. Include "subject" field.', {source:'ambition-cuet-cbt', mode: mode, image: img}, {timeoutMs: 90000});
+  var raw = await aiCall('Extract every single question from this photo. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode, image: img}, {timeoutMs: 90000});
   bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
 }
 
@@ -1381,14 +1100,14 @@ async function processTextFile(file, bar, text){
   var content = await file.text(); if(!content.trim()) throw new Error('Empty file.');
   bar.style.width='40%'; text.textContent='AI is extracting…';
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000) + '\nInclude "subject" field in output.', {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000});
+  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000), {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000});
   bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
 }
 
 async function processPDFFile(file, bar, text){
   bar.style.width='10%'; text.textContent='Loading PDF…';
   var extracted;
-  try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); } 
+  try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); }
   catch(e) { extracted = { text: '', pageCount: 0 }; }
   var textLen = (extracted.text || '').trim().length;
   if(textLen > 500){
@@ -1397,7 +1116,7 @@ async function processPDFFile(file, bar, text){
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
       bar.style.width = (30 + (b/chunks.length)*60) + '%'; text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions…';
-      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk + '\nInclude "subject" field.', {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000, retries: 1}).catch(function(e){ return ''; }); }));
+      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk, {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000, retries: 1}).catch(function(){ return ''; }); }));
       results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){} } });
     }
     return collected;
@@ -1406,16 +1125,16 @@ async function processPDFFile(file, bar, text){
   var rendered = await renderPDFPages(file, 30);
   if(!rendered.images.length) throw new Error('Could not render PDF pages.');
   bar.style.width='40%'; text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
-  var collected = [];
+  var collected2 = [];
   for(var i=0; i<rendered.images.length; i++){
-    bar.style.width = (40 + (i/rendered.images.length)*50) + '%'; text.textContent = 'Page '+(i+1)+'/'+rendered.images.length+' — '+collected.length+' questions…';
+    bar.style.width = (40 + (i/rendered.images.length)*50) + '%'; text.textContent = 'Page '+(i+1)+'/'+rendered.images.length+' — '+collected2.length+' questions…';
     try {
       var mode2 = uploadMode==='notes' ? 'notes' : 'scanned-extract';
-      var raw = await aiCall('Extract every single question on this page. Raw JSON array only. Include "subject" field.', {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]}, {timeoutMs: 90000, retries: 1});
-      collected = collected.concat(normaliseList(safeParseJSON(raw)));
+      var raw = await aiCall('Extract every single question on this page. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]}, {timeoutMs: 90000, retries: 1});
+      collected2 = collected2.concat(normaliseList(safeParseJSON(raw)));
     } catch(e) {}
   }
-  return collected;
+  return collected2;
 }
 
 function chunkText(text, size){
@@ -1424,11 +1143,24 @@ function chunkText(text, size){
   return chunks;
 }
 
+// -------- TEST ENGINE --------
 function launchTest(cfg){
-  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}), testId: cfg.testId || null, teacherId: cfg.teacherId || null, subject: cfg.subject || 'General'};
+  T = {
+    name: cfg.name,
+    questions: cfg.questions,
+    cur: 0,
+    elapsed: 0,
+    timerMode: cfg.timerMode || 'stopwatch',
+    timerMins: cfg.timerMins || 15,
+    subject: cfg.subject || 'General',
+    answers: cfg.questions.map(function(){return null;}),
+    marked: cfg.questions.map(function(){return false;}),
+    testId: cfg.testId || null,
+    teacherId: cfg.teacherId || null
+  };
   testType = cfg.type || 'self';
   LS.set(K.ACTIVE, T);
-  $('testTitle').textContent=T.name;
+  $('testTitle').textContent = T.name;
   $('timerDisplay').style.color = 'var(--text)';
   startTime = Date.now(); totalDuration = T.timerMins * 60;
   showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette();
@@ -1436,237 +1168,303 @@ function launchTest(cfg){
 
 function startTimer(){
   if(timerHandle) clearInterval(timerHandle);
-  timerHandle=setInterval(function(){
+  timerHandle = setInterval(function(){
     if(!T) return;
-    var now = Date.now(); T.elapsed = Math.floor((now - startTime) / 1000);
+    T.elapsed = Math.floor((Date.now() - startTime) / 1000);
     if (T.timerMode === 'timer') {
       var remaining = totalDuration - T.elapsed;
-      if (remaining <= 0) { clearInterval(timerHandle); $('timerDisplay').textContent = '00:00'; dialog({title:'Time Up!',message:'Auto-submitting your test.'}).then(function(){ submitTest(); }); return; }
-      $('timerDisplay').textContent=fmtTime(remaining); $('timerDisplay').style.color = remaining < 60 ? 'var(--red)' : 'var(--text)';
-    } else { $('timerDisplay').textContent=fmtTime(T.elapsed); }
-  },1000);
+      if (remaining <= 0) {
+        clearInterval(timerHandle);
+        $('timerDisplay').textContent = '00:00';
+        dialog({title:'Time Up!',message:'Auto-submitting your test.'}).then(function(){ submitTest(); });
+        return;
+      }
+      $('timerDisplay').textContent = fmtTime(remaining);
+      $('timerDisplay').style.color = remaining < 60 ? 'var(--red)' : 'var(--text)';
+    } else {
+      $('timerDisplay').textContent = fmtTime(T.elapsed);
+    }
+  }, 1000);
 }
 
 function renderQuestion(){
   if(!T) return;
-  var q=T.questions[T.cur];
-  $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length; $('qTopic').textContent=q.topic; $('qDiff').textContent=q.diff;
-  $('qText').innerHTML=autoWrapMath(esc(q.q));
-  var box=$('optionsBox');box.innerHTML=''; var letters=['A','B','C','D'];
-  q.options.forEach(function(opt,i){
-    var b=document.createElement('button'); b.className='option'+(T.answers[T.cur]===i?' selected':'');
+  var q = T.questions[T.cur];
+  $('qCounter').textContent = 'Question ' + (T.cur+1) + ' of ' + T.questions.length;
+  $('qTopic').textContent = q.topic; $('qDiff').textContent = q.diff;
+  $('qText').innerHTML = autoWrapMath(esc(q.q));
+  var box = $('optionsBox'); box.innerHTML = ''; var letters = ['A','B','C','D'];
+  q.options.forEach(function(opt, i){
+    var b = document.createElement('button');
+    b.className = 'option' + (T.answers[T.cur] === i ? ' selected' : '');
     var formattedOpt = autoWrapMath(esc(cleanOptionText(opt)));
-    b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+formattedOpt+'</span>';
-    b.onclick=function(){T.answers[T.cur]=i; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette();};
+    b.innerHTML = '<span class="opt-key">' + letters[i] + '</span><span class="option-text">' + formattedOpt + '</span>';
+    b.onclick = function(){ T.answers[T.cur] = i; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); };
     box.appendChild(b);
   });
-  $('btnPrev').disabled=(T.cur===0); $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
+  $('btnPrev').disabled = (T.cur === 0);
+  $('btnNext').textContent = (T.cur === T.questions.length-1) ? 'Review & Submit' : 'Save & Next →';
   renderMath($('qText')); renderMath(box);
 }
 
 function renderPalette(){
   if(!T) return;
-  var grid=$('paletteGrid');grid.innerHTML='';
-  T.questions.forEach(function(_,i){
-    var cls='grey'; if(T.marked[i]) cls='purple'; else if(T.answers[i]!==null) cls='green';
-    var b=document.createElement('button'); b.className='pal-btn '+cls+(i===T.cur?' cur':''); b.textContent=i+1;
-    b.onclick=function(){T.cur=i;renderQuestion();renderPalette();$('palette').classList.remove('open')};
+  var grid = $('paletteGrid'); grid.innerHTML = '';
+  T.questions.forEach(function(_, i){
+    var cls = 'grey'; if(T.marked[i]) cls = 'purple'; else if(T.answers[i] !== null) cls = 'green';
+    var b = document.createElement('button');
+    b.className = 'pal-btn ' + cls + (i === T.cur ? ' cur' : '');
+    b.textContent = i+1;
+    b.onclick = function(){ T.cur = i; renderQuestion(); renderPalette(); $('palette').classList.remove('open'); };
     grid.appendChild(b);
   });
 }
 
-function goNext(){ if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); } else { dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest();}); } }
+function goNext(){ if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); } else { dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){ if(ok) submitTest(); }); } }
 function goPrev(){ if(T.cur > 0){ T.cur--; renderQuestion(); renderPalette(); } }
-function toggleMark(){ T.marked[T.cur]=!T.marked[T.cur]; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
-function clearAns(){ T.answers[T.cur]=null; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
+function toggleMark(){ T.marked[T.cur] = !T.marked[T.cur]; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
+function clearAns(){ T.answers[T.cur] = null; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
 
 async function submitTest(){
   if(timerHandle) clearInterval(timerHandle);
   LS.del(K.ACTIVE);
-  
   showLoader('Submitting Test...', 'Calculating your score');
 
-  var correct=0,wrong=0,skipped=0; var topicStats = {};
-  T.questions.forEach(function(q,i){
-    var topic = q.topic || 'General'; if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 }; topicStats[topic].total++;
-    if(T.answers[i]===null) { skipped++; return; }
-    if(T.answers[i]===q.ans) { correct++; topicStats[topic].correct++; } else { wrong++; }
+  var correct = 0, wrong = 0, skipped = 0;
+  var topicStats = {};
+  T.questions.forEach(function(q, i){
+    var topic = q.topic || 'General';
+    if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 };
+    topicStats[topic].total++;
+    if(T.answers[i] === null) { skipped++; return; }
+    if(T.answers[i] === q.ans) { correct++; topicStats[topic].correct++; }
+    else { wrong++; }
   });
-  var score=(correct*5)-(wrong*1); var max=T.questions.length*5; var pct=Math.max(0,Math.round((score/max)*100));
-  
-  var record={ name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats, type: testType, subject: T.subject };
-  var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
+  var score = (correct*5) - (wrong*1);
+  var max = T.questions.length * 5;
+  var pct = Math.max(0, Math.round((score/max)*100));
 
-  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
-      try {
-          await addDoc(collection(db, "results"), {
-              studentId: currentUser.uid,
-              studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
-              testName: T.name,
-              testId: T.testId,
-              teacherId: T.teacherId, 
-              type: testType,
-              score: score,
-              pct: pct,
-              correct: correct,
-              wrong: wrong,
-              timestamp: serverTimestamp()
-          });
-      } catch(e) { console.error("Error saving result:", e); }
+  var record = { name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats:topicStats, type:testType, subject:T.subject };
+  var hist = LS.get(K.HISTORY, []);
+  hist.unshift(record); LS.set(K.HISTORY, hist);
+
+  // Save to Firestore (student only, not preview)
+  let savedResultId = null;
+  if (currentUserData && currentUserData.role === 'student') {
+    try {
+      const resultRef = await addDoc(collection(db, "results"), {
+        studentId: currentUser.uid,
+        studentName: currentUserData.name,
+        testName: T.name,
+        testId: T.testId,
+        teacherId: T.teacherId,
+        type: testType,
+        subject: normalizeSubject(T.subject),
+        score: score, pct: pct,
+        correct: correct, wrong: wrong,
+        questions: T.questions,        // for review
+        answers: T.answers,            // for review
+        timestamp: serverTimestamp()
+      });
+      savedResultId = resultRef.id;
+    } catch(e) { console.error("Error saving result:", e); }
+
+    // Update weak topics in Firestore (grouped by subject, never mixed)
+    try {
+      const subject = normalizeSubject(T.subject);
+      const userRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      const existing = userDoc.data()?.weakTopics || {};
+      if (!existing[subject]) existing[subject] = {};
+
+      Object.keys(topicStats).forEach(topic => {
+        const stats = topicStats[topic];
+        const acc = Math.round((stats.correct / stats.total) * 100);
+        if (acc < 60) {
+          existing[subject][topic] = {
+            pct: acc,
+            correct: stats.correct,
+            total: stats.total,
+            lastDate: new Date().toISOString()
+          };
+        } else {
+          // Improved! Remove from weak list
+          delete existing[subject][topic];
+        }
+      });
+
+      // Clean empty subject groups
+      Object.keys(existing).forEach(subj => {
+        if (Object.keys(existing[subj]).length === 0) delete existing[subj];
+      });
+
+      await updateDoc(userRef, { weakTopics: existing });
+      cachedWeakTopics = existing;
+    } catch(e) { console.error("Weak topics update error:", e); }
   }
 
   hideLoader();
 
+  // Render scorecard
   var strongHtml = '', weakHtml = '';
   for (var t in topicStats) {
-    var stats = topicStats[t]; var acc = Math.round((stats.correct / stats.total) * 100);
+    var stats = topicStats[t];
+    var acc = Math.round((stats.correct / stats.total) * 100);
     if (acc >= 70) strongHtml += '<div style="color:var(--green);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>✅ '+esc(t)+'</span><b>'+acc+'%</b></div>';
     else if (acc < 50) weakHtml += '<div style="color:var(--red);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>⚠️ '+esc(t)+'</span><b>'+acc+'%</b></div>';
   }
-  
+
   var analysisHtml = '<div class="card" style="margin-top:16px; padding:16px;">';
   if(strongHtml || weakHtml) {
     analysisHtml += '<h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Topic Analysis</h3>';
-    if(strongHtml) analysisHtml += '<div style="margin-bottom:12px;"><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Strong Topics</div>'+strongHtml+'</div>';
-    if(weakHtml) analysisHtml += '<div><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Needs Improvement</div>'+weakHtml+'</div>';
-  } else { analysisHtml += '<p class="muted small" style="margin:0">Complete more questions to see analysis.</p>'; }
+    if(strongHtml) analysisHtml += '<div style="margin-bottom:12px;"><div style="font-weight:700;font-size:12px;margin-bottom:6px;">Strong Topics</div>'+strongHtml+'</div>';
+    if(weakHtml) analysisHtml += '<div><div style="font-weight:700;font-size:12px;margin-bottom:6px;">Needs Improvement</div>'+weakHtml+'</div>';
+  } else {
+    analysisHtml += '<p class="muted small" style="margin:0">Complete more questions to see analysis.</p>';
+  }
   analysisHtml += '</div>';
 
-  var reviewHtml = '<div style="margin-top:26px; display:none;" id="reviewSection"><h2 class="section-title" style="margin-top:0;">Review Answers & Explanations</h2>';
-  T.questions.forEach(function(q, i) {
-    var userAns = T.answers[i]; var isCorrect = (userAns === q.ans);
-    var statusColor = userAns === null ? 'var(--muted)' : (isCorrect ? 'var(--green)' : 'var(--red)');
-    reviewHtml += '<div class="review-item" style="border-left: 4px solid '+statusColor+';">';
-    reviewHtml += '<div class="review-q">Q'+(i+1)+'. ' + esc(q.q) + '</div>';
-    q.options.forEach(function(opt, optIdx) {
-        var isThisCorrect = (optIdx === q.ans); var isThisUser = (optIdx === userAns);
-        var optStyle = 'padding:6px 10px; border-radius:6px; margin-bottom:4px; font-size:13px;';
-        if (isThisCorrect) optStyle += 'background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); font-weight:600;';
-        else if (isThisUser) optStyle += 'background: rgba(239,68,68,0.15); border: 1px solid var(--red); color: var(--red);';
-        else optStyle += 'color: var(--muted);';
-        reviewHtml += '<div style="'+optStyle+'">' + String.fromCharCode(65 + optIdx) + ') ' + esc(opt) + '</div>';
-    });
-    if(q.explain) { reviewHtml += '<div class="review-exp"><b style="color:var(--accent);">Explanation:</b> ' + esc(q.explain) + '</div>'; }
-    reviewHtml += '</div>';
-  });
-  reviewHtml += '</div>';
+  var reviewHtml = renderReviewContent(T.questions, T.answers);
 
-  $('resultBody').innerHTML='<div class="scorecard">'+
-    '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
-    '<div class="scorecard-score">'+score+'</div>'+
-    '<div class="muted" style="margin:4px 0 16px">Out of '+max+' Marks ('+pct+'%)</div>'+
-    '<div class="scorecard-meta">'+
-    '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--green)">'+correct+'</div><div class="scr-meta-lbl">Correct (+'+(correct*5)+')</div></div>'+
-    '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">'+wrong+'</div><div class="scr-meta-lbl">Wrong (-'+wrong+')</div></div>'+
-    '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
-    '</div></div>'+
+  $('resultBody').innerHTML = '<div class="scorecard">' +
+    '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>' +
+    '<div class="scorecard-score">' + score + '</div>' +
+    '<div class="muted" style="margin:4px 0 16px">Out of ' + max + ' Marks (' + pct + '%)</div>' +
+    '<div class="scorecard-meta">' +
+      '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--green)">' + correct + '</div><div class="scr-meta-lbl">Correct (+' + (correct*5) + ')</div></div>' +
+      '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">' + wrong + '</div><div class="scr-meta-lbl">Wrong (-' + wrong + ')</div></div>' +
+      '<div class="scr-meta-item"><div class="scr-meta-val">' + fmtTime(T.elapsed) + '</div><div class="scr-meta-lbl">Time</div></div>' +
+    '</div></div>' +
     analysisHtml +
     '<button class="btn big" id="btnToggleReview" style="margin-top:20px; background:var(--card-2); border:1px solid var(--border); color:var(--text);">👁️ Review Answers & Explanations</button>' +
-    reviewHtml +
+    '<div id="reviewSection" style="display:none;margin-top:16px;">' + reviewHtml + '</div>' +
     '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
 
   $('btnToggleReview').onclick = function() {
     var rev = $('reviewSection');
-    if (rev.style.display === 'none') { rev.style.display = 'block'; this.textContent = '🙈 Hide Answers & Explanations'; renderMath(rev); } 
-    else { rev.style.display = 'none'; this.textContent = '👁️ Review Answers & Explanations'; }
-  };
-  
-  $('btnResHome').onclick=function(){
-    showScreen('screen-home');
-    // Reload student dashboards specifically
-    if (currentUserData.role === 'student' || isStudentPreview) {
-        initStudentFolders(); 
+    if (rev.style.display === 'none') {
+      rev.style.display = 'block';
+      this.textContent = '🙈 Hide Answers & Explanations';
+      renderMath(rev);
     } else {
-        loadTeacherDashboard();
+      rev.style.display = 'none';
+      this.textContent = '👁️ Review Answers & Explanations';
     }
   };
-  
-  showScreen('screen-result'); T = null;
-}
 
-// Fix for the crash: Use a safe function to attach events so missing IDs don't break the app
-function safeClick(id, fn) {
-  var el = document.getElementById(id);
-  if (el) el.onclick = fn;
-}
-
-function wireEvents(){
-  safeClick('btnBackHome', function(){showScreen('screen-home')});
-  safeClick('btnModeAI', openSetup);
-  safeClick('btnModeBook', function(){openUpload('extract')});
-  safeClick('btnModeNotes', function(){openUpload('notes')});
-  safeClick('btnModeImage', function(){openUpload('image')});
-  
-  safeClick('btnSetupBack', function(){showScreen('screen-home')});
-  safeClick('btnUploadBack', function(){showScreen('screen-home')});
-  
-  safeClick('btnFullSubject', function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); });
-  safeClick('btnClearChapters', function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); });
-  
-  var ci = $('customNumInput'); if(ci) ci.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 100) { state.count = v; renderChips(); } };
-  var ti = $('customTimerInput'); if(ti) ti.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 180) { state.timerMins = v; } };
-
-  safeClick('btnStartTest', startAITest);
-  var fi = $('fileInput'); if(fi) fi.onchange = function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
-  safeClick('btnPaletteToggle', function(){$('palette').classList.toggle('open')});
-  safeClick('btnNext', goNext); 
-  safeClick('btnPrev', goPrev); 
-  safeClick('btnMark', toggleMark); 
-  safeClick('btnClear', clearAns);
-  safeClick('btnSubmit', function(){dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})});
-  
-  safeClick('btnResultHome', function(){
+  $('btnResHome').onclick = function() {
     showScreen('screen-home');
-    renderHome();
-  });
+    if (currentUserData.role === 'student' || isStudentPreview) initStudentDashboard();
+    else loadTeacherDashboard();
+  };
 
-  // Student Dashboard Buttons (Inside Folder 2)
-  safeClick('btnSelfPracticeSmall', () => { openSetup(); });
-  safeClick('btnSelfBookSmall', () => { openUpload('extract'); });
-  safeClick('btnSelfNotesSmall', () => { openUpload('notes'); });
-  safeClick('btnSelfImageSmall', () => { openUpload('image'); });
-  
-  // Teacher Dashboard Buttons
-  safeClick('btnTeacherCreateTest', () => { openSetup(); });
-  safeClick('btnTeacherBook', () => { openUpload('extract'); });
-  safeClick('btnTeacherNotes', () => { openUpload('notes'); });
-  safeClick('btnTeacherImage', () => { openUpload('image'); });
-
-  // Preview Mode Buttons
-  safeClick('btnPreviewAsStudent', () => {
-      isStudentPreview = true;
-      loadDashboards();
-  });
-  safeClick('btnExitPreview', () => {
-      isStudentPreview = false;
-      loadDashboards();
-  });
-
-  // REFRESH BUTTON LOGIC
-  safeClick('btnRefreshDash', async () => {
-      var btn = document.getElementById('btnRefreshDash');
-      if(btn) btn.classList.add('spinning');
-      
-      try {
-          if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
-              await fetchAndProcessStudentData();
-              refreshAssignmentsView();
-              refreshPracticeView();
-          } else if (currentUserData && currentUserData.role === 'teacher') {
-              await loadTeacherDashboard();
-          }
-      } catch (e) {
-          console.error("Refresh error:", e);
-      } finally {
-          setTimeout(() => {
-              if(btn) btn.classList.remove('spinning');
-          }, 600);
-      }
-  });
+  showScreen('screen-result');
+  $('resultTitle').textContent = 'Scorecard';
+  T = null;
 }
 
-wireEvents();
+function renderReviewContent(questions, answers) {
+  var html = '';
+  questions.forEach(function(q, i) {
+    var userAns = answers[i];
+    var isCorrect = (userAns === q.ans);
+    var statusColor = userAns === null ? 'var(--muted)' : (isCorrect ? 'var(--green)' : 'var(--red)');
+    html += '<div class="review-item" style="border-left: 4px solid ' + statusColor + ';">';
+    html += '<div class="review-q">Q' + (i+1) + '. ' + esc(q.q) + '</div>';
+    q.options.forEach(function(opt, optIdx) {
+      var isThisCorrect = (optIdx === q.ans);
+      var isThisUser = (optIdx === userAns);
+      var optStyle = 'padding:6px 10px; border-radius:6px; margin-bottom:4px; font-size:13px;';
+      if (isThisCorrect) optStyle += 'background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); font-weight:600;';
+      else if (isThisUser) optStyle += 'background: rgba(239,68,68,0.15); border: 1px solid var(--red); color: var(--red);';
+      else optStyle += 'color: var(--muted);';
+      html += '<div style="' + optStyle + '">' + String.fromCharCode(65 + optIdx) + ') ' + esc(opt) + '</div>';
+    });
+    if (q.explain) {
+      html += '<div class="review-exp"><b style="color:var(--accent);">Explanation:</b> ' + esc(q.explain) + '</div>';
+    }
+    html += '</div>';
+  });
+  return html;
+}
+
+function renderReviewScreen(result) {
+  $('resultBody').innerHTML = '<div class="scorecard">' +
+    '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">' + esc(result.testName) + '</div>' +
+    '<div class="scorecard-score">' + result.score + '</div>' +
+    '<div class="muted" style="margin:4px 0 16px">Accuracy: ' + result.pct + '%</div>' +
+    '<div class="scorecard-meta">' +
+      '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--green)">' + result.correct + '</div><div class="scr-meta-lbl">Correct</div></div>' +
+      '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">' + result.wrong + '</div><div class="scr-meta-lbl">Wrong</div></div>' +
+      '<div class="scr-meta-item"><div class="scr-meta-val">' + formatDate(result.timestamp) + '</div><div class="scr-meta-lbl">Attempted</div></div>' +
+    '</div></div>' +
+    renderReviewContent(result.questions, result.answers) +
+    '<button class="btn primary big" id="btnReviewBack">← Back to Home</button>';
+  $('btnReviewBack').onclick = function(){ showScreen('screen-home'); };
+  showScreen('screen-result');
+  $('resultTitle').textContent = 'Review: ' + result.testName;
+  setTimeout(function(){ renderMath($('resultBody')); }, 100);
+}
+
+// -------- EVENT WIRING --------
+function safeClick(id, fn) { var el = $(id); if (el) el.onclick = fn; }
+
+safeClick('btnSetupBack', function(){ showScreen('screen-home'); });
+safeClick('btnUploadBack', function(){ showScreen('screen-home'); });
+safeClick('btnFullSubject', function(){ state.chapters = (EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){ i.classList.add('on'); }); });
+safeClick('btnClearChapters', function(){ state.chapters = []; document.querySelectorAll('.check-item').forEach(function(i){ i.classList.remove('on'); }); });
+safeClick('btnStartTest', startAITest);
+safeClick('btnPaletteToggle', function(){ $('palette').classList.toggle('open'); });
+safeClick('btnNext', goNext);
+safeClick('btnPrev', goPrev);
+safeClick('btnMark', toggleMark);
+safeClick('btnClear', clearAns);
+safeClick('btnSubmit', function(){ dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){ if(ok) submitTest(); }); });
+
+var ci = $('customNumInput'); if(ci) ci.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 100) { state.count = v; renderChips(); } };
+var ti = $('customTimerInput'); if(ti) ti.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 180) { state.timerMins = v; } };
+var fi = $('fileInput'); if(fi) fi.onchange = function(e){ if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value = ''; };
+
+safeClick('btnResultHome', function(){
+  showScreen('screen-home');
+  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) initStudentDashboard();
+  else if (currentUserData) loadTeacherDashboard();
+});
+
+// Quick action buttons in folder 2
+safeClick('btnQuickAITest', openSetup);
+safeClick('btnQuickPDF', function(){ openUpload('extract'); });
+safeClick('btnQuickNotes', function(){ openUpload('notes'); });
+safeClick('btnQuickPhoto', function(){ openUpload('image'); });
+
+// Teacher dashboard buttons
+safeClick('btnTeacherCreateTest', openSetup);
+safeClick('btnTeacherBook', function(){ openUpload('extract'); });
+safeClick('btnTeacherNotes', function(){ openUpload('notes'); });
+safeClick('btnTeacherImage', function(){ openUpload('image'); });
+
+// Preview mode
+safeClick('btnPreviewAsStudent', function(){ isStudentPreview = true; loadDashboards(); });
+safeClick('btnExitPreview', function(){ isStudentPreview = false; loadDashboards(); });
+
+// Refresh
+safeClick('btnRefreshDash', async function(){
+  var btn = $('btnRefreshDash');
+  if(btn) btn.classList.add('spinning');
+  try {
+    if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
+      await fetchStudentData();
+      refreshAssignmentsView();
+      refreshPracticeView();
+      renderResumeBanner();
+    } else if (currentUserData && currentUserData.role === 'teacher') {
+      await loadTeacherDashboard();
+    }
+  } catch(e) { console.error(e); }
+  finally { setTimeout(function(){ if(btn) btn.classList.remove('spinning'); }, 600); }
+});
+
 IDB.open().catch(function(){});
 </script>
 </body>
-  </html>
+    </html>
