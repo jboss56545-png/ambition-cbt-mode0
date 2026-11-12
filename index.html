@@ -11,7 +11,7 @@
 
 <link rel="manifest" href="/manifest.json" />
 <link rel="apple-touch-icon" href="https://ambition-cbt-v2.vercel.app/icon.png">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
@@ -50,46 +50,57 @@ a{color:var(--accent-2);text-decoration:none}
 .action-card:nth-child(4) { animation-delay: 0.2s; }
 
 /* FOLDER + NOTIFICATION */
-.folder-card { position: relative; min-height: 130px; }
-.notif-badge { position: absolute; top: 10px; right: 10px; background: var(--red); color: #fff; font-size: 11px; font-weight: 800; min-width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 0 7px; box-shadow: 0 0 0 3px var(--card); animation: pulseDot 2s infinite; z-index: 2;}
-@keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px var(--card); } 50% { box-shadow: 0 0 0 3px var(--card), 0 0 0 8px rgba(239,68,68,0.25); } }
+.folder-card { position: relative; min-height: 136px; }
+.notif-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 9px;
+  box-shadow: 0 0 0 3px var(--card);
+  animation: pulseDot 2s infinite;
+  z-index: 2;
+}
+.notif-dot-inline {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  display: inline-block;
+}
+@keyframes pulseDot {
+  0%, 100% { box-shadow: 0 0 0 3px var(--card); }
+  50% { box-shadow: 0 0 0 3px var(--card), 0 0 0 8px rgba(239,68,68,0.28); }
+}
 
-/* NEW TEACHER HEADER */
-.teacher-header-banner { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-.th-top { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-.th-back-btn { background: var(--bg-2); border: 1px solid var(--border); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s;}
-.th-back-btn:active { transform: scale(0.95); }
-.th-title-area { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; }
-.th-stats-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.stat-pill { background: var(--bg-2); border: 1px solid var(--border); border-radius: 99px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.stat-pill.pending { color: #fca5a5; border-color: rgba(239,68,68,0.3); }
-.stat-pill.pending .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; }
-.stat-pill.completed { color: #86efac; border-color: rgba(34,197,94,0.3); }
-.stat-pill.total { color: #cbd5e1; }
-
-/* WEAK TOPICS NEW UI */
-.filter-chips { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;}
-.f-chip { background: var(--card); border: 1px solid var(--border); border-radius: 99px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; transition: 0.2s; }
-.f-chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-color: transparent; }
-
-.weak-subject-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 14px; overflow: hidden; border-top-width: 4px; border-top-style: solid; }
-.ws-header { padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-.ws-title { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-.ws-subtitle { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: 6px;}
-.ws-badge { padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
-.ws-badge.strong { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-.ws-badge.weak { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-.ws-body { padding: 16px 18px; }
-.ws-empty-text { color: var(--muted); font-size: 13.5px; font-weight: 500; }
-.ws-topic-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
-.ws-topic-row:last-child { border-bottom: none; padding-bottom: 0;}
-.ws-topic-name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.ws-topic-pct { color: var(--red); font-weight: 800; background: rgba(239,68,68,0.1); padding: 2px 8px; border-radius: 6px; font-size: 12px;}
+.weak-practice-btn {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(99,102,241,.16);
+  border: 1px solid rgba(99,102,241,.4);
+  color: #c7d2fe;
+  font-size: 11.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: .15s;
+}
+.weak-practice-btn:hover { background: var(--accent); color: #fff; }
 
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
 .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff}
 .chip-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .check-list{display:grid;gap:8px;max-height:340px;overflow-y:auto;padding:4px}
 @media(min-width:700px){.check-list{grid-template-columns:1fr 1fr}}
 .check-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 13px;font-size:13.5px;cursor:pointer;transition:.14s;text-align:left;color:var(--text)}
@@ -162,15 +173,18 @@ mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
 .review-q { font-size: 14.5px; font-weight: 600; margin-bottom: 10px; white-space: pre-wrap; }
 .review-exp { font-size: 13px; margin-top: 8px; padding: 8px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--border); }
 
+/* VIP AUTH SCREEN STYLES */
 .vip-header { text-align: center; margin-bottom: 24px; }
 .vip-icon { width: 60px; height: 60px; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
 .vip-title { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
 .vip-sub { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
 .signed-in-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-2); border: 1px solid var(--green); padding: 8px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 16px; }
 
+/* PREVIEW BANNER */
 .preview-banner { background: var(--orange); color: #000; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
 .preview-banner button { background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; }
 
+/* SPINNING ANIMATION FOR REFRESH */
 .spinning { animation: spin 0.8s linear infinite; }
 </style>
 
@@ -207,7 +221,7 @@ window.MathJax = {
       </select>
 
       <button class="btn big google" id="btnGoogleLogin" style="margin-top:20px;">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width: 20px; margin-right: 8px;"> Continue with Google
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; margin-right: 8px;"> Continue with Google
       </button>
       <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
@@ -225,7 +239,7 @@ window.MathJax = {
       
       <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify &amp; Login</button>
       <div style="text-align:center; margin-top:16px;">
-        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">← Edit Details</a>
+        <button type="button" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">← Edit Details</button>
       </div>
       <div id="authError2" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
@@ -253,24 +267,25 @@ window.MathJax = {
 
       <div id="previewBanner" class="preview-banner hidden">
         <span>👀 Viewing as Student</span>
-        <button id="btnExitPreview">Return to Teacher</button>
+        <button type="button" id="btnExitPreview">Return to Teacher</button>
       </div>
 
+      <!-- ===== STUDENT DASHBOARD (2 FOLDERS) ===== -->
       <div id="studentDashboard" class="hidden">
         <div id="resumeBanner"></div>
         
         <h2 class="section-title" style="margin-top:0;">Study Folders</h2>
         <div class="animated-grid" style="grid-template-columns: repeat(2, 1fr);">
-          <button class="action-card folder-card" id="btnTeacherFolder">
+          <button type="button" class="action-card folder-card" id="btnTeacherFolder">
             <div style="font-size:34px">📚</div>
-            <div style="font-weight:700;font-size:15px;margin-top:4px;">Teacher Tests</div>
-            <div class="muted small">Questions uploaded by teacher</div>
-            <span class="notif-badge hidden" id="teacherPendingBadge">0</span>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Upload Question by Teacher</div>
+            <div class="muted small" id="teacherFolderStatusText">Questions uploaded by teacher</div>
+            <span class="notif-badge hidden" id="teacherPendingBadge"><span class="notif-dot-inline"></span><span id="teacherPendingCountText">0 Pending</span></span>
           </button>
-          <button class="action-card folder-card" id="btnSelfFolder">
+          <button type="button" class="action-card folder-card" id="btnSelfFolder">
             <div style="font-size:34px">🧪</div>
             <div style="font-weight:700;font-size:15px;margin-top:4px;">Your Question</div>
-            <div class="muted small">AI &amp; self practice</div>
+            <div class="muted small" id="selfFolderStatusText">AI &amp; self practice</div>
           </button>
         </div>
 
@@ -280,29 +295,30 @@ window.MathJax = {
           <div style="height: 220px; width: 100%; position: relative;"><canvas id="progressChart"></canvas></div>
         </div>
       </div>
+      <!-- ===== END STUDENT DASHBOARD ===== -->
 
       <div id="teacherDashboard" class="hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h2 class="section-title" style="margin:0;">Create Tests</h2>
-            <button class="btn small" id="btnPreviewAsStudent" style="font-size:11px; padding:6px 12px;">👁️ Preview as Student</button>
+            <button type="button" class="btn small" id="btnPreviewAsStudent" style="font-size:11px; padding:6px 12px;">👁️ Preview as Student</button>
         </div>
         <div class="animated-grid">
-          <button class="action-card" id="btnTeacherCreateTest">
+          <button type="button" class="action-card" id="btnTeacherCreateTest">
             <div style="font-size:28px">🧪</div>
             <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
             <div class="muted small">Generate custom test</div>
           </button>
-          <button class="action-card" id="btnTeacherBook">
+          <button type="button" class="action-card" id="btnTeacherBook">
             <div style="font-size:28px">📄</div>
             <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
             <div class="muted small">Extract from PDF</div>
           </button>
-          <button class="action-card" id="btnTeacherNotes">
+          <button type="button" class="action-card" id="btnTeacherNotes">
             <div style="font-size:28px">📝</div>
             <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
             <div class="muted small">AI generates MCQs</div>
           </button>
-          <button class="action-card" id="btnTeacherImage">
+          <button type="button" class="action-card" id="btnTeacherImage">
             <div style="font-size:28px">📷</div>
             <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
             <div class="muted small">Extract from image</div>
@@ -319,22 +335,22 @@ window.MathJax = {
     </div>
   </section>
 
-  <!-- ===== NEW SCREEN: TEACHER TESTS FOLDER ===== -->
+  <!-- ===== SCREEN: UPLOAD QUESTION BY TEACHER FOLDER ===== -->
   <section id="screen-teacher-tests" class="screen">
     <div class="wrap">
-      
-      <!-- NEW HEADER: Image 2 Style -->
-      <div class="teacher-header-banner" id="teacherHeaderBanner">
-         <!-- Will be filled dynamically -->
-      </div>
-
+      <header class="appbar">
+        <button type="button" class="icon-btn" id="btnTeacherTestsBack">←</button>
+        <div class="appbar-title">📚 Upload Question by Teacher</div>
+        <div style="width:44px"></div>
+      </header>
       <div id="teacherTestsContent">
         <p class="muted small">Loading...</p>
       </div>
     </div>
   </section>
+  <!-- ===== END TEACHER TESTS ===== -->
 
-  <!-- ===== NEW SCREEN: SELF PRACTICE FOLDER ===== -->
+  <!-- ===== SCREEN: YOUR QUESTION (SELF PRACTICE FOLDER) ===== -->
   <section id="screen-self-practice" class="screen">
     <div class="wrap">
       <header class="appbar">
@@ -344,34 +360,33 @@ window.MathJax = {
       </header>
       <h2 class="section-title" style="margin-top:0;">Self Practice</h2>
       <div class="animated-grid">
-        <button class="action-card" id="btnSelfPractice">
+        <button type="button" class="action-card" id="btnSelfPractice">
           <div style="font-size:28px">🧪</div>
           <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
           <div class="muted small">Generate custom test</div>
         </button>
-        <button class="action-card" id="btnSelfBook">
+        <button type="button" class="action-card" id="btnSelfBook">
           <div style="font-size:28px">📄</div>
           <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
           <div class="muted small">Extract from PDF</div>
         </button>
-        <button class="action-card" id="btnSelfNotes">
+        <button type="button" class="action-card" id="btnSelfNotes">
           <div style="font-size:28px">📝</div>
           <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
           <div class="muted small">AI generates MCQs</div>
         </button>
-        <button class="action-card" id="btnSelfImage">
+        <button type="button" class="action-card" id="btnSelfImage">
           <div style="font-size:28px">📷</div>
           <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
           <div class="muted small">Extract from image</div>
         </button>
       </div>
-      
-      <!-- Weak Topics in Self Practice -->
-      <div id="selfPracticeWeakTopics" style="margin-top:20px;">
-         <!-- Dynamic content -->
-      </div>
+
+      <!-- Pending / Saved Banks, Completed Self Tests & Subject-Wise Weak Topics -->
+      <div id="selfPracticeFolderContent" style="margin-top:22px;"></div>
     </div>
   </section>
+  <!-- ===== END SELF PRACTICE ===== -->
 
   <section id="screen-setup" class="screen">
     <div class="wrap">
@@ -394,12 +409,10 @@ window.MathJax = {
       <header class="appbar"><button type="button" class="icon-btn" id="btnUploadBack">←</button><div class="appbar-title" id="uploadTitle">Upload File</div><div style="width:44px"></div></header>
       
       <div class="card">
-        <div id="teacherTitleField" class="hidden" style="margin-bottom: 16px;">
+        <div id="teacherUploadFields" class="hidden" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
             <label class="small muted">Test Title</label>
             <input type="text" id="uploadTestTitle" placeholder="e.g. Biology Chapter 1">
-        </div>
-        <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-            <label class="small muted">Subject</label>
+            <label class="small muted" style="margin-top:8px; display:block;">Subject</label>
             <select id="uploadTestSubject">
                 <option value="Mathematics">Mathematics</option>
                 <option value="Physics">Physics</option>
@@ -457,9 +470,10 @@ window.MathJax = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script type="module">
+// 1. IMPORT FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBI5-BN0V5SNOLUCNzZ8ffC8y-mf_6sYqs",
@@ -481,7 +495,17 @@ let tempEmail = null;
 let tempRole = null;
 let tempName = null;
 let isStudentPreview = false;
-let weakFilter = 'all'; // 'all', 'pcb', 'pcm'
+let lastFolderScreen = 'screen-home';
+
+// CHAPTER LISTS
+var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
+var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
+var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
+var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Welfare","Biotechnology Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation"];
+
+var EXAM_DATA={ CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{"Mathematics (Class 12)":CH_MATH_12,"Physics (Class 12)":CH_PHY_12,"Chemistry (Class 12)":CH_CHEM_12,"Biology (Class 12)":CH_BIO_12,"English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],"General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]}}};
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history',WEAK:'cbt_weak_topics_v2'};
 
 // --- HELPER: Format Date ---
 function formatDate(ts) {
@@ -492,15 +516,130 @@ function formatDate(ts) {
     } catch(e) { return 'N/A'; }
 }
 
-function normalizeSubject(s) {
-    if (!s) return 'General';
-    const sl = String(s).toLowerCase();
-    if (sl.includes('physics')) return 'Physics';
-    if (sl.includes('chemistry')) return 'Chemistry';
-    if (sl.includes('biology')) return 'Biology';
+// --- HELPER: Smart Subject & Topic Detection (Strict PCB/PCM separation, never mixes Biology/Physics/Chemistry/Maths) ---
+function normalizeSubject(s, topicHint, qTextHint) {
+    const sl = String(s || '').toLowerCase();
+    const tl = String(topicHint || '').toLowerCase();
+    const ql = String(qTextHint || '').toLowerCase();
+
+    if (sl.includes('physics') || sl === 'phy') return 'Physics';
+    if (sl.includes('chemistry') || sl === 'chem') return 'Chemistry';
+    if (sl.includes('biology') || sl.includes('botany') || sl.includes('zoology') || sl === 'bio') return 'Biology';
     if (sl.includes('math')) return 'Mathematics';
     if (sl.includes('english')) return 'English';
+
+    // Check against NCERT Class 12 Chapter names
+    for (var i = 0; i < CH_PHY_12.length; i++) {
+        if (tl.includes(CH_PHY_12[i].toLowerCase())) return 'Physics';
+    }
+    for (var j = 0; j < CH_CHEM_12.length; j++) {
+        if (tl.includes(CH_CHEM_12[j].toLowerCase())) return 'Chemistry';
+    }
+    for (var k = 0; k < CH_BIO_12.length; k++) {
+        if (tl.includes(CH_BIO_12[k].toLowerCase())) return 'Biology';
+    }
+    for (var m = 0; m < CH_MATH_12.length; m++) {
+        if (tl.includes(CH_MATH_12[m].toLowerCase())) return 'Mathematics';
+    }
+
+    // Keyword detection from question/topic so even uploaded PDFs without subject dropdown stay separated into PCB / PCM
+    const combined = sl + ' ' + tl + ' ' + ql;
+    if (/(physics|electric|magnetic|optics|capacit|current|voltage|ohm|induct|photon|nuclei|semiconductor|diode|lens|prism|wavefront|coulomb|gauss|ampere|faraday)/i.test(combined)) return 'Physics';
+    if (/(chemistry|molarity|electrochem|kinetics|coordination|haloalkane|alcohol|phenol|aldehyde|ketone|amine|ligand|oxidation|reagent|enthalpy|arrhenius|raoult|colligative)/i.test(combined)) return 'Chemistry';
+    if (/(biology|reproduction|pollination|gamete|mendel|inheritance|dna|rna|transcription|evolution|darwin|immunity|antibody|microbe|plasmid|pcr|ecosystem|biodiversity|chromosome|gene)/i.test(combined)) return 'Biology';
+    if (/(mathematics|maths|matrix|matrices|determinant|derivative|differenti|integral|vector|probability|trigonometr|relation|function)/i.test(combined)) return 'Mathematics';
+
     return 'General';
+}
+
+function resolveChapterTopic(rawTopic, canonicalSub, qText, testTitle) {
+    var clean = String(rawTopic || '').trim();
+    var isGeneric = !clean || /^(general|cuet|mcq|test|default|mixed|science|chapter)$/i.test(clean);
+    if (!isGeneric) {
+        return clean.replace(/^(Physics|Chemistry|Biology|Mathematics)\s*[:\-•]\s*/i, '').trim() || clean;
+    }
+    var qLow = String(qText || '').toLowerCase();
+    var chapPool = canonicalSub === 'Physics' ? CH_PHY_12 :
+                   canonicalSub === 'Chemistry' ? CH_CHEM_12 :
+                   canonicalSub === 'Biology' ? CH_BIO_12 :
+                   canonicalSub === 'Mathematics' ? CH_MATH_12 : [];
+    for (var i = 0; i < chapPool.length; i++) {
+        var words = chapPool[i].toLowerCase().split(/\s+/).filter(function(w){ return w.length > 4; });
+        for (var w = 0; w < words.length; w++) {
+            if (qLow.includes(words[w])) return chapPool[i];
+        }
+    }
+    if (canonicalSub === 'Physics') {
+        if (/(charge|coulomb|dipole|flux|gauss)/i.test(qLow)) return 'Electric Charges and Fields';
+        if (/(potential|capacit)/i.test(qLow)) return 'Electrostatic Potential';
+        if (/(current|resist|kirchhoff|wheatstone|drift)/i.test(qLow)) return 'Current Electricity';
+        if (/(biot|ampere|cyclotron|galvanometer|solenoid|lorentz)/i.test(qLow)) return 'Moving Charges and Magnetism';
+        if (/(faraday|lenz|induct|eddy)/i.test(qLow)) return 'Electromagnetic Induction';
+        if (/(mirror|lens|refract|prism|microscope|telescope)/i.test(qLow)) return 'Ray Optics';
+        if (/(interference|diffraction|young|polarisation|huygens)/i.test(qLow)) return 'Wave Optics';
+        if (/(photoelectric|de broglie|work function|photon)/i.test(qLow)) return 'Dual Nature of Radiation';
+        if (/(bohr|rydberg|hydrogen spectrum)/i.test(qLow)) return 'Atoms';
+        if (/(nuclear|binding energy|fission|fusion|mass defect)/i.test(qLow)) return 'Nuclei';
+        if (/(diode|rectifier|transistor|logic gate|semiconductor|p-n)/i.test(qLow)) return 'Semiconductor Electronics';
+    } else if (canonicalSub === 'Chemistry') {
+        if (/(raoult|colligative|osmotic|molality)/i.test(qLow)) return 'Solutions';
+        if (/(nernst|conductance|faraday|galvanic|cell potential)/i.test(qLow)) return 'Electrochemistry';
+        if (/(rate law|half-life|order of reaction|arrhenius|activation energy)/i.test(qLow)) return 'Chemical Kinetics';
+        if (/(lanthanoid|actinoid|transition element|kmno4|k2cr2o7)/i.test(qLow)) return 'd- and f-Block Elements';
+        if (/(ligand|chelate|werner|isomerism|crystal field|coordination)/i.test(qLow)) return 'Coordination Compounds';
+        if (/(sn1|sn2|grignard|haloalkane|wurtz|sandmeyer)/i.test(qLow)) return 'Haloalkanes and Haloarenes';
+        if (/(lucas|reimer-tiemann|kolbe|williamson|phenol|ether)/i.test(qLow)) return 'Alcohols Phenols and Ethers';
+        if (/(aldol|cannizzaro|tollen|fehling|ketone|aldehyde|carboxylic)/i.test(qLow)) return 'Aldehydes Ketones and Carboxylic Acids';
+        if (/(hoffmann|gabriel|carbylamine|diazonium|amine|aniline)/i.test(qLow)) return 'Amines';
+        if (/(glucose|fructose|peptide|protein|vitamin|nucleic acid|enzyme)/i.test(qLow)) return 'Biomolecules';
+    } else if (canonicalSub === 'Biology') {
+        if (/(pollen|embryo sac|double fertilization|endosperm|apomixis)/i.test(qLow)) return 'Sexual Reproduction in Flowering Plants';
+        if (/(spermatogenesis|oogenesis|menstrual|placenta|blastocyst|acrosome)/i.test(qLow)) return 'Human Reproduction';
+        if (/(contraceptive|amniocentesis|ivf|zift|gift|mtp)/i.test(qLow)) return 'Reproductive Health';
+        if (/(mendel|monohybrid|dihybrid|linkage|pedigree|haemophilia|sickle cell)/i.test(qLow)) return 'Principles of Inheritance and Variation';
+        if (/(dna|rna|replication|transcription|translation|operon|genetic code)/i.test(qLow)) return 'Molecular Basis of Inheritance';
+        if (/(hardy-weinberg|homologous|analogous|natural selection|adaptive radiation)/i.test(qLow)) return 'Evolution';
+        if (/(malaria|typhoid|immunity|antibody|aids|hiv|cancer|allerg)/i.test(qLow)) return 'Human Health and Disease';
+        if (/(lactobacillus|penicillin|sewage|biogas|biocontrol|mycorrhiza)/i.test(qLow)) return 'Microbes in Welfare';
+        if (/(restriction enzyme|pcr|plasmid|gel electrophoresis|bioreactor)/i.test(qLow)) return 'Biotechnology Principles and Processes';
+        if (/(bt cotton|cry gene|rna interference|insulin|gene therapy|transgenic)/i.test(qLow)) return 'Biotechnology and its Applications';
+        if (/(mutualism|commensalism|parasitism|predation|carrying capacity)/i.test(qLow)) return 'Organisms and Populations';
+        if (/(food chain|trophic|ecological pyramid|productivity|decomposition)/i.test(qLow)) return 'Ecosystem';
+        if (/(hotspot|in-situ|ex-situ|red data|extinction|sacred grove)/i.test(qLow)) return 'Biodiversity and Conservation';
+    } else if (canonicalSub === 'Mathematics') {
+        if (/(reflexive|symmetric|transitive|equivalence|bijective|one-one|onto)/i.test(qLow)) return 'Relations and Functions';
+        if (/(sin\^-1|cos\^-1|tan\^-1|principal value|inverse trig)/i.test(qLow)) return 'Inverse Trigonometric Functions';
+        if (/(matrix|matrices|symmetric matrix|skew-symmetric|invertible)/i.test(qLow)) return 'Matrices';
+        if (/(determinant|cofactor|adjoint|singular|cramer)/i.test(qLow)) return 'Determinants';
+        if (/(continuous|differentiable|chain rule|rolle|mean value)/i.test(qLow)) return 'Continuity and Differentiability';
+        if (/(maxima|minima|increasing|decreasing|tangent|normal|rate of change)/i.test(qLow)) return 'Application of Derivatives';
+        if (/(integrate|integral|by parts|partial fraction|\bint\b)/i.test(qLow)) return 'Integrals';
+        if (/(area bounded|parabola|ellipse|curve area)/i.test(qLow)) return 'Application of Integrals';
+        if (/(differential equation|order and degree|integrating factor)/i.test(qLow)) return 'Differential Equations';
+        if (/(dot product|cross product|unit vector|collinear|projection)/i.test(qLow)) return 'Vector Algebra';
+        if (/(direction cosine|direction ratio|skew lines|shortest distance)/i.test(qLow)) return 'Three Dimensional Geometry';
+        if (/(feasible region|objective function|corner point|linear programming)/i.test(qLow)) return 'Linear Programming';
+        if (/(bayes|conditional probability|independent events|random variable)/i.test(qLow)) return 'Probability';
+    }
+    if (testTitle) {
+        var cleaned = String(testTitle).replace(/^CUET\s*•\s*/i, '').replace(/\s*\(Class 12\)/i, '').trim();
+        if (cleaned) return cleaned;
+    }
+    return canonicalSub + ' Core Concepts';
+}
+
+// Local weak topic helper (keeps Teacher Folder vs Self Folder weak topics synced with Firestore)
+function getLocalWeakTopics(folderKey) {
+    var all = LS.get(K.WEAK, { teacher: {}, self: {} });
+    var bucket = (folderKey === 'assigned' || folderKey === 'teacher') ? 'teacher' : 'self';
+    return all[bucket] || {};
+}
+
+function saveLocalWeakTopics(folderKey, mergedObj) {
+    var all = LS.get(K.WEAK, { teacher: {}, self: {} });
+    var bucket = (folderKey === 'assigned' || folderKey === 'teacher') ? 'teacher' : 'self';
+    all[bucket] = mergedObj;
+    LS.set(K.WEAK, all);
 }
 
 // --- GOOGLE LOGIN FLOW ---
@@ -524,7 +663,9 @@ document.getElementById('btnGoogleLogin').addEventListener('click', async () => 
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
     
-    if (!docSnap.exists()) {
+    if (docSnap.exists()) {
+      // User exists -> Auto-login
+    } else {
       document.getElementById('displayEmail').textContent = tempEmail;
       document.getElementById('authStep1').classList.add('hidden');
       document.getElementById('authStep2').classList.remove('hidden');
@@ -560,9 +701,13 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
     if (!docSnap.exists()) throw new Error("Invalid Access Code.");
     
     let firestoreRole = '';
-    if (code.startsWith('ATT')) firestoreRole = 'teacher';
-    else if (code.startsWith('ATS')) firestoreRole = 'student';
-    else throw new Error("Invalid Code Format. Code must start with ATT or ATS.");
+    if (code.startsWith('ATT')) {
+        firestoreRole = 'teacher';
+    } else if (code.startsWith('ATS')) {
+        firestoreRole = 'student';
+    } else {
+        throw new Error("Invalid Code Format. Code must start with ATT or ATS.");
+    }
 
     if (firestoreRole !== tempRole) {
        throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
@@ -572,10 +717,16 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
     if (!user) throw new Error("Session expired. Please login with Google again.");
 
     await setDoc(doc(db, "users", user.uid), {
-      name: tempName, email: tempEmail, role: firestoreRole, lastLogin: serverTimestamp()
+      name: tempName,
+      email: tempEmail,
+      role: firestoreRole,
+      lastLogin: serverTimestamp()
     }, { merge: true });
 
-    await updateDoc(doc(db, "access_codes", code), { used: true, usedByEmail: tempEmail });
+    await updateDoc(doc(db, "access_codes", code), {
+        used: true,
+        usedByEmail: tempEmail
+    });
 
     const updatedDocSnap = await getDoc(doc(db, "users", user.uid));
     if (updatedDocSnap.exists()) {
@@ -583,6 +734,7 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
         document.getElementById('userNameDisplay').textContent = currentUserData.name;
         isStudentPreview = false;
         loadDashboards();
+        
         document.getElementById('screen-auth').classList.remove('active');
         document.getElementById('mainApp').classList.remove('hidden');
         renderHome();
@@ -597,8 +749,10 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
 
 document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
 
+// --- Dashboard Switching Logic ---
 function loadDashboards() {
     if (!currentUserData) return;
+    
     document.getElementById('studentDashboard').classList.add('hidden');
     document.getElementById('teacherDashboard').classList.add('hidden');
     document.getElementById('previewBanner').classList.add('hidden');
@@ -619,6 +773,7 @@ function loadDashboards() {
     }
 }
 
+// --- AUTH STATE LISTENER (AUTO LOGIN) ---
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
@@ -628,8 +783,10 @@ onAuthStateChanged(auth, async (user) => {
         if (docSnap.exists()) {
             currentUserData = docSnap.data();
             document.getElementById('userNameDisplay').textContent = currentUserData.name;
+            
             isStudentPreview = false;
             loadDashboards();
+            
             document.getElementById('screen-auth').classList.remove('active');
             document.getElementById('mainApp').classList.remove('hidden');
             renderHome();
@@ -643,6 +800,7 @@ onAuthStateChanged(auth, async (user) => {
         currentUser = null; currentUserData = null;
         document.getElementById('mainApp').classList.add('hidden');
         document.getElementById('screen-auth').classList.add('active');
+        
         document.getElementById('authStep1').classList.remove('hidden');
         document.getElementById('authStep2').classList.add('hidden');
         document.getElementById('authAccessCode').value = '';
@@ -654,10 +812,25 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// ==================== STUDENT DASHBOARD ====================
+// ==================== STUDENT DASHBOARD (2 FOLDERS) ====================
 async function loadStudentDashboard() {
     renderHistoryChart();
     updateTeacherBadge();
+    updateSelfFolderSubtitle();
+}
+
+function updateSelfFolderSubtitle() {
+    const subEl = document.getElementById('selfFolderStatusText');
+    if (!subEl) return;
+    const hist = LS.get(K.HISTORY, []).filter(h => h.type !== 'assigned');
+    IDB.all().then(banks => {
+        const bLen = (banks || []).length;
+        if (bLen > 0 || hist.length > 0) {
+            subEl.textContent = `${bLen} Saved • ${hist.length} Completed`;
+        } else {
+            subEl.textContent = 'AI & self practice';
+        }
+    }).catch(() => {});
 }
 
 async function updateTeacherBadge() {
@@ -668,30 +841,30 @@ async function updateTeacherBadge() {
         const completedIds = new Set();
         resultsSnap.forEach(d => { if (d.data().testId) completedIds.add(d.data().testId); });
         let pendingCount = 0;
-        testsSnap.forEach(d => { if (!completedIds.has(d.id)) pendingCount++; });
+        let totalSent = 0;
+        testsSnap.forEach(d => {
+            totalSent++;
+            if (!completedIds.has(d.id)) pendingCount++;
+        });
         const badge = document.getElementById('teacherPendingBadge');
+        const badgeText = document.getElementById('teacherPendingCountText');
+        const statusText = document.getElementById('teacherFolderStatusText');
         if (!badge) return;
         if (pendingCount > 0) {
-            badge.textContent = pendingCount > 9 ? '9+' : String(pendingCount);
+            if (badgeText) badgeText.textContent = `${pendingCount} Pending`;
             badge.classList.remove('hidden');
+            if (statusText) statusText.innerHTML = `<span style="color:var(--red);font-weight:700;">● ${pendingCount} Question Pending</span> (${totalSent} Sent)`;
         } else {
             badge.classList.add('hidden');
+            if (statusText) {
+                statusText.textContent = totalSent > 0 ? `All ${totalSent} Sent Completed ✅` : 'Questions uploaded by teacher';
+            }
         }
     } catch(e) { console.error("Badge error:", e); }
 }
 
-// CHANGE WEAK FILTER
-window.setWeakFilter = function(filter) {
-    weakFilter = filter;
-    if (document.getElementById('screen-teacher-tests').classList.contains('active')) {
-        openTeacherTests(); 
-    } else if (document.getElementById('screen-self-practice').classList.contains('active')) {
-        loadSelfPractice();
-    }
-}
-
-// NEW: IMAGE 2 HEADER UI
 async function openTeacherTests() {
+    lastFolderScreen = 'screen-teacher-tests';
     showScreen('screen-teacher-tests');
     const content = document.getElementById('teacherTestsContent');
     content.innerHTML = '<p class="muted small">Loading tests...</p>';
@@ -706,55 +879,40 @@ async function openTeacherTests() {
         const resultsMap = {};
         resultsSnap.forEach(d => { const data = d.data(); if (data.testId) resultsMap[data.testId] = data; });
         
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const firestoreWeak = userDoc.data()?.weakTopicsTeacher || userDoc.data()?.weakTopics || {};
+        const localWeak = getLocalWeakTopics('teacher');
+        const mergedWeak = mergeWeakTopicMaps(firestoreWeak, localWeak);
+        
         const pending = testsList.filter(t => !resultsMap[t.id]);
         const completed = testsList.filter(t => resultsMap[t.id]);
-        const totalSent = testsList.length;
         
-        // Build The New Header (Image 2)
-        const headerEl = document.getElementById('teacherHeaderBanner');
-        headerEl.innerHTML = `
-           <div class="th-top">
-              <button class="th-back-btn" id="btnTeacherBackBtn">← Folders</button>
-              <div class="th-title-area">📁 Upload Question by Teacher</div>
-           </div>
-           <div class="th-stats-row">
-              <div class="stat-pill pending"><span class="dot"></span> ${pending.length} Pending</div>
-              <div class="stat-pill completed">✅ ${completed.length} Completed</div>
-              <div class="stat-pill total">📨 ${totalSent} Total Sent</div>
-           </div>
-        `;
-        
-        // FIX: Attach back button click event
-        document.getElementById('btnTeacherBackBtn').onclick = function() {
-            showScreen('screen-home'); 
-            updateTeacherBadge();
-        };
-
         let html = '';
         
         // PENDING
         if (pending.length > 0) {
-            html += '<h2 class="section-title" style="margin-top:0; color:var(--red);">🔴 Pending Questions (' + pending.length + ')</h2>';
+            html += '<h2 class="section-title" style="margin-top:0; color:var(--accent);">📌 Pending Questions (' + pending.length + ' Sent)</h2>';
             html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
             pending.forEach(t => { html += renderTeacherTestCard(t, null); });
             html += '</div>';
         } else {
-            html += '<h2 class="section-title" style="margin-top:0; color:var(--muted);">📌 Pending Questions</h2>';
-            html += '<div class="card" style="margin-bottom:20px;"><p class="muted small" style="margin:0;">✅ No pending tests. You are all caught up!</p></div>';
+            html += '<h2 class="section-title" style="margin-top:0; color:var(--muted);">📌 Pending Questions (0)</h2>';
+            html += '<div class="card" style="margin-bottom:20px;"><p class="muted small" style="margin:0;">✅ No pending questions. You are all caught up!</p></div>';
         }
         
         // COMPLETED
         if (completed.length > 0) {
-            html += '<h2 class="section-title" style="color:var(--green);">✅ Completed Tests (' + completed.length + ')</h2>';
+            html += '<h2 class="section-title" style="color:var(--green);">✅ Completed Questions (' + completed.length + ')</h2>';
             html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
             completed.forEach(t => { html += renderTeacherTestCard(t, resultsMap[t.id]); });
             html += '</div>';
+        } else {
+            html += '<h2 class="section-title" style="color:var(--muted);">✅ Completed Questions (0)</h2>';
+            html += '<div class="card" style="margin-bottom:20px;"><p class="muted small" style="margin:0;">Completed teacher questions will appear here.</p></div>';
         }
         
-        // WEAK TOPICS
-        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-        const weakTopics = userDoc.data()?.weakTopics || {};
-        html += renderWeakTopicsNewUI(weakTopics);
+        // WEAK TOPICS (PCB / PCM separated)
+        html += renderWeakTopics(mergedWeak);
         
         content.innerHTML = html;
         
@@ -764,25 +922,139 @@ async function openTeacherTests() {
                 const id = btn.getAttribute('data-start-test');
                 const t = testsList.find(x => x.id === id);
                 if (!t) return;
-                launchTest({ name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit || 15, type: 'assigned', testId: id, teacherId: t.teacherId, subject: t.subject || 'General' });
+                launchTest({ 
+                    name: t.name, 
+                    questions: t.questions, 
+                    timerMode: 'timer', 
+                    timerMins: t.timeLimit || 15, 
+                    type: 'assigned', 
+                    testId: id, 
+                    teacherId: t.teacherId,
+                    subject: normalizeSubject(t.subject, t.name, '')
+                });
             };
         });
+
+        wireWeakTopicPracticeButtons(content);
     } catch(e) {
         console.error(e);
         content.innerHTML = '<p class="muted small">Error loading. Please try again.</p>';
     }
 }
 
+async function openSelfPracticeFolder() {
+    lastFolderScreen = 'screen-self-practice';
+    showScreen('screen-self-practice');
+    const host = document.getElementById('selfPracticeFolderContent');
+    if (!host) return;
+
+    let firestoreSelfWeak = {};
+    if (currentUser) {
+        try {
+            const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+            firestoreSelfWeak = userDoc.data()?.weakTopicsSelf || {};
+        } catch(e) {}
+    }
+    const localSelfWeak = getLocalWeakTopics('self');
+    const mergedSelfWeak = mergeWeakTopicMaps(firestoreSelfWeak, localSelfWeak);
+
+    const banks = await IDB.all().catch(() => []);
+    const selfHist = LS.get(K.HISTORY, []).filter(h => h.type !== 'assigned');
+
+    let html = '';
+
+    // Pending / Saved Question Banks in Your Question
+    if (banks && banks.length > 0) {
+        html += '<h2 class="section-title" style="color:var(--accent);">📌 Your Saved Question Banks (' + banks.length + ')</h2>';
+        html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
+        banks.forEach(b => {
+            const sub = normalizeSubject(b.subject, b.name, '');
+            html += `<div class="bank-item" style="border-color:var(--accent);">
+                <div style="font-weight:700;font-size:15.5px;">📄 ${esc(b.name)} <span style="font-size:10px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;margin-left:6px;">${esc(sub)}</span></div>
+                <div class="muted small">${b.questions.length} questions</div>
+                <div class="btn-row">
+                    <button type="button" class="btn small primary" data-start-self-bank="${esc(b.id)}">▶ Start Test</button>
+                    <button type="button" class="btn small danger" data-del-self-bank="${esc(b.id)}">Delete</button>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+    }
+
+    // Completed Self Tests in Your Question
+    if (selfHist.length > 0) {
+        html += '<h2 class="section-title" style="color:var(--green);">✅ Completed Questions (' + selfHist.length + ')</h2>';
+        html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
+        selfHist.slice(0, 10).forEach(h => {
+            const sub = normalizeSubject(h.subject, h.name, '');
+            html += `<div class="bank-item" style="opacity:0.88;">
+                <div style="font-weight:700;color:var(--muted);">📄 ${esc(h.name)} <span style="font-size:10px;background:var(--card-2);border:1px solid var(--border);color:var(--text);padding:2px 6px;border-radius:4px;margin-left:6px;">${esc(sub)}</span></div>
+                <div class="muted small">Correct: ${h.correct} • Wrong: ${h.wrong} • Skipped: ${h.skipped}</div>
+                <div class="muted small" style="color:var(--green);font-weight:600;">🎯 Score: ${h.score}/${h.max} Marks (${h.pct}%) | 📅 ${esc(h.date || '')}</div>
+            </div>`;
+        });
+        html += '</div>';
+    }
+
+    // Weak Topics by Subject (PCB / PCM separated)
+    html += renderWeakTopics(mergedSelfWeak);
+
+    host.innerHTML = html;
+
+    host.querySelectorAll('[data-start-self-bank]').forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.getAttribute('data-start-self-bank');
+            const b = (banks || []).find(x => x.id === id);
+            if (b) {
+                launchTest({
+                    name: b.name,
+                    questions: b.questions,
+                    timerMode: 'stopwatch',
+                    type: 'self',
+                    subject: normalizeSubject(b.subject, b.name, '')
+                });
+            }
+        };
+    });
+
+    host.querySelectorAll('[data-del-self-bank]').forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.getAttribute('data-del-self-bank');
+            IDB.del(id).then(() => {
+                openSelfPracticeFolder();
+                updateSelfFolderSubtitle();
+            });
+        };
+    });
+
+    wireWeakTopicPracticeButtons(host);
+}
+
+function mergeWeakTopicMaps(mapA, mapB) {
+    const out = {};
+    [mapA || {}, mapB || {}].forEach(src => {
+        Object.keys(src).forEach(sub => {
+            const normSub = normalizeSubject(sub, sub, '');
+            if (!out[normSub]) out[normSub] = {};
+            Object.keys(src[sub] || {}).forEach(topic => {
+                out[normSub][topic] = src[sub][topic];
+            });
+        });
+    });
+    return out;
+}
+
 function renderTeacherTestCard(t, result) {
     const createdDate = formatDate(t.timestamp);
-    const subjectTag = t.subject ? '<span style="font-size:10px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">' + esc(t.subject) + '</span>' : '';
+    const normSub = normalizeSubject(t.subject, t.name, '');
+    const subjectTag = `<span style="font-size:10px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">${esc(normSub)}</span>`;
     
     if (result) {
         return `<div class="bank-item" style="opacity:0.85;">
             <div style="font-weight:700;color:var(--muted);">📄 ${esc(t.name)} ${subjectTag}</div>
             <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
             <div class="muted small">📅 Sent: ${createdDate}</div>
-            <div class="muted small" style="color:var(--green);font-weight:600;">🎯 Score: ${result.score} Marks | Attempted: ${formatDate(result.timestamp)}</div>
+            <div class="muted small" style="color:var(--green);font-weight:600;">🎯 Score: ${result.score} Marks (${result.pct || 0}%) | Attempted: ${formatDate(result.timestamp)}</div>
         </div>`;
     }
     
@@ -790,85 +1062,90 @@ function renderTeacherTestCard(t, result) {
         <div style="font-weight:700;font-size:16px;">📄 ${esc(t.name)} ${subjectTag}</div>
         <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
         <div class="muted small">📅 Sent: ${createdDate}</div>
-        <button class="btn primary" style="width:100%;margin-top:8px;" data-start-test="${t.id}">▶ Start Test</button>
+        <button type="button" class="btn primary" style="width:100%;margin-top:8px;" data-start-test="${t.id}">▶ Start Test</button>
     </div>`;
 }
 
-// NEW: IMAGE 1 UI (Weak Topics with Cards & Filters)
-function renderWeakTopicsNewUI(weakTopics) {
-    let html = `
-        <h2 class="section-title" style="color:var(--orange); margin-top:30px;">⚠️ Weak Topics in Your Questions (PCB / PCM Subject-Wise)</h2>
-        <p class="muted small" style="margin:-8px 0 12px;">Physics, Chemistry, Biology & Maths weak topics are kept strictly separate so PCB/PCM topics never mix.</p>
+function renderWeakTopics(weakTopics) {
+    // Strictly order PCB / PCM subjects first so Physics, Chemistry, Biology, Mathematics never mix
+    const orderedSubjects = ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'General'];
+    const allKeys = Object.keys(weakTopics || {});
+    const subjects = orderedSubjects.filter(s => allKeys.includes(s) && Object.keys(weakTopics[s] || {}).length > 0);
+    
+    if (subjects.length === 0) {
+        return '<h2 class="section-title" style="color:var(--orange);">📊 Weak Topics by Subject (PCB / PCM)</h2><div class="card"><p class="muted small" style="margin:0;">Give a test to see your weak topics separated by Physics, Chemistry, Biology &amp; Mathematics.</p></div>';
+    }
+    
+    const subjectIcons = { 'Physics': '⚛️', 'Chemistry': '🧪', 'Biology': '🧬', 'Mathematics': '📐', 'English': '📖', 'General': '📚' };
+    const subjectColors = { 'Physics': '#3b82f6', 'Chemistry': '#f59e0b', 'Biology': '#22c55e', 'Mathematics': '#a855f7', 'English': '#ec4899', 'General': '#6366f1' };
+    
+    let html = '<h2 class="section-title" style="color:var(--orange);">📊 Weak Topics by Subject (PCB / PCM Separated)</h2>';
+    html += '<p class="muted small" style="margin:-8px 0 12px;">Physics, Chemistry, Biology &amp; Mathematics weak topics are kept separate. Tap Practice to improve.</p>';
+    
+    subjects.forEach(subject => {
+        const topics = Object.entries(weakTopics[subject] || {});
+        if (topics.length === 0) return;
+        topics.sort((a, b) => (a[1].pct || 0) - (b[1].pct || 0));
         
-        <div class="filter-chips">
-            <button class="f-chip ${weakFilter === 'all' ? 'active' : ''}" onclick="setWeakFilter('all')">All (PCB + PCM)</button>
-            <button class="f-chip ${weakFilter === 'pcb' ? 'active' : ''}" onclick="setWeakFilter('pcb')">PCB Only</button>
-            <button class="f-chip ${weakFilter === 'pcm' ? 'active' : ''}" onclick="setWeakFilter('pcm')">PCM Only</button>
-        </div>
-    `;
-
-    const subjectData = {
-        'Physics': { icon: '⚛️', color: '#3b82f6', streams: ['PCB', 'PCM'], streamText: '(PCB & PCM)' },
-        'Chemistry': { icon: '🧪', color: '#f59e0b', streams: ['PCB', 'PCM'], streamText: '(PCB & PCM)' },
-        'Biology': { icon: '🧬', color: '#22c55e', streams: ['PCB'], streamText: '(PCB)' },
-        'Mathematics': { icon: '📐', color: '#a855f7', streams: ['PCM'], streamText: '(PCM)' }
-    };
-
-    Object.keys(subjectData).forEach(subject => {
-        const subData = subjectData[subject];
+        const icon = subjectIcons[subject] || '📚';
+        const color = subjectColors[subject] || 'var(--accent)';
         
-        // Skip based on filter
-        if (weakFilter === 'pcb' && !subData.streams.includes('PCB')) return;
-        if (weakFilter === 'pcm' && !subData.streams.includes('PCM')) return;
-
-        const topicsObj = weakTopics[subject] || {};
-        const topics = Object.entries(topicsObj).filter(([_, data]) => data.pct < 60); // double check
-        const hasWeak = topics.length > 0;
+        html += `<div class="card" style="margin-bottom:12px;border-left:4px solid ${color};">
+            <div style="font-weight:800;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+                <span>${icon}</span><span>${esc(subject)}</span>
+                <span style="font-size:11px;background:${color};color:#fff;padding:2px 8px;border-radius:99px;margin-left:auto;">${topics.length} weak</span>
+            </div>`;
         
-        html += `
-            <div class="weak-subject-card" style="border-top-color: ${subData.color};">
-                <div class="ws-header">
-                    <div class="ws-title">
-                        <span>${subData.icon}</span> ${subject} <span class="ws-subtitle">${subData.streamText}</span>
-                    </div>
-                    ${hasWeak 
-                        ? `<div class="ws-badge weak">⚠️ ${topics.length} Weak</div>` 
-                        : `<div class="ws-badge strong">✔ Strong</div>`}
+        topics.forEach(([name, stats]) => {
+            const pct = stats.pct != null ? stats.pct : 0;
+            const wrongCount = stats.wrong != null ? stats.wrong : ((stats.total || 0) - (stats.correct || 0));
+            const wrongText = wrongCount > 0 ? `${wrongCount} wrong • ` : '';
+            html += `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;font-size:13.5px;border-bottom:1px solid var(--border);">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:600;">⚠️ ${esc(name)}</div>
+                    <div class="muted" style="font-size:11.5px;color:var(--red);">${wrongText}Accuracy: ${pct}%</div>
                 </div>
-                <div class="ws-body">
-        `;
+                <button type="button" class="weak-practice-btn" data-practice-sub="${esc(subject)}" data-practice-topic="${esc(name)}">⚡ Practice</button>
+            </div>`;
+        });
         
-        if (!hasWeak) {
-            html += `<div class="ws-empty-text">No weak topics in ${subject} yet. Keep practicing!</div>`;
-        } else {
-            topics.sort((a, b) => (a[1].pct || 0) - (b[1].pct || 0));
-            topics.forEach(([topicName, data]) => {
-                html += `
-                    <div class="ws-topic-row">
-                        <div class="ws-topic-name"><span style="color:var(--muted);">⚠️</span> ${esc(topicName)}</div>
-                        <div class="ws-topic-pct">${data.pct}%</div>
-                    </div>
-                `;
-            });
-        }
-        
-        html += `</div></div>`;
+        html += '</div>';
     });
-
+    
     return html;
 }
 
-async function loadSelfPractice() {
-    showScreen('screen-self-practice');
-    const container = document.getElementById('selfPracticeWeakTopics');
-    container.innerHTML = '<p class="muted small">Loading analysis...</p>';
-    try {
-        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-        const weakTopics = userDoc.data()?.weakTopics || {};
-        container.innerHTML = renderWeakTopicsNewUI(weakTopics);
-    } catch(e) {
-        container.innerHTML = '<p class="muted small">Error loading analysis.</p>';
-    }
+function wireWeakTopicPracticeButtons(container) {
+    if (!container) return;
+    container.querySelectorAll('[data-practice-sub]').forEach(btn => {
+        btn.onclick = () => {
+            const sub = btn.getAttribute('data-practice-sub');
+            const topic = btn.getAttribute('data-practice-topic');
+            startWeakTopicPractice(sub, topic);
+        };
+    });
+}
+
+function startWeakTopicPractice(subject, topicName) {
+    var randomSeed = Math.floor(Math.random() * 999999);
+    var prompt = 'Generate 10 NEW and UNIQUE CUET MCQs for ' + subject + ' specifically on the weak chapter/topic "' + topicName + '". Difficulty: Medium. Set "topic" to "' + topicName + '". Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
+    showLoader('Generating Weak Topic Practice…', subject + ' • ' + topicName);
+    aiCall(prompt, { source: 'ambition-cuet-cbt', mode: 'ai' }).then(function(res) {
+        var list = normaliseList(safeParseJSON(res), subject, topicName);
+        hideLoader();
+        if (!list.length) throw new Error('No questions generated');
+        launchTest({
+            name: subject + ' • ' + topicName,
+            questions: list,
+            timerMode: 'stopwatch',
+            timerMins: 15,
+            type: 'self',
+            subject: subject
+        });
+    }).catch(function(err) {
+        hideLoader();
+        dialog({ title: 'Error', message: err.message || 'Failed to generate weak topic practice.' });
+    });
 }
 
 // ==================== TEACHER DASHBOARD ====================
@@ -896,10 +1173,10 @@ async function loadTeacherDashboard() {
             d.className = 'bank-item';
             d.innerHTML = `
                 <div style="display:flex; justify-content:space-between; font-weight:700;">
-                    <span>${r.studentName}</span> 
+                    <span>${esc(r.studentName)}</span> 
                     <span style="color:var(--green)">${r.score} Marks</span>
                 </div>
-                <div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>
+                <div class="muted small">${esc(r.testName)} • Accuracy: ${r.pct}%</div>
                 <div class="muted small" style="margin-top:4px;">📅 Attempted: ${attemptDate}</div>`;
             listDiv.appendChild(d);
         });
@@ -910,14 +1187,6 @@ async function loadTeacherDashboard() {
 }
 
 // 4. APP CORE LOGIC
-var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
-var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
-var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
-var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Welfare","Biotechnology Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation"];
-
-var EXAM_DATA={ CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{"Mathematics (Class 12)":CH_MATH_12,"Physics (Class 12)":CH_PHY_12,"Chemistry (Class 12)":CH_CHEM_12,"Biology (Class 12)":CH_BIO_12,"English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],"General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]}}};
-var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
-var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
 var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
 
 function $(id){return document.getElementById(id)}
@@ -961,7 +1230,7 @@ function formatStatements(text) { if (!text) return ''; var formatted = text; fo
 function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1'); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; } if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) { var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, ''); if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str; str = str.replace(/\$/g, ''); } var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) { var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i); if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)'; return '\\(' + str + '\\)'; } return str; }
 function cleanOptionText(str) { if (!str) return ''; var s = String(str).trim(); s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, ''); return s.trim(); }
 
-function normaliseList(raw){ 
+function normaliseList(raw, defaultSub, defaultTop){ 
     var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []); 
     var out = []; 
     for(var i=0; i<arr.length; i++){ 
@@ -971,23 +1240,33 @@ function normaliseList(raw){
         var opts = item.options || item.opts || []; 
         if(!q) continue; 
         
-        var uniqueOpts = []; var seen = new Set();
+        var uniqueOpts = [];
+        var seen = new Set();
         opts.forEach(function(o) {
             var cleanO = cleanOptionText(o);
-            if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') { seen.add(cleanO.toLowerCase()); uniqueOpts.push(cleanO); }
+            if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') {
+                seen.add(cleanO.toLowerCase());
+                uniqueOpts.push(cleanO);
+            }
         });
         
-        while(uniqueOpts.length < 4) { uniqueOpts.push('None of the above'); }
+        while(uniqueOpts.length < 4) {
+            uniqueOpts.push('None of the above');
+        }
         opts = uniqueOpts.slice(0, 4); 
         
         var ans = Number(item.ans); 
         if(isNaN(ans) || ans < 0 || ans > 3) ans = 0; 
+
+        var qSub = normalizeSubject(item.subject || defaultSub, item.topic || defaultTop, q);
+        var qTop = resolveChapterTopic(item.topic || defaultTop, qSub, q, defaultTop);
         
         out.push({ 
             q: autoWrapMath(formatStatements(q)), 
             options: opts.map(function(o) { return autoWrapMath(o); }), 
             ans: ans, 
-            topic: String(item.topic || 'General'), 
+            subject: qSub,
+            topic: String(qTop || 'General'), 
             diff: String(item.diff || 'medium'), 
             explain: String(item.explain || '') 
         }); 
@@ -1009,6 +1288,7 @@ function renderHome(){
   renderResumeBanner();
   if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
       updateTeacherBadge();
+      updateSelfFolderSubtitle();
   }
 }
 
@@ -1036,7 +1316,7 @@ function renderResumeBanner(){
   var active = LS.get(K.ACTIVE, null);
   var banner = $('resumeBanner');
   if(active && active.questions && active.questions.length > 0){
-    banner.innerHTML = '<div class="card" style="border-color:var(--accent);margin-bottom:18px;"><div style="font-weight:700;color:var(--accent);margin-bottom:6px;">⚠️ Test in progress</div><div class="muted small" style="margin-bottom:12px;">Unfinished test: <b>'+esc(active.name)+'</b></div><div class="btn-row"><button class="btn small primary" id="btnResumeTest">▶ Resume Test</button><button class="btn small danger" id="btnDiscardTest">Discard</button></div></div>';
+    banner.innerHTML = '<div class="card" style="border-color:var(--accent);margin-bottom:18px;"><div style="font-weight:700;color:var(--accent);margin-bottom:6px;">⚠️ Test in progress</div><div class="muted small" style="margin-bottom:12px;">Unfinished test: <b>'+esc(active.name)+'</b></div><div class="btn-row"><button type="button" class="btn small primary" id="btnResumeTest">▶ Resume Test</button><button type="button" class="btn small danger" id="btnDiscardTest">Discard</button></div></div>';
     $('btnResumeTest').onclick=function(){ T = active; startTime = Date.now() - (T.elapsed * 1000); showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette(); };
     $('btnDiscardTest').onclick=function(){ LS.del(K.ACTIVE); renderResumeBanner(); };
   } else { banner.innerHTML=''; }
@@ -1068,19 +1348,21 @@ function startAITest(){
   else state.timerMins = 15;
 
   var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
+  var normSub = normalizeSubject(state.subject, chapters[0], '');
+  var defaultTop = state.chapters.length === 1 ? state.chapters[0] : '';
   var randomSeed = Math.floor(Math.random() * 999999);
-  var prompt='Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
+  var prompt='Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Set the exact chapter name in "topic". Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
   
   showLoader('AI is generating questions…','This might take a few seconds');
   aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai'}).then(function(res){
-    var list=normaliseList(safeParseJSON(res));
+    var list=normaliseList(safeParseJSON(res), normSub, defaultTop);
     hideLoader();
     if(!list.length) throw new Error('No questions generated');
     
     if (currentUserData.role === 'teacher' && !isStudentPreview) {
-        saveTeacherTest(list, state.subject + ' Test', state.subject);
+        saveTeacherTest(list, state.subject + ' Test', normSub);
     } else {
-        launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: state.subject});
+        launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: normSub});
     }
   }).catch(function(err){
     hideLoader();
@@ -1093,7 +1375,7 @@ async function saveTeacherTest(questions, testName, subjectName) {
     try {
         await addDoc(collection(db, "tests"), {
             name: testName || 'New Test',
-            subject: subjectName || 'General',
+            subject: normalizeSubject(subjectName, testName, ''),
             questions: questions,
             teacherName: currentUserData.name,
             teacherId: currentUser.uid,
@@ -1120,10 +1402,10 @@ function openUpload(mode){
   $('bankListTitle').textContent = config.bank;
   
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
-      document.getElementById('teacherTitleField').classList.remove('hidden');
+      document.getElementById('teacherUploadFields').classList.remove('hidden');
       document.getElementById('uploadTestTitle').value = ''; 
   } else {
-      document.getElementById('teacherTitleField').classList.add('hidden');
+      document.getElementById('teacherUploadFields').classList.add('hidden');
   }
 
   renderBanks(); showScreen('screen-upload');
@@ -1137,8 +1419,9 @@ function renderBanks(){
     host.innerHTML='';
     filtered.forEach(function(b){
       var d=document.createElement('div');d.className='bank-item';
-      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions • Subject: '+esc(b.subject||'General')+'</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
-      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch', type: 'self', subject: b.subject || 'General'})};
+      var normSub = normalizeSubject(b.subject, b.name, '');
+      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions • Subject: '+esc(normSub)+'</div><div class="btn-row"><button type="button" class="btn small primary" data-act="start">▶ Start Test</button><button type="button" class="btn small danger" data-act="del">Delete</button></div>';
+      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch', type: 'self', subject: normSub})};
       d.querySelector('[data-act="del"]').onclick=function(){IDB.del(b.id).then(renderBanks)};
       host.appendChild(d);
     });
@@ -1149,15 +1432,17 @@ async function handleFileUpload(file){
   if(!file) return;
   
   let customName = "";
-  let customSubject = "General";
+  let customSubject = "";
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
       customName = document.getElementById('uploadTestTitle').value.trim();
+      customSubject = document.getElementById('uploadTestSubject').value || 'General';
       if(!customName) {
           dialog({title: 'Missing Title', message: 'Please enter a test title before uploading.'});
           return;
       }
+  } else {
+      customSubject = normalizeSubject('', file.name, '');
   }
-  customSubject = document.getElementById('uploadTestSubject').value || 'General';
 
   var fname=(file.name||'').toLowerCase();
   var isImage = (file.type && file.type.indexOf('image/')===0) || /\.(jpg|jpeg|png|webp|heic|heif|bmp|gif)$/i.test(fname);
@@ -1177,6 +1462,20 @@ async function handleFileUpload(file){
     else { throw new Error('Unsupported file type.'); }
     if(!questions || !questions.length) throw new Error('No valid questions found.');
     
+    // Auto-detect dominant PCB/PCM subject from extracted questions if not explicitly set by teacher
+    if (!customSubject || customSubject === 'General') {
+        var counts = { Physics: 0, Chemistry: 0, Biology: 0, Mathematics: 0 };
+        questions.forEach(function(q) {
+            var s = normalizeSubject(q.subject, q.topic, q.q);
+            if (counts[s] !== undefined) counts[s]++;
+        });
+        var bestSub = 'General', bestVal = 0;
+        Object.keys(counts).forEach(function(k) {
+            if (counts[k] > bestVal) { bestVal = counts[k]; bestSub = k; }
+        });
+        if (bestVal > 0) customSubject = bestSub;
+    }
+
     progressBar.style.width='100%'; progressText.textContent='Saving…';
 
     if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
@@ -1185,6 +1484,7 @@ async function handleFileUpload(file){
         var bank={ id:'bank_'+Date.now(), name: customName || file.name, category: uploadMode, questions:questions, subject: customSubject, created:Date.now() };
         await IDB.put(bank);
         progressWrap.classList.add('hidden'); renderBanks();
+        updateSelfFolderSubtitle();
         var elapsed=((Date.now()-startTs)/1000).toFixed(1);
         dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self', subject: bank.subject}); });
     }
@@ -1196,8 +1496,8 @@ async function processImageFile(file, bar, text){
   var img = await compressImage(file, 2500, 0.88);
   bar.style.width='40%'; text.textContent='AI is reading…';
   var mode = uploadMode==='notes' ? 'notes' : 'image-extract';
-  var raw = await aiCall('Extract every single question from this photo. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode, image: img}, {timeoutMs: 90000});
-  bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
+  var raw = await aiCall('Extract every single question from this photo. Include specific chapter name in "topic". Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode, image: img}, {timeoutMs: 90000});
+  bar.style.width='90%'; return normaliseList(safeParseJSON(raw), '', file.name.replace(/\.[^.]+$/, ''));
 }
 
 async function processTextFile(file, bar, text){
@@ -1205,13 +1505,14 @@ async function processTextFile(file, bar, text){
   var content = await file.text(); if(!content.trim()) throw new Error('Empty file.');
   bar.style.width='40%'; text.textContent='AI is extracting…';
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000), {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000});
-  bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
+  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes (include chapter name in "topic"):\n\n' : 'Extract all MCQs from this text (include chapter name in "topic"):\n\n') + content.slice(0, 30000), {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000});
+  bar.style.width='90%'; return normaliseList(safeParseJSON(raw), '', file.name.replace(/\.[^.]+$/, ''));
 }
 
 async function processPDFFile(file, bar, text){
   bar.style.width='10%'; text.textContent='Loading PDF…';
   var extracted;
+  var cleanFile = file.name.replace(/\.[^.]+$/, '');
   try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); } 
   catch(e) { extracted = { text: '', pageCount: 0 }; }
   var textLen = (extracted.text || '').trim().length;
@@ -1221,8 +1522,8 @@ async function processPDFFile(file, bar, text){
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
       bar.style.width = (30 + (b/chunks.length)*60) + '%'; text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions…';
-      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk, {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000, retries: 1}).catch(function(e){ return ''; }); }));
-      results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){} } });
+      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes (set chapter name in "topic"):\n\n' : 'Extract all MCQs from this text (set chapter name in "topic"):\n\n') + chunk, {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000, retries: 1}).catch(function(e){ return ''; }); }));
+      results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r), '', cleanFile)); } catch(e){} } });
     }
     return collected;
   }
@@ -1236,7 +1537,7 @@ async function processPDFFile(file, bar, text){
     try {
       var mode2 = uploadMode==='notes' ? 'notes' : 'scanned-extract';
       var raw = await aiCall('Extract every single question on this page. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]}, {timeoutMs: 90000, retries: 1});
-      collected = collected.concat(normaliseList(safeParseJSON(raw)));
+      collected = collected.concat(normaliseList(safeParseJSON(raw), '', cleanFile));
     } catch(e) {}
   }
   return collected;
@@ -1256,11 +1557,12 @@ function launchTest(cfg){
     elapsed: 0,
     timerMode: cfg.timerMode || 'stopwatch',
     timerMins: cfg.timerMins || 15,
-    subject: cfg.subject || 'General',
+    subject: normalizeSubject(cfg.subject, cfg.name, ''),
     answers: cfg.questions.map(function(){ return null; }),
     marked: cfg.questions.map(function(){ return false; }),
     testId: cfg.testId || null,
-    teacherId: cfg.teacherId || null
+    teacherId: cfg.teacherId || null,
+    type: cfg.type || 'self'
   };
   testType = cfg.type || 'self';
   LS.set(K.ACTIVE, T);
@@ -1286,7 +1588,11 @@ function startTimer(){
 function renderQuestion(){
   if(!T) return;
   var q=T.questions[T.cur];
-  $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length; $('qTopic').textContent=q.topic; $('qDiff').textContent=q.diff;
+  var qSub = normalizeSubject(q.subject || T.subject, q.topic || T.name, q.q);
+  var qTop = resolveChapterTopic(q.topic, qSub, q.q, T.name);
+  $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length;
+  $('qTopic').textContent = qSub + ' • ' + qTop;
+  $('qDiff').textContent=q.diff;
   $('qText').innerHTML=autoWrapMath(esc(q.q));
   var box=$('optionsBox');box.innerHTML=''; var letters=['A','B','C','D'];
   q.options.forEach(function(opt,i){
@@ -1322,51 +1628,84 @@ async function submitTest(){
   
   showLoader('Submitting Test...', 'Calculating your score');
 
-  var correct=0,wrong=0,skipped=0; var topicStats = {};
+  var correct=0,wrong=0,skipped=0;
+  var topicStats = {};
+  var bySubStats = {};
+
   T.questions.forEach(function(q,i){
-    var topic = q.topic || 'General'; if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 }; topicStats[topic].total++;
+    var qSub = normalizeSubject(q.subject || T.subject, q.topic || T.name, q.q);
+    var topic = resolveChapterTopic(q.topic, qSub, q.q, T.name);
+    if(!topicStats[topic]) topicStats[topic] = { subject: qSub, correct: 0, wrong: 0, total: 0 };
+    topicStats[topic].total++;
+
+    if (!bySubStats[qSub]) bySubStats[qSub] = {};
+    if (!bySubStats[qSub][topic]) bySubStats[qSub][topic] = { correct: 0, wrong: 0, total: 0 };
+    bySubStats[qSub][topic].total++;
+
     if(T.answers[i]===null) { skipped++; return; }
-    if(T.answers[i]===q.ans) { correct++; topicStats[topic].correct++; } else { wrong++; }
+    if(T.answers[i]===q.ans) {
+        correct++;
+        topicStats[topic].correct++;
+        bySubStats[qSub][topic].correct++;
+    } else {
+        wrong++;
+        topicStats[topic].wrong++;
+        bySubStats[qSub][topic].wrong++;
+    }
   });
   var score=(correct*5)-(wrong*1); var max=T.questions.length*5; var pct=Math.max(0,Math.round((score/max)*100));
+  var currentTestType = T.type || testType || 'self';
   
-  var record={ name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats };
+  var record={ name:T.name, subject: T.subject, type: currentTestType, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats };
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
 
-  // Save result + weak topics (only for students, not teacher preview)
-  if (currentUser && currentUserData && currentUserData.role === 'student') {
+  // Update Subject-Wise Weak Topics (never mixing Physics, Chemistry, Biology, Mathematics)
+  var localWeak = getLocalWeakTopics(currentTestType);
+  Object.keys(bySubStats).forEach(function(sub) {
+      if (!localWeak[sub]) localWeak[sub] = {};
+      Object.keys(bySubStats[sub]).forEach(function(topic) {
+          var st = bySubStats[sub][topic];
+          var acc = Math.round((st.correct / st.total) * 100);
+          // Mark as weak if student got any question wrong or scored < 60%
+          if (st.wrong > 0 || acc < 60) {
+              localWeak[sub][topic] = { pct: acc, correct: st.correct, wrong: st.wrong, total: st.total, lastDate: new Date().toISOString() };
+          } else if (st.correct > 0 && acc >= 70) {
+              delete localWeak[sub][topic];
+          }
+      });
+      if (Object.keys(localWeak[sub]).length === 0) delete localWeak[sub];
+  });
+  saveLocalWeakTopics(currentTestType, localWeak);
+
+  // Save result + weak topics in Firebase
+  if (currentUser && currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
       try {
           await addDoc(collection(db, "results"), {
-              studentId: currentUser.uid, studentName: currentUserData.name,
-              testName: T.name, testId: T.testId, teacherId: T.teacherId, 
-              type: testType, score: score, pct: pct, correct: correct, wrong: wrong,
+              studentId: currentUser.uid,
+              studentName: isStudentPreview ? currentUserData.name + " (Preview)" : currentUserData.name,
+              testName: T.name,
+              testId: T.testId,
+              teacherId: T.teacherId, 
+              type: currentTestType,
+              score: score,
+              pct: pct,
+              correct: correct,
+              wrong: wrong,
               timestamp: serverTimestamp()
           });
       } catch(e) { console.error("Error saving result:", e); }
 
-      try {
-          const subject = normalizeSubject(T.subject);
-          const userRef = doc(db, "users", currentUser.uid);
-          const userDoc = await getDoc(userRef);
-          const existingWeak = userDoc.data()?.weakTopics || {};
-          if (!existingWeak[subject]) existingWeak[subject] = {};
-          
-          Object.keys(topicStats).forEach(topic => {
-              const stats = topicStats[topic];
-              const acc = Math.round((stats.correct / stats.total) * 100);
-              if (acc < 60) {
-                  existingWeak[subject][topic] = { pct: acc, correct: stats.correct, total: stats.total, lastDate: new Date().toISOString() };
-              } else {
-                  delete existingWeak[subject][topic];
-              }
-          });
-          
-          Object.keys(existingWeak).forEach(sub => {
-              if (Object.keys(existingWeak[sub]).length === 0) delete existingWeak[sub];
-          });
-          
-          await updateDoc(userRef, { weakTopics: existingWeak });
-      } catch(e) { console.error("Weak topics save error:", e); }
+      if (currentUserData.role === 'student') {
+          try {
+              const userRef = doc(db, "users", currentUser.uid);
+              const userDoc = await getDoc(userRef);
+              const fieldName = currentTestType === 'assigned' ? 'weakTopicsTeacher' : 'weakTopicsSelf';
+              const existingWeak = mergeWeakTopicMaps(userDoc.data()?.[fieldName] || userDoc.data()?.weakTopics || {}, localWeak);
+              const updatePayload = { weakTopics: existingWeak };
+              updatePayload[fieldName] = existingWeak;
+              await updateDoc(userRef, updatePayload);
+          } catch(e) { console.error("Weak topics save error:", e); }
+      }
   }
 
   hideLoader();
@@ -1374,15 +1713,16 @@ async function submitTest(){
   var strongHtml = '', weakHtml = '';
   for (var t in topicStats) {
     var stats = topicStats[t]; var acc = Math.round((stats.correct / stats.total) * 100);
-    if (acc >= 70) strongHtml += '<div style="color:var(--green);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>✅ '+esc(t)+'</span><b>'+acc+'%</b></div>';
-    else if (acc < 50) weakHtml += '<div style="color:var(--red);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>⚠️ '+esc(t)+'</span><b>'+acc+'%</b></div>';
+    var labelWithSub = stats.subject && stats.subject !== 'General' ? ('[' + stats.subject + '] ' + t) : t;
+    if (acc >= 70 && stats.wrong === 0) strongHtml += '<div style="color:var(--green);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>✅ '+esc(labelWithSub)+'</span><b>'+acc+'%</b></div>';
+    else if (stats.wrong > 0 || acc < 60) weakHtml += '<div style="color:var(--red);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>⚠️ '+esc(labelWithSub)+' ('+stats.wrong+' wrong)</span><b>'+acc+'%</b></div>';
   }
   
   var analysisHtml = '<div class="card" style="margin-top:16px; padding:16px;">';
   if(strongHtml || weakHtml) {
-    analysisHtml += '<h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Topic Analysis</h3>';
+    analysisHtml += '<h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Topic Analysis (PCB / PCM Subject-Wise)</h3>';
     if(strongHtml) analysisHtml += '<div style="margin-bottom:12px;"><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Strong Topics</div>'+strongHtml+'</div>';
-    if(weakHtml) analysisHtml += '<div><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Needs Improvement</div>'+weakHtml+'</div>';
+    if(weakHtml) analysisHtml += '<div><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Needs Improvement (Saved to Folder)</div>'+weakHtml+'</div>';
   } else { analysisHtml += '<p class="muted small" style="margin:0">Complete more questions to see analysis.</p>'; }
   analysisHtml += '</div>';
 
@@ -1405,6 +1745,8 @@ async function submitTest(){
   });
   reviewHtml += '</div>';
 
+  var finishedTestType = currentTestType;
+
   $('resultBody').innerHTML='<div class="scorecard">'+
     '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
     '<div class="scorecard-score">'+score+'</div>'+
@@ -1415,9 +1757,9 @@ async function submitTest(){
     '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
     '</div></div>'+
     analysisHtml +
-    '<button class="btn big" id="btnToggleReview" style="margin-top:20px; background:var(--card-2); border:1px solid var(--border); color:var(--text);">👁️ Review Answers & Explanations</button>' +
+    '<button type="button" class="btn big" id="btnToggleReview" style="margin-top:20px; background:var(--card-2); border:1px solid var(--border); color:var(--text);">👁️ Review Answers & Explanations</button>' +
     reviewHtml +
-    '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
+    '<button type="button" class="btn primary big" id="btnResHome">🏠 Back to Folder</button>';
 
   $('btnToggleReview').onclick = function() {
     var rev = $('reviewSection');
@@ -1426,8 +1768,14 @@ async function submitTest(){
   };
   
   $('btnResHome').onclick=function(){
-    showScreen('screen-home');
-    if (currentUserData.role === 'student' || isStudentPreview) loadStudentDashboard(); else loadTeacherDashboard();
+    if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
+        loadStudentDashboard();
+        if (finishedTestType === 'assigned') openTeacherTests();
+        else openSelfPracticeFolder();
+    } else {
+        showScreen('screen-home');
+        loadTeacherDashboard();
+    }
   };
   
   showScreen('screen-result'); T = null;
@@ -1439,8 +1787,15 @@ function safeClick(id, fn) {
 }
 
 function wireEvents(){
-  safeClick('btnSetupBack', function(){showScreen('screen-home')});
-  safeClick('btnUploadBack', function(){showScreen('screen-home')});
+  safeClick('btnSetupBack', function(){
+    if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) openSelfPracticeFolder();
+    else showScreen('screen-home');
+  });
+  safeClick('btnUploadBack', function(){
+    if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) openSelfPracticeFolder();
+    else showScreen('screen-home');
+  });
+  
   safeClick('btnFullSubject', function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); });
   safeClick('btnClearChapters', function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); });
   
@@ -1461,12 +1816,13 @@ function wireEvents(){
     if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) loadStudentDashboard(); else if (currentUserData) loadTeacherDashboard();
   });
 
-  // FOLDER BUTTONS
+  // ===== FOLDER BUTTONS =====
   safeClick('btnTeacherFolder', openTeacherTests);
-  safeClick('btnSelfFolder', loadSelfPractice);
-  safeClick('btnSelfPracticeBack', function(){ showScreen('screen-home'); });
+  safeClick('btnSelfFolder', openSelfPracticeFolder);
+  safeClick('btnTeacherTestsBack', function(){ showScreen('screen-home'); updateTeacherBadge(); });
+  safeClick('btnSelfPracticeBack', function(){ showScreen('screen-home'); updateSelfFolderSubtitle(); });
 
-  // Self Practice buttons
+  // Self Practice buttons (inside self-practice screen)
   safeClick('btnSelfPractice', () => { openSetup(); });
   safeClick('btnSelfBook', () => { openUpload('extract'); });
   safeClick('btnSelfNotes', () => { openUpload('notes'); });
@@ -1488,11 +1844,7 @@ function wireEvents(){
       if(btn) btn.classList.add('spinning');
       try {
           if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
-              if (document.getElementById('screen-teacher-tests').classList.contains('active')) {
-                  await openTeacherTests();
-              } else {
-                  await loadStudentDashboard();
-              }
+              await loadStudentDashboard();
           } else if (currentUserData && currentUserData.role === 'teacher') {
               await loadTeacherDashboard();
           }
@@ -1507,4 +1859,4 @@ wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-  </html>
+</html>
