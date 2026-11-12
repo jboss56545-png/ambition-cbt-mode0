@@ -620,14 +620,14 @@ async function loadStudentDashboard() {
     
     listDiv.innerHTML = '';
     
-    // Sort tests by timestamp (newest first)
+    // Sort tests by timestamp (newest first) in JS to avoid index requirement
     let testsList = [];
     querySnapshot.forEach(docSnap => testsList.push({ id: docSnap.id, ...docSnap.data() }));
     testsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
     testsList.forEach((t) => {
         const testId = t.id;
-        const attempt = resultsMap[testId]; // Check if student has attempted this specific testId
+        const attempt = resultsMap[testId]; 
         
         const subjectTag = t.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${t.subject}</span>` : '';
         const createdDate = formatDate(t.timestamp);
@@ -663,34 +663,47 @@ async function loadStudentDashboard() {
 
 async function loadTeacherDashboard() {
     const listDiv = document.getElementById('teacherResultsList');
+    listDiv.innerHTML = '<p class="muted small">Loading results...</p>';
     
-    // Fetch ONLY results for tests created by THIS teacher
-    const q = query(
-        collection(db, "results"), 
-        where("teacherId", "==", currentUser.uid), 
-        orderBy("timestamp", "desc")
-    );
-    const querySnapshot = await getDocs(q);
-    
-    if(querySnapshot.empty) {
-        listDiv.innerHTML = '<p class="muted small">No student results yet.</p>';
-        return;
+    try {
+        // Fetch results for THIS teacher WITHOUT orderBy to avoid index error
+        const q = query(
+            collection(db, "results"), 
+            where("teacherId", "==", currentUser.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        
+        let resultsList = [];
+        querySnapshot.forEach((docSnap) => {
+            resultsList.push(docSnap.data());
+        });
+
+        // Sort in JS by timestamp descending
+        resultsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+        if(resultsList.length === 0) {
+            listDiv.innerHTML = '<p class="muted small">No student results yet.</p>';
+            return;
+        }
+        
+        listDiv.innerHTML = '';
+        resultsList.forEach((r) => {
+            const attemptDate = formatDate(r.timestamp);
+            const d = document.createElement('div');
+            d.className = 'bank-item';
+            d.innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-weight:700;">
+                    <span>${r.studentName}</span> 
+                    <span style="color:var(--green)">${r.score} Marks</span>
+                </div>
+                <div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>
+                <div class="muted small" style="margin-top:4px;">📅 Attempted: ${attemptDate}</div>`;
+            listDiv.appendChild(d);
+        });
+    } catch(e) {
+        console.error(e);
+        listDiv.innerHTML = '<p class="muted small">Error loading results.</p>';
     }
-    listDiv.innerHTML = '';
-    querySnapshot.forEach((docSnap) => {
-        const r = docSnap.data();
-        const attemptDate = formatDate(r.timestamp);
-        const d = document.createElement('div');
-        d.className = 'bank-item';
-        d.innerHTML = `
-            <div style="display:flex; justify-content:space-between; font-weight:700;">
-                <span>${r.studentName}</span> 
-                <span style="color:var(--green)">${r.score} Marks</span>
-            </div>
-            <div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>
-            <div class="muted small" style="margin-top:4px;">📅 Attempted: ${attemptDate}</div>`;
-        listDiv.appendChild(d);
-    });
 }
 
 // 4. APP CORE LOGIC
@@ -845,7 +858,7 @@ async function saveTeacherTest(questions, testName, subjectName) {
             subject: subjectName || 'General',
             questions: questions,
             teacherName: currentUserData.name,
-            teacherId: currentUser.uid, // IMPORTANT: Save Teacher ID
+            teacherId: currentUser.uid, // Save Teacher ID for filtering
             assignedTo: 'all',
             timeLimit: state.timerMins || 15,
             timestamp: serverTimestamp()
@@ -1057,6 +1070,9 @@ async function submitTest(){
   if(timerHandle) clearInterval(timerHandle);
   LS.del(K.ACTIVE);
   
+  // Add Loader immediately to prevent lag feeling
+  showLoader('Submitting Test...', 'Calculating your score');
+
   var correct=0,wrong=0,skipped=0; var topicStats = {};
   T.questions.forEach(function(q,i){
     var topic = q.topic || 'General'; if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 }; topicStats[topic].total++;
@@ -1075,7 +1091,7 @@ async function submitTest(){
               studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
               testName: T.name,
               testId: T.testId,
-              teacherId: T.teacherId, // Save Teacher ID to filter results
+              teacherId: T.teacherId, // Save Teacher ID
               type: testType,
               score: score,
               pct: pct,
@@ -1085,6 +1101,9 @@ async function submitTest(){
           });
       } catch(e) { console.error("Error saving result:", e); }
   }
+
+  // Hide Loader and show result
+  hideLoader();
 
   var strongHtml = '', weakHtml = '';
   for (var t in topicStats) {
