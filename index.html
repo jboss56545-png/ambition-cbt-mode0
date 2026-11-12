@@ -45,6 +45,26 @@ a{color:var(--accent-2);text-decoration:none}
 .action-card:nth-child(2) { animation-delay: 0.1s; }
 .action-card:nth-child(3) { animation-delay: 0.15s; }
 .action-card:nth-child(4) { animation-delay: 0.2s; }
+
+/* FOLDER CARDS (HOME) */
+.folder-card { position: relative; min-height: 150px; padding: 20px 16px; }
+.folder-card .folder-icon { font-size: 40px; }
+.folder-card .folder-title { font-weight: 800; font-size: 16px; margin-top: 4px; }
+.folder-card .folder-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.notif-badge { position: absolute; top: 12px; right: 12px; min-width: 26px; height: 26px; background: var(--red); color: #fff; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 800; padding: 0 7px; box-shadow: 0 0 0 3px var(--card); z-index: 2; animation: pulseDot 2s infinite; }
+@keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px var(--card); } 50% { box-shadow: 0 0 0 3px var(--card), 0 0 0 8px rgba(239,68,68,0.25); } }
+
+/* TAB NAV */
+.tab-nav { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+.tab-btn { background: none; border: none; color: var(--muted); font-weight: 700; padding: 10px 14px; cursor: pointer; border-bottom: 2px solid transparent; font-size: 13.5px; margin-bottom: -1px; transition: .15s;}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* WEAK TOPICS */
+.weak-topic-group { background: var(--bg-2); border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid; }
+.weak-topic-header { font-weight: 800; font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.weak-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.weak-chip { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;}
+
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
 .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff}
@@ -128,32 +148,6 @@ mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
 .preview-banner { background: var(--orange); color: #000; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
 .preview-banner button { background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; }
 .spinning { animation: spin 0.8s linear infinite; }
-
-/* FOLDER CARDS */
-.folder-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; position: relative; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; }
-.folder-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.1); }
-.folder-card.open { border-color: var(--accent); }
-.folder-info { display: flex; align-items: center; gap: 15px; flex: 1; }
-.folder-icon { width: 50px; height: 50px; background: var(--bg-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid var(--border); flex-shrink: 0;}
-.folder-details h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--text); }
-.folder-details p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
-.folder-arrow { font-size: 18px; color: var(--muted); transition: transform 0.25s; flex-shrink: 0; margin-left: 8px;}
-.folder-card.open .folder-arrow { transform: rotate(180deg); }
-.notification-dot { position: absolute; top: -6px; right: -6px; min-width: 24px; height: 24px; background: var(--red); color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2px solid var(--bg); z-index: 10; padding: 0 6px; animation: pulse 2s infinite; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-.sub-folder-view { display: none; margin: 0 0 16px; padding: 4px 0 16px; }
-.sub-folder-view.open { display: block; animation: fadeUp .25s ease; }
-.tab-nav { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
-.tab-btn { background: none; border: none; color: var(--muted); font-weight: 700; padding: 10px 14px; cursor: pointer; border-bottom: 2px solid transparent; font-size: 13.5px; margin-bottom: -1px; transition: .15s;}
-.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-.weak-topic-group { background: var(--bg-2); border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid; }
-.weak-topic-header { font-weight: 800; font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.weak-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.weak-chip { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;}
-.quick-action-mini { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; transition: .2s; display: flex; flex-direction: column; align-items: center; gap: 6px;}
-.quick-action-mini:hover { border-color: var(--accent); background: var(--card-2); transform: translateY(-2px);}
-.quick-action-mini .qa-icon { font-size: 22px; }
-.quick-action-mini .qa-label { font-weight: 700; font-size: 12px; color: var(--text); }
 </style>
 
 <script>
@@ -167,6 +161,7 @@ window.MathJax = {
 </head>
 <body>
 
+<!-- AUTH -->
 <section id="screen-auth" class="screen active">
   <div class="wrap" style="display:flex; flex-direction:column; justify-content:center; min-height:100vh; max-width:400px;">
     <div class="logo ambition-brand" style="justify-content:center; margin-bottom:20px;">
@@ -208,6 +203,8 @@ window.MathJax = {
 </section>
 
 <div id="mainApp" class="hidden">
+
+  <!-- HOME -->
   <section id="screen-home" class="screen active">
     <div class="wrap">
       <header class="appbar">
@@ -227,73 +224,26 @@ window.MathJax = {
         <button id="btnExitPreview">Return to Teacher</button>
       </div>
 
-      <!-- ===== STUDENT DASHBOARD ===== -->
+      <!-- STUDENT HOME -->
       <div id="studentDashboard" class="hidden">
         <div id="resumeBanner"></div>
-        <div style="margin-top:8px;">
-
-          <!-- Folder 1: Teacher Assignments -->
-          <div class="folder-card" id="folderAssignments" onclick="toggleFolder('assignments')">
-            <div class="notification-dot hidden" id="assignDot">0</div>
-            <div class="folder-info">
-              <div class="folder-icon">📂</div>
-              <div class="folder-details">
-                <h3>Teacher Assignments</h3>
-                <p>Tests sent by teachers</p>
-              </div>
-            </div>
-            <div class="folder-arrow">▼</div>
-          </div>
-          <div id="viewAssignments" class="sub-folder-view">
-            <div class="tab-nav">
-              <button class="tab-btn active" data-tab="pending" onclick="switchTab('pending')">Pending (<span id="countPending">0</span>)</button>
-              <button class="tab-btn" data-tab="completed" onclick="switchTab('completed')">Completed (<span id="countCompleted">0</span>)</button>
-            </div>
-            <div id="listPending"><p class="muted small">Loading...</p></div>
-            <div id="listCompleted" style="display:none;"></div>
-          </div>
-
-          <!-- Folder 2: My Practice & Analysis -->
-          <div class="folder-card" id="folderPractice" onclick="toggleFolder('practice')">
-            <div class="folder-info">
-              <div class="folder-icon">🧠</div>
-              <div class="folder-details">
-                <h3>My Practice & Analysis</h3>
-                <p>Self tests &amp; weak topics</p>
-              </div>
-            </div>
-            <div class="folder-arrow">▼</div>
-          </div>
-          <div id="viewPractice" class="sub-folder-view">
-            <div class="section-title" style="margin-top:0;">Quick Start</div>
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:18px;">
-              <button class="quick-action-mini" id="btnQuickAITest">
-                <span class="qa-icon">🧪</span><span class="qa-label">AI Test</span>
-              </button>
-              <button class="quick-action-mini" id="btnQuickPDF">
-                <span class="qa-icon">📄</span><span class="qa-label">PDF</span>
-              </button>
-              <button class="quick-action-mini" id="btnQuickNotes">
-                <span class="qa-icon">📝</span><span class="qa-label">Notes</span>
-              </button>
-              <button class="quick-action-mini" id="btnQuickPhoto">
-                <span class="qa-icon">📷</span><span class="qa-label">Photo</span>
-              </button>
-            </div>
-            <div id="analysisWrap"></div>
-            <div class="card hidden" id="chartContainer" style="margin-top: 14px; padding: 18px;">
-              <div style="height: 220px; width: 100%; position: relative;"><canvas id="progressChart"></canvas></div>
-            </div>
-            <h2 class="section-title" style="margin-top:22px; color:var(--orange);">⚠️ Weak Topics by Subject</h2>
-            <p class="muted" style="margin:-8px 0 12px;font-size:12.5px;">Topics where you scored below 60%. Subjects are kept separate.</p>
-            <div id="weakTopicsContainer"><p class="muted small">Give a test to see your weak topics.</p></div>
-          </div>
-
+        <h2 class="section-title" style="margin-top:0;">Study Folders</h2>
+        <div class="animated-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <button class="action-card folder-card" id="btnTeacherFolder">
+            <div class="folder-icon">📚</div>
+            <div class="folder-title">Teacher Tests</div>
+            <div class="folder-sub">Questions from teachers</div>
+            <span class="notif-badge hidden" id="teacherPendingBadge">0</span>
+          </button>
+          <button class="action-card folder-card" id="btnSelfFolder">
+            <div class="folder-icon">🧪</div>
+            <div class="folder-title">Your Question</div>
+            <div class="folder-sub">AI &amp; self practice</div>
+          </button>
         </div>
       </div>
-      <!-- ===== END STUDENT DASHBOARD ===== -->
 
-      <!-- ===== TEACHER DASHBOARD ===== -->
+      <!-- TEACHER HOME -->
       <div id="teacherDashboard" class="hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h2 class="section-title" style="margin:0;">Create Tests</h2>
@@ -331,6 +281,61 @@ window.MathJax = {
     </div>
   </section>
 
+  <!-- TEACHER TESTS FOLDER (NEW SCREEN) -->
+  <section id="screen-teacher-tests" class="screen">
+    <div class="wrap">
+      <header class="appbar">
+        <button type="button" class="icon-btn" id="btnTeacherTestsBack">←</button>
+        <div class="appbar-title">📚 Teacher Tests</div>
+        <div style="width:44px"></div>
+      </header>
+      <div id="teacherTestsContent"><p class="muted small">Loading...</p></div>
+    </div>
+  </section>
+
+  <!-- SELF PRACTICE FOLDER (NEW SCREEN) -->
+  <section id="screen-self-practice" class="screen">
+    <div class="wrap">
+      <header class="appbar">
+        <button type="button" class="icon-btn" id="btnSelfPracticeBack">←</button>
+        <div class="appbar-title">🧪 Your Question</div>
+        <div style="width:44px"></div>
+      </header>
+      <h2 class="section-title" style="margin-top:0;">Self Practice</h2>
+      <div class="animated-grid">
+        <button class="action-card" id="btnSelfPractice">
+          <div style="font-size:28px">🧪</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
+          <div class="muted small">Generate custom test</div>
+        </button>
+        <button class="action-card" id="btnSelfBook">
+          <div style="font-size:28px">📄</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
+          <div class="muted small">Extract from PDF</div>
+        </button>
+        <button class="action-card" id="btnSelfNotes">
+          <div style="font-size:28px">📝</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
+          <div class="muted small">AI generates MCQs</div>
+        </button>
+        <button class="action-card" id="btnSelfImage">
+          <div style="font-size:28px">📷</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
+          <div class="muted small">Extract from image</div>
+        </button>
+      </div>
+      <h2 class="section-title">My Progress</h2>
+      <div id="analysisWrap"></div>
+      <div class="card hidden" id="chartContainer" style="margin-top: 14px; padding: 18px;">
+        <div style="height: 220px; width: 100%; position: relative;"><canvas id="progressChart"></canvas></div>
+      </div>
+      <h2 class="section-title" style="color:var(--orange);">⚠️ Weak Topics by Subject</h2>
+      <p class="muted" style="margin:-8px 0 12px;font-size:12.5px;">Topics where you scored below 60%. Subjects are kept separate — never mixed.</p>
+      <div id="weakTopicsContainer"><p class="muted small">Give a test to see your weak topics.</p></div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
   <section id="screen-setup" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnSetupBack">←</button><div class="appbar-title" id="setupTitle">AI Practice Test</div><div style="width:44px"></div></header>
@@ -347,6 +352,7 @@ window.MathJax = {
     </div>
   </section>
 
+  <!-- UPLOAD -->
   <section id="screen-upload" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnUploadBack">←</button><div class="appbar-title" id="uploadTitle">Upload File</div><div style="width:44px"></div></header>
@@ -385,6 +391,7 @@ window.MathJax = {
     </div>
   </section>
 
+  <!-- TEST -->
   <section id="screen-test" class="screen">
     <div class="test-topbar">
       <button type="button" class="icon-btn" id="btnPaletteToggle" title="Palette">☰</button>
@@ -408,16 +415,17 @@ window.MathJax = {
     </div>
   </section>
 
+  <!-- RESULT -->
   <section id="screen-result" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnResultHome">←</button><div class="appbar-title" id="resultTitle">Scorecard</div><div style="width:44px"></div></header>
       <div id="resultBody"></div>
     </div>
   </section>
+
 </div>
 
 <div id="loader" class="overlay hidden"><div class="spinner"></div><div id="loaderText">Working…</div><div id="loaderSub"></div></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script type="module">
@@ -438,70 +446,39 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser = null;
-let currentUserData = null;
+let currentUser = null, currentUserData = null;
 let testType = 'self';
 let tempEmail = null, tempRole = null, tempName = null;
 let isStudentPreview = false;
 let cachedAssignedTests = [];
 let cachedStudentResults = [];
 let cachedWeakTopics = {};
-let currentTab = 'pending';
+let teacherTab = 'pending';
 
-// -------- HELPERS --------
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function fmtTime(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
-function formatDate(ts) {
-    if (!ts) return 'Just now';
-    try {
-        if (typeof ts.toDate === 'function') return ts.toDate().toLocaleString();
-        return new Date(ts).toLocaleString();
-    } catch(e) { return 'N/A'; }
-}
-function normalizeSubject(s) {
-    if (!s) return 'General';
-    const sl = String(s).toLowerCase();
-    if (sl.includes('phys')) return 'Physics';
-    if (sl.includes('chem')) return 'Chemistry';
-    if (sl.includes('bio')) return 'Biology';
-    if (sl.includes('math')) return 'Mathematics';
-    if (sl.includes('eng')) return 'English';
-    return 'General';
-}
-function subjectIcon(s) {
-    switch(s) {
-        case 'Physics': return '⚛️';
-        case 'Chemistry': return '🧪';
-        case 'Biology': return '🧬';
-        case 'Mathematics': return '📐';
-        case 'English': return '📖';
-        default: return '📚';
-    }
-}
-function subjectColor(s) {
-    switch(s) {
-        case 'Physics': return '#3b82f6';
-        case 'Chemistry': return '#f59e0b';
-        case 'Biology': return '#22c55e';
-        case 'Mathematics': return '#a855f7';
-        case 'English': return '#ec4899';
-        default: return '#6366f1';
-    }
-}
+function formatDate(ts){ if(!ts) return 'Just now'; try{ if(typeof ts.toDate==='function') return ts.toDate().toLocaleString(); return new Date(ts).toLocaleString();}catch(e){return 'N/A'} }
+function normalizeSubject(s){ if(!s) return 'General'; const sl=String(s).toLowerCase(); if(sl.includes('phys')) return 'Physics'; if(sl.includes('chem')) return 'Chemistry'; if(sl.includes('bio')) return 'Biology'; if(sl.includes('math')) return 'Mathematics'; if(sl.includes('eng')) return 'English'; return 'General'; }
+function subjectIcon(s){ switch(s){ case 'Physics': return '⚛️'; case 'Chemistry': return '🧪'; case 'Biology': return '🧬'; case 'Mathematics': return '📐'; case 'English': return '📖'; default: return '📚'; } }
+function subjectColor(s){ switch(s){ case 'Physics': return '#3b82f6'; case 'Chemistry': return '#f59e0b'; case 'Biology': return '#22c55e'; case 'Mathematics': return '#a855f7'; case 'English': return '#ec4899'; default: return '#6366f1'; } }
 function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('active');var el=$(id);if(el)el.classList.add('active');window.scrollTo(0,0);document.body.classList.toggle('no-scroll',id==='screen-test')}
 function renderMath(el){if(!el) return;if(window.MathJax && MathJax.typesetPromise){try{ if(MathJax.typesetClear) MathJax.typesetClear([el]); MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}} else { setTimeout(function(){ renderMath(el); }, 350); }}
-function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
+function showLoader(t,s){$('loaderText').textContent=t||'Working…';$('loaderSub').textContent=s||'';$('loader').classList.remove('hidden')}
 function hideLoader(){$('loader').classList.add('hidden')}
 function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p style="margin:12px 0;line-height:1.5;color:var(--muted)">'+esc(opts.message||'')+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.text;btn.onclick=function(){document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);document.body.appendChild(ov)})}
 
-// -------- AUTH --------
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
+var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
+
+// AUTH FLOW
 $('btnGoogleLogin').addEventListener('click', async () => {
   const name = $('authName').value.trim();
   const role = $('authRole').value;
   const errDiv = $('authError1');
   errDiv.textContent = '';
-  if(!name) { errDiv.textContent = "Please enter your name first."; return; }
+  if(!name){ errDiv.textContent = "Please enter your name first."; return; }
   tempName = name; tempRole = role;
   const provider = new GoogleAuthProvider();
   try {
@@ -516,7 +493,6 @@ $('btnGoogleLogin').addEventListener('click', async () => {
     }
   } catch (error) {
     errDiv.textContent = "Google Login Failed. Try again.";
-    console.error(error);
   }
 });
 
@@ -531,7 +507,7 @@ $('btnVerifyCode').addEventListener('click', async () => {
   const code = $('authAccessCode').value.trim().toUpperCase();
   const errDiv = $('authError2');
   errDiv.textContent = '';
-  if(!code) { errDiv.textContent = "Please enter access code."; return; }
+  if(!code){ errDiv.textContent = "Please enter access code."; return; }
   const btn = $('btnVerifyCode');
   btn.disabled = true; btn.textContent = 'Verifying...';
   try {
@@ -551,6 +527,7 @@ $('btnVerifyCode').addEventListener('click', async () => {
     const updatedDoc = await getDoc(doc(db, "users", user.uid));
     if (updatedDoc.exists()) {
       currentUserData = updatedDoc.data();
+      cachedWeakTopics = currentUserData.weakTopics || {};
       $('userNameDisplay').textContent = currentUserData.name;
       isStudentPreview = false;
       loadDashboards();
@@ -565,7 +542,6 @@ $('btnVerifyCode').addEventListener('click', async () => {
 
 $('btnLogout').addEventListener('click', () => { signOut(auth); });
 
-// -------- AUTH STATE --------
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
@@ -586,6 +562,7 @@ onAuthStateChanged(auth, async (user) => {
     }
   } else {
     currentUser = null; currentUserData = null; cachedWeakTopics = {};
+    cachedAssignedTests = []; cachedStudentResults = [];
     $('mainApp').classList.add('hidden');
     $('screen-auth').classList.add('active');
     $('authStep1').classList.remove('hidden');
@@ -599,18 +576,11 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// -------- DASHBOARD SWITCH --------
 function loadDashboards() {
   if (!currentUserData) return;
   $('studentDashboard').classList.add('hidden');
   $('teacherDashboard').classList.add('hidden');
   $('previewBanner').classList.add('hidden');
-  // Reset folder states
-  $('viewAssignments').classList.remove('open');
-  $('viewPractice').classList.remove('open');
-  $('folderAssignments').classList.remove('open');
-  $('folderPractice').classList.remove('open');
-
   if (currentUserData.role === 'student' || isStudentPreview) {
     $('studentDashboard').classList.remove('hidden');
     if (currentUserData.role === 'teacher') {
@@ -619,7 +589,7 @@ function loadDashboards() {
     } else {
       $('userRoleBadge').textContent = 'STUDENT';
     }
-    initStudentDashboard();
+    initStudentHome();
   } else if (currentUserData.role === 'teacher') {
     $('teacherDashboard').classList.remove('hidden');
     $('userRoleBadge').textContent = 'TEACHER';
@@ -627,35 +597,10 @@ function loadDashboards() {
   }
 }
 
-// -------- FOLDER TOGGLE --------
-window.toggleFolder = function(name) {
-  const card = name === 'assignments' ? $('folderAssignments') : $('folderPractice');
-  const view = name === 'assignments' ? $('viewAssignments') : $('viewPractice');
-  const isOpen = view.classList.contains('open');
-  if (isOpen) {
-    view.classList.remove('open');
-    card.classList.remove('open');
-  } else {
-    view.classList.add('open');
-    card.classList.add('open');
-    if (name === 'assignments') refreshAssignmentsView();
-    if (name === 'practice') refreshPracticeView();
-  }
-};
-
-window.switchTab = function(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  $('listPending').style.display = tab === 'pending' ? 'block' : 'none';
-  $('listCompleted').style.display = tab === 'completed' ? 'block' : 'none';
-};
-
-// -------- STUDENT DASHBOARD --------
-async function initStudentDashboard() {
+// STUDENT HOME
+async function initStudentHome() {
   renderResumeBanner();
-  await fetchStudentData();
-  refreshAssignmentsView();
-  refreshPracticeView();
+  await updateHomeBadges();
 }
 
 function renderResumeBanner(){
@@ -669,140 +614,152 @@ function renderResumeBanner(){
   } else { banner.innerHTML=''; }
 }
 
-async function fetchStudentData() {
-  if(!currentUser) return;
-  showLoader('Syncing data...', '');
+async function updateHomeBadges() {
+  if (!currentUser) return;
   try {
-    // Assigned tests
-    const testsSnap = await getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all")));
+    const [testsSnap, resultsSnap] = await Promise.all([
+      getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all"))),
+      getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)))
+    ]);
     cachedAssignedTests = [];
     testsSnap.forEach(d => cachedAssignedTests.push({ id: d.id, ...d.data() }));
     cachedAssignedTests.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
-    // Student results
-    const resultsSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
     cachedStudentResults = [];
     resultsSnap.forEach(d => cachedStudentResults.push({ id: d.id, ...d.data() }));
 
-    // Weak topics from user doc (source of truth)
-    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-    cachedWeakTopics = userDoc.data()?.weakTopics || {};
+    const resultMap = {};
+    cachedStudentResults.forEach(r => { if (r.testId) resultMap[r.testId] = r; });
+    const pendingCount = cachedAssignedTests.filter(t => !resultMap[t.id]).length;
 
-    hideLoader();
+    const badge = $('teacherPendingBadge');
+    if (pendingCount > 0) {
+      badge.textContent = pendingCount > 9 ? '9+' : String(pendingCount);
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  } catch(e) { console.error("Badge error:", e); }
+}
+
+// TEACHER TESTS SCREEN
+async function openTeacherTests() {
+  showScreen('screen-teacher-tests');
+  const content = $('teacherTestsContent');
+  content.innerHTML = '<p class="muted small">Loading...</p>';
+  try {
+    if (!cachedAssignedTests.length && !cachedStudentResults.length) {
+      await updateHomeBadges();
+    }
+    renderTeacherTestsContent();
   } catch(e) {
     console.error(e);
-    hideLoader();
+    content.innerHTML = '<p class="muted small">Error loading. Please try again.</p>';
   }
 }
 
-function refreshAssignmentsView() {
+function renderTeacherTestsContent() {
+  const content = $('teacherTestsContent');
   const resultMap = {};
-  cachedStudentResults.forEach(r => { if(r.testId) resultMap[r.testId] = r; });
+  cachedStudentResults.forEach(r => { if (r.testId) resultMap[r.testId] = r; });
 
-  let pendingCount = 0, completedCount = 0;
-  let htmlPending = '', htmlCompleted = '';
+  const pending = cachedAssignedTests.filter(t => !resultMap[t.id]);
+  const completed = cachedAssignedTests.filter(t => resultMap[t.id]);
 
-  cachedAssignedTests.forEach(test => {
-    const attempt = resultMap[test.id];
-    const subjectTag = test.subject ? `<span style="font-size:10px;background:${subjectColor(normalizeSubject(test.subject))};color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">${esc(test.subject)}</span>` : '';
-    const createdDate = formatDate(test.timestamp);
+  let html = '';
 
-    if(attempt) {
-      completedCount++;
-      const attDate = formatDate(attempt.timestamp);
-      htmlCompleted += `
-        <div class="bank-item" style="opacity:0.85;">
-          <div style="font-weight:700;color:var(--muted)">✅ ${esc(test.name)} ${subjectTag}</div>
-          <div class="muted small">${test.questions.length} questions • By ${esc(test.teacherName)}</div>
-          <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-          <div class="muted small" style="color:var(--green);margin-top:4px;font-weight:600;">🎯 Score: ${attempt.score} Marks | Accuracy: ${attempt.pct}% | ${attDate}</div>
-          <button class="btn small primary" style="margin-top:8px;" onclick="showReview('${attempt.id}')">👁️ View Review</button>
-        </div>`;
-    } else {
-      pendingCount++;
-      htmlPending += `
-        <div class="bank-item" style="border-color:var(--accent);">
-          <div style="font-weight:700;font-size:16px;">📄 ${esc(test.name)} ${subjectTag}</div>
-          <div class="muted small">${test.questions.length} questions • By ${esc(test.teacherName)}</div>
-          <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-          <button class="btn primary" style="width:100%;margin-top:8px;" onclick="startAssignedTest('${test.id}')">▶ Start Test</button>
-        </div>`;
-    }
-  });
+  // Tabs
+  html += `<div class="tab-nav">
+    <button class="tab-btn ${teacherTab === 'pending' ? 'active' : ''}" onclick="switchTeacherTab('pending')">Pending (${pending.length})</button>
+    <button class="tab-btn ${teacherTab === 'completed' ? 'active' : ''}" onclick="switchTeacherTab('completed')">Completed (${completed.length})</button>
+  </div>`;
 
-  $('countPending').textContent = pendingCount;
-  $('countCompleted').textContent = completedCount;
-
-  const dot = $('assignDot');
-  if (pendingCount > 0) {
-    dot.classList.remove('hidden');
-    dot.textContent = pendingCount > 9 ? '9+' : pendingCount;
+  // Pending list
+  html += `<div id="listPending" style="display:${teacherTab === 'pending' ? 'block' : 'none'};">`;
+  if (pending.length === 0) {
+    html += '<div class="card"><p class="muted small" style="margin:0;text-align:center;padding:14px;">✨ No pending tests. You are all caught up!</p></div>';
   } else {
-    dot.classList.add('hidden');
+    pending.forEach(t => { html += renderTeacherTestCard(t, null); });
   }
+  html += '</div>';
 
-  $('listPending').innerHTML = pendingCount > 0 ? htmlPending : '<p class="muted small" style="text-align:center;padding:20px;">✨ No pending tests. You are all caught up!</p>';
-  $('listCompleted').innerHTML = completedCount > 0 ? htmlCompleted : '<p class="muted small" style="text-align:center;padding:20px;">No completed tests yet.</p>';
-}
+  // Completed list
+  html += `<div id="listCompleted" style="display:${teacherTab === 'completed' ? 'block' : 'none'};">`;
+  if (completed.length === 0) {
+    html += '<div class="card"><p class="muted small" style="margin:0;text-align:center;padding:14px;">No completed tests yet.</p></div>';
+  } else {
+    completed.forEach(t => { html += renderTeacherTestCard(t, resultMap[t.id]); });
+  }
+  html += '</div>';
 
-window.startAssignedTest = function(id) {
-  const t = cachedAssignedTests.find(x => x.id === id);
-  if(!t) return;
-  launchTest({
-    name: t.name, questions: t.questions, timerMode: 'timer',
-    timerMins: t.timeLimit || 15, type: 'assigned', testId: id,
-    teacherId: t.teacherId, subject: t.subject || 'General'
+  // Weak topics (always visible at bottom)
+  html += '<h2 class="section-title" style="color:var(--orange);">⚠️ Weak Topics by Subject</h2>';
+  html += '<p class="muted" style="margin:-8px 0 12px;font-size:12.5px;">Topics where you scored below 60%. Subjects are kept separate.</p>';
+  html += renderWeakTopicsHTML();
+
+  content.innerHTML = html;
+
+  // Attach handlers
+  content.querySelectorAll('[data-start-test]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.getAttribute('data-start-test');
+      const t = cachedAssignedTests.find(x => x.id === id);
+      if (!t) return;
+      launchTest({ name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit || 15, type: 'assigned', testId: id, teacherId: t.teacherId, subject: t.subject || 'General' });
+    };
   });
-};
-
-window.showReview = function(resultId) {
-  const result = cachedStudentResults.find(r => r.id === resultId);
-  if (!result) { dialog({title: 'Error', message: 'Result not found.'}); return; }
-  if (!result.questions || !result.answers) {
-    dialog({title: 'Review Not Available', message: 'Detailed review is only available for tests taken after this feature was added.'});
-    return;
-  }
-  renderReviewScreen(result);
-};
-
-function refreshPracticeView() {
-  renderHistoryChart();
-  renderWeakTopics();
+  content.querySelectorAll('[data-review-result]').forEach(btn => {
+    btn.onclick = () => {
+      const rid = btn.getAttribute('data-review-result');
+      const res = cachedStudentResults.find(r => r.id === rid);
+      if (!res) return;
+      if (!res.questions || !res.answers) {
+        dialog({title: 'Review Not Available', message: 'Detailed review is only available for tests taken after this feature was added.'});
+        return;
+      }
+      renderReviewScreen(res);
+    };
+  });
 }
 
-function renderHistoryChart() {
-  var hist = LS.get(K.HISTORY, []);
-  var analysis = $('analysisWrap');
-  if (!analysis) return;
-  if(!hist.length){
-    analysis.innerHTML = '<div class="card"><p class="muted small" style="margin:0">Complete a test to see your performance chart here.</p></div>';
-    $('chartContainer').classList.add('hidden');
-    return;
+window.switchTeacherTab = function(tab) {
+  teacherTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const text = b.textContent.toLowerCase();
+    b.classList.toggle('active', text.startsWith(tab === 'pending' ? 'pending' : 'completed'));
+  });
+  $('listPending').style.display = tab === 'pending' ? 'block' : 'none';
+  $('listCompleted').style.display = tab === 'completed' ? 'block' : 'none';
+};
+
+function renderTeacherTestCard(t, result) {
+  const createdDate = formatDate(t.timestamp);
+  const subjKey = normalizeSubject(t.subject);
+  const subjectTag = t.subject ? `<span style="font-size:10px;background:${subjectColor(subjKey)};color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">${esc(t.subject)}</span>` : '';
+
+  if (result) {
+    return `<div class="bank-item" style="opacity:0.9;">
+      <div style="font-weight:700;color:var(--muted);">✅ ${esc(t.name)} ${subjectTag}</div>
+      <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
+      <div class="muted small">📅 Sent: ${createdDate}</div>
+      <div class="muted small" style="color:var(--green);font-weight:600;">🎯 Score: ${result.score} Marks | Accuracy: ${result.pct}% | ${formatDate(result.timestamp)}</div>
+      <button class="btn small primary" style="margin-top:6px;" data-review-result="${result.id}">👁️ View Review</button>
+    </div>`;
   }
-  var totalCorrect = 0, totalQs = 0;
-  hist.forEach(h => { totalCorrect += (h.correct || 0); totalQs += ((h.correct || 0) + (h.wrong || 0) + (h.skipped || 0)); });
-  var overallAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
-  analysis.innerHTML = '<div class="analysis-grid"><div class="analysis-stat"><div class="value">' + hist.length + '</div><div class="label">Tests Taken</div></div><div class="analysis-stat"><div class="value">' + overallAcc + '%</div><div class="label">Overall Accuracy</div></div></div>';
-  $('chartContainer').classList.remove('hidden');
-  var recentTests = hist.slice(0, 10).reverse();
-  var labels = recentTests.map((h, i) => h.date ? h.date.split(',')[0] : 'Test ' + (i+1));
-  var dataPts = recentTests.map(h => h.pct);
-  var ctx = $('progressChart').getContext('2d');
-  if(myChart) myChart.destroy();
-  myChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Score %', data: dataPts, borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.15)', borderWidth: 3, pointBackgroundColor: '#a855f7', pointBorderColor: '#fff', pointRadius: 4, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b95ad', font: { size: 11 } } }, x: { grid: { display: false }, ticks: { color: '#8b95ad', font: { size: 11 } } } } } });
+
+  return `<div class="bank-item" style="border-color:var(--accent);">
+    <div style="font-weight:700;font-size:16px;">📄 ${esc(t.name)} ${subjectTag}</div>
+    <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
+    <div class="muted small">📅 Sent: ${createdDate}</div>
+    <button class="btn primary" style="width:100%;margin-top:6px;" data-start-test="${t.id}">▶ Start Test</button>
+  </div>`;
 }
 
-function renderWeakTopics() {
-  const container = $('weakTopicsContainer');
-  if (!container) return;
+function renderWeakTopicsHTML() {
   const subjects = Object.keys(cachedWeakTopics).filter(s => Object.keys(cachedWeakTopics[s] || {}).length > 0);
-
   if (subjects.length === 0) {
-    container.innerHTML = '<div class="card"><p class="muted small" style="margin:0;">🎉 Great! No weak topics identified yet. Take more tests to track your progress.</p></div>';
-    return;
+    return '<div class="card"><p class="muted small" style="margin:0;">🎉 Great! No weak topics identified yet. Give a test to start tracking.</p></div>';
   }
-
-  // Order subjects consistently
   const order = ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'General'];
   subjects.sort((a, b) => order.indexOf(a) - order.indexOf(b));
 
@@ -811,7 +768,6 @@ function renderWeakTopics() {
     const topics = Object.entries(cachedWeakTopics[subject] || {});
     if (topics.length === 0) return;
     topics.sort((a, b) => (a[1].pct || 0) - (b[1].pct || 0));
-
     const color = subjectColor(subject);
     html += `<div class="weak-topic-group" style="border-left-color:${color};">
       <div class="weak-topic-header" style="color:${color};">
@@ -819,16 +775,32 @@ function renderWeakTopics() {
         <span style="font-size:11px;background:${color};color:#fff;padding:2px 8px;border-radius:99px;margin-left:auto;">${topics.length} weak</span>
       </div>
       <div class="weak-chips">`;
-    topics.forEach(([topicName, data]) => {
+    topics.forEach(([name, data]) => {
       const pct = data.pct != null ? data.pct : 0;
-      html += `<span class="weak-chip">⚠️ ${esc(topicName)} <b style="margin-left:4px;">${pct}%</b></span>`;
+      html += `<span class="weak-chip">⚠️ ${esc(name)} <b style="margin-left:4px;">${pct}%</b></span>`;
     });
     html += `</div></div>`;
   });
-  container.innerHTML = html;
+  return html;
 }
 
-// -------- TEACHER DASHBOARD --------
+// SELF PRACTICE SCREEN
+function openSelfPractice() {
+  showScreen('screen-self-practice');
+  // Small delay so canvas is visible before Chart.js renders
+  setTimeout(() => {
+    renderHistoryChart();
+    renderWeakTopicsInSelf();
+  }, 50);
+}
+
+function renderWeakTopicsInSelf() {
+  const container = $('weakTopicsContainer');
+  if (!container) return;
+  container.innerHTML = renderWeakTopicsHTML();
+}
+
+// TEACHER DASHBOARD
 async function loadTeacherDashboard() {
   const listDiv = $('teacherResultsList');
   listDiv.innerHTML = '<p class="muted small">Loading results...</p>';
@@ -861,18 +833,13 @@ async function loadTeacherDashboard() {
   }
 }
 
-// -------- CONSTANTS --------
+// CONSTANTS
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
 var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Welfare","Biotechnology Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation"];
-
 var EXAM_DATA={ CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{"Mathematics (Class 12)":CH_MATH_12,"Physics (Class 12)":CH_PHY_12,"Chemistry (Class 12)":CH_CHEM_12,"Biology (Class 12)":CH_BIO_12,"English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],"General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]}}};
-var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
-var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
-var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
 
-// -------- AI HELPERS --------
 async function aiCall(message, context, opts) {
   opts = opts || {};
   var timeoutMs = opts.timeoutMs || 90000;
@@ -883,13 +850,14 @@ async function aiCall(message, context, opts) {
   var lastErr;
   for (var attempt = 0; attempt <= retries; attempt++) {
     var ctrl = new AbortController();
-    var timer = setTimeout(function() { ctrl.abort(); }, timeoutMs);
+    var timer = setTimeout(function(){ ctrl.abort(); }, timeoutMs);
     try {
       var res = await fetch('/api/ai-coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: ctrl.signal });
       clearTimeout(timer);
-      if (!res.ok) { var body = ''; try { body = await res.text(); } catch (e) {} throw new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : '')); }
+      if (!res.ok) { var body = ''; try { body = await res.text(); } catch(e){} throw new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : '')); }
       var data = await res.json(); var text = data && (data.message || data.text);
-      if (!text) throw new Error('Empty AI response'); return String(text);
+      if (!text) throw new Error('Empty AI response');
+      return String(text);
     } catch (e) {
       clearTimeout(timer); lastErr = e;
       if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) { await new Promise(r => setTimeout(r, 1000)); continue; }
@@ -902,7 +870,7 @@ async function aiCall(message, context, opts) {
 function fixLatexEscapesInJSON(jsonStr) { return jsonStr.replace(/(^|[^\\])\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '$1\\\\$2').replace(/(^|[^\\])\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})/g, '$1\\\\'); }
 function safeParseJSON(text){ if (!text) return []; var t = String(text).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim(); var safeT = fixLatexEscapesInJSON(t); try { return JSON.parse(safeT); } catch(e) {} try { return JSON.parse(t); } catch(e) {} var s = safeT.indexOf('['), e = safeT.lastIndexOf(']'); if(s >= 0 && e > s) { try { return JSON.parse(safeT.slice(s, e+1)); } catch(err) {} } var s2 = safeT.indexOf('{'), e2 = safeT.lastIndexOf('}'); if(s2 >= 0 && e2 > s2) { try { var o = JSON.parse(safeT.slice(s2, e2+1)); if (o && Array.isArray(o.questions)) return o.questions; return o; } catch(err) {} } if (t.length > 0 && t.length < 500 && !t.includes('{')) return []; throw new Error('AI returned non-JSON. Please retry.'); }
 function formatStatements(text) { if (!text) return ''; var formatted = text; formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2').replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2').replace(/^([A-E]\.\s)/, '\n$1').replace(/^(\([A-E1-4]\)\s)/, '\n$1'); return formatted.trim(); }
-function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1'); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; } if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) { var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, ''); if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str; str = str.replace(/\$/g, ''); } var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) { var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i); if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)'; return '\\(' + str + '\\)'; } return str; }
+function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) str = str.replace(/\$/g, ''); var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) return '\\(' + str + '\\)'; return str; }
 function cleanOptionText(str) { if (!str) return ''; var s = String(str).trim(); s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, ''); return s.trim(); }
 
 function normaliseList(raw){
@@ -918,23 +886,13 @@ function normaliseList(raw){
     var seen = new Set();
     opts.forEach(function(o) {
       var cleanO = cleanOptionText(o);
-      if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') {
-        seen.add(cleanO.toLowerCase());
-        uniqueOpts.push(cleanO);
-      }
+      if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') { seen.add(cleanO.toLowerCase()); uniqueOpts.push(cleanO); }
     });
     while (uniqueOpts.length < 4) uniqueOpts.push('None of the above');
     opts = uniqueOpts.slice(0, 4);
     var ans = Number(item.ans);
     if (isNaN(ans) || ans < 0 || ans > 3) ans = 0;
-    out.push({
-      q: autoWrapMath(formatStatements(q)),
-      options: opts.map(o => autoWrapMath(o)),
-      ans: ans,
-      topic: String(item.topic || 'General'),
-      diff: String(item.diff || 'medium'),
-      explain: String(item.explain || '')
-    });
+    out.push({ q: autoWrapMath(formatStatements(q)), options: opts.map(o => autoWrapMath(o)), ans: ans, topic: String(item.topic || 'General'), diff: String(item.diff || 'medium'), explain: String(item.explain || '') });
   }
   return out;
 }
@@ -943,11 +901,33 @@ function compressImage(file, maxDim, quality){ maxDim = maxDim || 2500; quality 
 async function extractPDFText(file, onProgress) { var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var pages = []; for (var i = 1; i <= pdf.numPages; i++) { var page = await pdf.getPage(i); var content = await page.getTextContent(); pages.push(content.items.map(function(it){ return it.str; }).join(' ')); if (onProgress) onProgress(i, pdf.numPages); } return { text: pages.join('\n\n'), pageCount: pdf.numPages }; }
 async function renderPDFPages(file, maxPages) { maxPages = maxPages || 30; var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var total = Math.min(pdf.numPages, maxPages); var images = []; for (var i = 1; i <= total; i++) { var page = await pdf.getPage(i); var viewport = page.getViewport({ scale: 2.0 }); var canvas = document.createElement('canvas'); canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height); await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise; var dataUrl = canvas.toDataURL('image/jpeg', 0.85); images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' }); canvas.width = 0; canvas.height = 0; } return { images: images, pageCount: pdf.numPages, renderedCount: total }; }
 
-var state = {exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'stopwatch',timerMins:15};
+var state = {exam:'CUET', subject:null, chapters:[], count:10, difficulty:'Mixed', timerMode:'stopwatch', timerMins:15};
 var uploadMode = 'extract';
 var T = null, timerHandle = null;
 var startTime = 0, totalDuration = 0;
 var myChart = null;
+
+function renderHistoryChart() {
+  var hist = LS.get(K.HISTORY, []);
+  var analysis = $('analysisWrap');
+  if (!analysis) return;
+  if(!hist.length){
+    analysis.innerHTML = '<div class="card"><p class="muted small" style="margin:0">Complete a test to see your performance chart here.</p></div>';
+    $('chartContainer').classList.add('hidden');
+    return;
+  }
+  var totalCorrect = 0, totalQs = 0;
+  hist.forEach(h => { totalCorrect += (h.correct || 0); totalQs += ((h.correct || 0) + (h.wrong || 0) + (h.skipped || 0)); });
+  var overallAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
+  analysis.innerHTML = '<div class="analysis-grid"><div class="analysis-stat"><div class="value">' + hist.length + '</div><div class="label">Tests Taken</div></div><div class="analysis-stat"><div class="value">' + overallAcc + '%</div><div class="label">Overall Accuracy</div></div></div>';
+  $('chartContainer').classList.remove('hidden');
+  var recentTests = hist.slice(0, 10).reverse();
+  var labels = recentTests.map((h, i) => h.date ? h.date.split(',')[0] : 'Test ' + (i+1));
+  var dataPts = recentTests.map(h => h.pct);
+  var ctx = $('progressChart').getContext('2d');
+  if(myChart) myChart.destroy();
+  myChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Score %', data: dataPts, borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.15)', borderWidth: 3, pointBackgroundColor: '#a855f7', pointBorderColor: '#fff', pointRadius: 4, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b95ad', font: { size: 11 } } }, x: { grid: { display: false }, ticks: { color: '#8b95ad', font: { size: 11 } } } } } });
+}
 
 function openSetup(){
   state.subject = null; state.chapters = []; state.count = 10; state.timerMode = 'stopwatch';
@@ -969,8 +949,7 @@ function startAITest(){
   var cInput = parseInt($('customNumInput').value);
   if(cInput > 0 && cInput <= 100) state.count = cInput;
   var tInput = parseInt($('customTimerInput').value);
-  if(tInput > 0 && tInput <= 180) state.timerMins = tInput;
-  else state.timerMins = 15;
+  if(tInput > 0 && tInput <= 180) state.timerMins = tInput; else state.timerMins = 15;
   var chapters = state.chapters.length ? state.chapters : ['Full Syllabus'];
   var randomSeed = Math.floor(Math.random() * 999999);
   var prompt = 'Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
@@ -982,7 +961,7 @@ function startAITest(){
     if (currentUserData.role === 'teacher' && !isStudentPreview) {
       saveTeacherTest(list, state.subject + ' Test', state.subject);
     } else {
-      launchTest({name:'CUET • '+state.subject, questions:list, timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: state.subject});
+      launchTest({name:'CUET • '+state.subject, questions:list, timerMode:state.timerMode, timerMins:state.timerMins, type:'self', subject: state.subject});
     }
   }).catch(function(err){
     hideLoader();
@@ -994,14 +973,9 @@ async function saveTeacherTest(questions, testName, subjectName) {
   showLoader('Saving test for students…', '');
   try {
     await addDoc(collection(db, "tests"), {
-      name: testName || 'New Test',
-      subject: subjectName || 'General',
-      questions: questions,
-      teacherName: currentUserData.name,
-      teacherId: currentUser.uid,
-      assignedTo: 'all',
-      timeLimit: state.timerMins || 15,
-      timestamp: serverTimestamp()
+      name: testName || 'New Test', subject: subjectName || 'General', questions: questions,
+      teacherName: currentUserData.name, teacherId: currentUser.uid, assignedTo: 'all',
+      timeLimit: state.timerMins || 15, timestamp: serverTimestamp()
     });
     hideLoader();
     dialog({title:'✅ Test Assigned', message:'Test saved! Students can now see this test.'}).then(() => showScreen('screen-home'));
@@ -1143,21 +1117,13 @@ function chunkText(text, size){
   return chunks;
 }
 
-// -------- TEST ENGINE --------
+// TEST ENGINE
 function launchTest(cfg){
-  T = {
-    name: cfg.name,
-    questions: cfg.questions,
-    cur: 0,
-    elapsed: 0,
-    timerMode: cfg.timerMode || 'stopwatch',
-    timerMins: cfg.timerMins || 15,
+  T = { name: cfg.name, questions: cfg.questions, cur: 0, elapsed: 0,
+    timerMode: cfg.timerMode || 'stopwatch', timerMins: cfg.timerMins || 15,
     subject: cfg.subject || 'General',
-    answers: cfg.questions.map(function(){return null;}),
-    marked: cfg.questions.map(function(){return false;}),
-    testId: cfg.testId || null,
-    teacherId: cfg.teacherId || null
-  };
+    answers: cfg.questions.map(()=>null), marked: cfg.questions.map(()=>false),
+    testId: cfg.testId || null, teacherId: cfg.teacherId || null };
   testType = cfg.type || 'self';
   LS.set(K.ACTIVE, T);
   $('testTitle').textContent = T.name;
@@ -1173,17 +1139,10 @@ function startTimer(){
     T.elapsed = Math.floor((Date.now() - startTime) / 1000);
     if (T.timerMode === 'timer') {
       var remaining = totalDuration - T.elapsed;
-      if (remaining <= 0) {
-        clearInterval(timerHandle);
-        $('timerDisplay').textContent = '00:00';
-        dialog({title:'Time Up!',message:'Auto-submitting your test.'}).then(function(){ submitTest(); });
-        return;
-      }
+      if (remaining <= 0) { clearInterval(timerHandle); $('timerDisplay').textContent = '00:00'; dialog({title:'Time Up!',message:'Auto-submitting your test.'}).then(function(){ submitTest(); }); return; }
       $('timerDisplay').textContent = fmtTime(remaining);
       $('timerDisplay').style.color = remaining < 60 ? 'var(--red)' : 'var(--text)';
-    } else {
-      $('timerDisplay').textContent = fmtTime(T.elapsed);
-    }
+    } else { $('timerDisplay').textContent = fmtTime(T.elapsed); }
   }, 1000);
 }
 
@@ -1212,9 +1171,7 @@ function renderPalette(){
   var grid = $('paletteGrid'); grid.innerHTML = '';
   T.questions.forEach(function(_, i){
     var cls = 'grey'; if(T.marked[i]) cls = 'purple'; else if(T.answers[i] !== null) cls = 'green';
-    var b = document.createElement('button');
-    b.className = 'pal-btn ' + cls + (i === T.cur ? ' cur' : '');
-    b.textContent = i+1;
+    var b = document.createElement('button'); b.className = 'pal-btn ' + cls + (i === T.cur ? ' cur' : ''); b.textContent = i+1;
     b.onclick = function(){ T.cur = i; renderQuestion(); renderPalette(); $('palette').classList.remove('open'); };
     grid.appendChild(b);
   });
@@ -1237,67 +1194,47 @@ async function submitTest(){
     if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 };
     topicStats[topic].total++;
     if(T.answers[i] === null) { skipped++; return; }
-    if(T.answers[i] === q.ans) { correct++; topicStats[topic].correct++; }
-    else { wrong++; }
+    if(T.answers[i] === q.ans) { correct++; topicStats[topic].correct++; } else { wrong++; }
   });
   var score = (correct*5) - (wrong*1);
   var max = T.questions.length * 5;
   var pct = Math.max(0, Math.round((score/max)*100));
 
   var record = { name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats:topicStats, type:testType, subject:T.subject };
-  var hist = LS.get(K.HISTORY, []);
-  hist.unshift(record); LS.set(K.HISTORY, hist);
+  var hist = LS.get(K.HISTORY, []); hist.unshift(record); LS.set(K.HISTORY, hist);
 
   // Save to Firestore (student only, not preview)
-  let savedResultId = null;
   if (currentUserData && currentUserData.role === 'student') {
     try {
-      const resultRef = await addDoc(collection(db, "results"), {
-        studentId: currentUser.uid,
-        studentName: currentUserData.name,
-        testName: T.name,
-        testId: T.testId,
-        teacherId: T.teacherId,
-        type: testType,
-        subject: normalizeSubject(T.subject),
-        score: score, pct: pct,
-        correct: correct, wrong: wrong,
-        questions: T.questions,        // for review
-        answers: T.answers,            // for review
+      await addDoc(collection(db, "results"), {
+        studentId: currentUser.uid, studentName: currentUserData.name,
+        testName: T.name, testId: T.testId, teacherId: T.teacherId,
+        type: testType, subject: normalizeSubject(T.subject),
+        score: score, pct: pct, correct: correct, wrong: wrong,
+        questions: T.questions, answers: T.answers,
         timestamp: serverTimestamp()
       });
-      savedResultId = resultRef.id;
     } catch(e) { console.error("Error saving result:", e); }
 
-    // Update weak topics in Firestore (grouped by subject, never mixed)
+    // Update weak topics grouped by subject
     try {
       const subject = normalizeSubject(T.subject);
       const userRef = doc(db, "users", currentUser.uid);
       const userDoc = await getDoc(userRef);
       const existing = userDoc.data()?.weakTopics || {};
       if (!existing[subject]) existing[subject] = {};
-
       Object.keys(topicStats).forEach(topic => {
         const stats = topicStats[topic];
         const acc = Math.round((stats.correct / stats.total) * 100);
         if (acc < 60) {
-          existing[subject][topic] = {
-            pct: acc,
-            correct: stats.correct,
-            total: stats.total,
-            lastDate: new Date().toISOString()
-          };
+          existing[subject][topic] = { pct: acc, correct: stats.correct, total: stats.total, lastDate: new Date().toISOString() };
         } else {
-          // Improved! Remove from weak list
           delete existing[subject][topic];
         }
       });
-
-      // Clean empty subject groups
       Object.keys(existing).forEach(subj => {
         if (Object.keys(existing[subj]).length === 0) delete existing[subj];
       });
-
       await updateDoc(userRef, { weakTopics: existing });
       cachedWeakTopics = existing;
     } catch(e) { console.error("Weak topics update error:", e); }
@@ -1305,7 +1242,6 @@ async function submitTest(){
 
   hideLoader();
 
-  // Render scorecard
   var strongHtml = '', weakHtml = '';
   for (var t in topicStats) {
     var stats = topicStats[t];
@@ -1342,19 +1278,13 @@ async function submitTest(){
 
   $('btnToggleReview').onclick = function() {
     var rev = $('reviewSection');
-    if (rev.style.display === 'none') {
-      rev.style.display = 'block';
-      this.textContent = '🙈 Hide Answers & Explanations';
-      renderMath(rev);
-    } else {
-      rev.style.display = 'none';
-      this.textContent = '👁️ Review Answers & Explanations';
-    }
+    if (rev.style.display === 'none') { rev.style.display = 'block'; this.textContent = '🙈 Hide Answers & Explanations'; renderMath(rev); }
+    else { rev.style.display = 'none'; this.textContent = '👁️ Review Answers & Explanations'; }
   };
 
   $('btnResHome').onclick = function() {
     showScreen('screen-home');
-    if (currentUserData.role === 'student' || isStudentPreview) initStudentDashboard();
+    if (currentUserData.role === 'student' || isStudentPreview) initStudentHome();
     else loadTeacherDashboard();
   };
 
@@ -1380,9 +1310,7 @@ function renderReviewContent(questions, answers) {
       else optStyle += 'color: var(--muted);';
       html += '<div style="' + optStyle + '">' + String.fromCharCode(65 + optIdx) + ') ' + esc(opt) + '</div>';
     });
-    if (q.explain) {
-      html += '<div class="review-exp"><b style="color:var(--accent);">Explanation:</b> ' + esc(q.explain) + '</div>';
-    }
+    if (q.explain) html += '<div class="review-exp"><b style="color:var(--accent);">Explanation:</b> ' + esc(q.explain) + '</div>';
     html += '</div>';
   });
   return html;
@@ -1400,14 +1328,36 @@ function renderReviewScreen(result) {
     '</div></div>' +
     renderReviewContent(result.questions, result.answers) +
     '<button class="btn primary big" id="btnReviewBack">← Back to Home</button>';
-  $('btnReviewBack').onclick = function(){ showScreen('screen-home'); };
+  $('btnReviewBack').onclick = function(){
+    showScreen('screen-home');
+    if (currentUserData.role === 'student' || isStudentPreview) initStudentHome();
+    else loadTeacherDashboard();
+  };
   showScreen('screen-result');
   $('resultTitle').textContent = 'Review: ' + result.testName;
   setTimeout(function(){ renderMath($('resultBody')); }, 100);
 }
 
-// -------- EVENT WIRING --------
+// EVENT WIRING
 function safeClick(id, fn) { var el = $(id); if (el) el.onclick = fn; }
+
+safeClick('btnTeacherFolder', openTeacherTests);
+safeClick('btnSelfFolder', openSelfPractice);
+safeClick('btnTeacherTestsBack', function(){ showScreen('screen-home'); updateHomeBadges(); });
+safeClick('btnSelfPracticeBack', function(){ showScreen('screen-home'); });
+
+safeClick('btnSelfPractice', openSetup);
+safeClick('btnSelfBook', function(){ openUpload('extract'); });
+safeClick('btnSelfNotes', function(){ openUpload('notes'); });
+safeClick('btnSelfImage', function(){ openUpload('image'); });
+
+safeClick('btnTeacherCreateTest', openSetup);
+safeClick('btnTeacherBook', function(){ openUpload('extract'); });
+safeClick('btnTeacherNotes', function(){ openUpload('notes'); });
+safeClick('btnTeacherImage', function(){ openUpload('image'); });
+
+safeClick('btnPreviewAsStudent', function(){ isStudentPreview = true; loadDashboards(); });
+safeClick('btnExitPreview', function(){ isStudentPreview = false; loadDashboards(); });
 
 safeClick('btnSetupBack', function(){ showScreen('screen-home'); });
 safeClick('btnUploadBack', function(){ showScreen('screen-home'); });
@@ -1421,42 +1371,25 @@ safeClick('btnMark', toggleMark);
 safeClick('btnClear', clearAns);
 safeClick('btnSubmit', function(){ dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){ if(ok) submitTest(); }); });
 
-var ci = $('customNumInput'); if(ci) ci.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 100) { state.count = v; renderChips(); } };
-var ti = $('customTimerInput'); if(ti) ti.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 180) { state.timerMins = v; } };
+var ci = $('customNumInput'); if(ci) ci.oninput = function(e){ var v = parseInt(e.target.value); if(v > 0 && v <= 100){ state.count = v; renderChips(); } };
+var ti = $('customTimerInput'); if(ti) ti.oninput = function(e){ var v = parseInt(e.target.value); if(v > 0 && v <= 180){ state.timerMins = v; } };
 var fi = $('fileInput'); if(fi) fi.onchange = function(e){ if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value = ''; };
 
 safeClick('btnResultHome', function(){
   showScreen('screen-home');
-  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) initStudentDashboard();
+  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) initStudentHome();
   else if (currentUserData) loadTeacherDashboard();
 });
 
-// Quick action buttons in folder 2
-safeClick('btnQuickAITest', openSetup);
-safeClick('btnQuickPDF', function(){ openUpload('extract'); });
-safeClick('btnQuickNotes', function(){ openUpload('notes'); });
-safeClick('btnQuickPhoto', function(){ openUpload('image'); });
-
-// Teacher dashboard buttons
-safeClick('btnTeacherCreateTest', openSetup);
-safeClick('btnTeacherBook', function(){ openUpload('extract'); });
-safeClick('btnTeacherNotes', function(){ openUpload('notes'); });
-safeClick('btnTeacherImage', function(){ openUpload('image'); });
-
-// Preview mode
-safeClick('btnPreviewAsStudent', function(){ isStudentPreview = true; loadDashboards(); });
-safeClick('btnExitPreview', function(){ isStudentPreview = false; loadDashboards(); });
-
-// Refresh
 safeClick('btnRefreshDash', async function(){
   var btn = $('btnRefreshDash');
   if(btn) btn.classList.add('spinning');
   try {
     if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
-      await fetchStudentData();
-      refreshAssignmentsView();
-      refreshPracticeView();
-      renderResumeBanner();
+      cachedAssignedTests = []; cachedStudentResults = [];
+      await updateHomeBadges();
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      cachedWeakTopics = userDoc.data()?.weakTopics || {};
     } else if (currentUserData && currentUserData.role === 'teacher') {
       await loadTeacherDashboard();
     }
@@ -1467,4 +1400,4 @@ safeClick('btnRefreshDash', async function(){
 IDB.open().catch(function(){});
 </script>
 </body>
-    </html>
+</html>
