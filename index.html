@@ -410,6 +410,15 @@ let tempCode = null;
 let tempName = null;
 let isStudentPreview = false;
 
+// --- HELPER: Format Date ---
+function formatDate(ts) {
+    if (!ts) return 'Just now';
+    try {
+        if (typeof ts.toDate === 'function') return ts.toDate().toLocaleString();
+        return new Date(ts).toLocaleString();
+    } catch(e) { return 'N/A'; }
+}
+
 // --- GOOGLE LOGIN FLOW ---
 document.getElementById('btnGoogleLogin').addEventListener('click', async () => {
   const name = document.getElementById('authName').value.trim();
@@ -590,15 +599,17 @@ async function loadStudentDashboard() {
     renderHistoryChart();
     const listDiv = document.getElementById('assignedTestsList');
     
+    // Get completed tests (map by testId)
     const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
     const resultsSnap = await getDocs(resultsQ);
-    const completedTestIds = new Set();
-    const completedTestNames = new Set();
+    
+    const resultsMap = {};
     resultsSnap.forEach(doc => {
-        completedTestIds.add(doc.data().testId);
-        completedTestNames.add(doc.data().testName);
+        const data = doc.data();
+        if(data.testId) resultsMap[data.testId] = data;
     });
 
+    // Fetch assigned tests
     const q = query(collection(db, "tests"), where("assignedTo", "==", "all"));
     const querySnapshot = await getDocs(q);
     
@@ -606,21 +617,44 @@ async function loadStudentDashboard() {
         listDiv.innerHTML = '<p class="muted small">No tests assigned by teacher yet.</p>';
         return;
     }
+    
     listDiv.innerHTML = '';
-    querySnapshot.forEach((docSnap) => {
-        const t = docSnap.data();
-        const testId = docSnap.id;
-        const isDone = completedTestIds.has(testId) || completedTestNames.has(t.name);
+    
+    // Sort tests by timestamp (newest first)
+    let testsList = [];
+    querySnapshot.forEach(docSnap => testsList.push({ id: docSnap.id, ...docSnap.data() }));
+    testsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+    testsList.forEach((t) => {
+        const testId = t.id;
+        const attempt = resultsMap[testId]; // Check if student has attempted this specific testId
         
         const subjectTag = t.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${t.subject}</span>` : '';
-
+        const createdDate = formatDate(t.timestamp);
+        
         const d = document.createElement('div');
         d.className = 'bank-item';
         
-        if (isDone) {
-            d.innerHTML = `<div style="font-weight:700; color:var(--muted)">📄 ${t.name} ${subjectTag} <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span></div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>`;
+        if (attempt) {
+            const attemptDate = formatDate(attempt.timestamp);
+            d.innerHTML = `
+                <div style="font-weight:700; color:var(--muted)">
+                    📄 ${t.name} ${subjectTag} 
+                    <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span>
+                </div>
+                <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
+                <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
+                <div class="muted small" style="color:var(--green); margin-top:4px; font-weight:600;">
+                    🎯 Score: ${attempt.score} Marks | 📅 Attempted: ${attemptDate}
+                </div>`;
         } else {
-            d.innerHTML = `<div style="font-weight:700">📄 ${t.name} ${subjectTag}</div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div><div class="btn-row"><button class="btn small primary">▶ Start Test</button></div>`;
+            d.innerHTML = `
+                <div style="font-weight:700">📄 ${t.name} ${subjectTag}</div>
+                <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
+                <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
+                <div class="btn-row" style="margin-top:8px;">
+                    <button class="btn small primary">▶ Start Test</button>
+                </div>`;
             d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: testId, teacherId: t.teacherId});
         }
         listDiv.appendChild(d);
@@ -645,9 +679,16 @@ async function loadTeacherDashboard() {
     listDiv.innerHTML = '';
     querySnapshot.forEach((docSnap) => {
         const r = docSnap.data();
+        const attemptDate = formatDate(r.timestamp);
         const d = document.createElement('div');
         d.className = 'bank-item';
-        d.innerHTML = `<div style="display:flex; justify-content:space-between; font-weight:700;"><span>${r.studentName}</span> <span style="color:var(--green)">${r.score} Marks</span></div><div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>`;
+        d.innerHTML = `
+            <div style="display:flex; justify-content:space-between; font-weight:700;">
+                <span>${r.studentName}</span> 
+                <span style="color:var(--green)">${r.score} Marks</span>
+            </div>
+            <div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>
+            <div class="muted small" style="margin-top:4px;">📅 Attempted: ${attemptDate}</div>`;
         listDiv.appendChild(d);
     });
 }
@@ -804,7 +845,7 @@ async function saveTeacherTest(questions, testName, subjectName) {
             subject: subjectName || 'General',
             questions: questions,
             teacherName: currentUserData.name,
-            teacherId: currentUser.uid, // NEW: Save Teacher ID
+            teacherId: currentUser.uid, // IMPORTANT: Save Teacher ID
             assignedTo: 'all',
             timeLimit: state.timerMins || 15,
             timestamp: serverTimestamp()
@@ -1034,7 +1075,7 @@ async function submitTest(){
               studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
               testName: T.name,
               testId: T.testId,
-              teacherId: T.teacherId, // NEW: Save Teacher ID here
+              teacherId: T.teacherId, // Save Teacher ID to filter results
               type: testType,
               score: score,
               pct: pct,
