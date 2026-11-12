@@ -229,8 +229,9 @@ window.MathJax = {
       <div id="studentDashboard" class="hidden">
         <div id="resumeBanner"></div>
         
-        <h2 class="section-title">Assigned Tests</h2>
-        <div id="assignedTestsList"><p class="muted small">No tests assigned yet.</p></div>
+        <div id="assignedTestsWrapper">
+            <!-- Content will be injected via JS -->
+        </div>
 
         <h2 class="section-title">Self Practice</h2>
         <div class="animated-grid">
@@ -597,9 +598,10 @@ onAuthStateChanged(auth, async (user) => {
 // 3. DASHBOARD LOADERS
 async function loadStudentDashboard() {
     renderHistoryChart();
-    const listDiv = document.getElementById('assignedTestsList');
+    const wrapper = document.getElementById('assignedTestsWrapper');
+    wrapper.innerHTML = '<p class="muted small">Loading tests...</p>';
     
-    // Get completed tests (map by testId)
+    // Get completed tests
     const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
     const resultsSnap = await getDocs(resultsQ);
     
@@ -614,16 +616,23 @@ async function loadStudentDashboard() {
     const querySnapshot = await getDocs(q);
     
     if(querySnapshot.empty) {
-        listDiv.innerHTML = '<p class="muted small">No tests assigned by teacher yet.</p>';
+        wrapper.innerHTML = '<p class="muted small">No tests assigned by teacher yet.</p>';
         return;
     }
     
-    listDiv.innerHTML = '';
+    wrapper.innerHTML = '';
     
-    // Sort tests by timestamp (newest first) in JS to avoid index requirement
+    // Sort tests by timestamp (newest first)
     let testsList = [];
     querySnapshot.forEach(docSnap => testsList.push({ id: docSnap.id, ...docSnap.data() }));
     testsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+    // Separate into Pending and Completed
+    let pendingHTML = '<h2 class="section-title" style="margin-top:0; color:var(--accent);">📌 Pending Tests</h2><div style="display:flex; flex-direction:column; gap:11px; margin-bottom:20px;">';
+    let completedHTML = '<h2 class="section-title" style="color:var(--green);">✅ Completed Tests</h2><div style="display:flex; flex-direction:column; gap:11px;">';
+    
+    let hasPending = false;
+    let hasCompleted = false;
 
     testsList.forEach((t) => {
         const testId = t.id;
@@ -632,33 +641,52 @@ async function loadStudentDashboard() {
         const subjectTag = t.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${t.subject}</span>` : '';
         const createdDate = formatDate(t.timestamp);
         
-        const d = document.createElement('div');
-        d.className = 'bank-item';
-        
         if (attempt) {
+            hasCompleted = true;
             const attemptDate = formatDate(attempt.timestamp);
-            d.innerHTML = `
-                <div style="font-weight:700; color:var(--muted)">
-                    📄 ${t.name} ${subjectTag} 
-                    <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span>
-                </div>
-                <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
-                <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-                <div class="muted small" style="color:var(--green); margin-top:4px; font-weight:600;">
-                    🎯 Score: ${attempt.score} Marks | 📅 Attempted: ${attemptDate}
+            completedHTML += `
+                <div class="bank-item" style="opacity: 0.8;">
+                    <div style="font-weight:700; color:var(--muted)">
+                        📄 ${t.name} ${subjectTag} 
+                    </div>
+                    <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
+                    <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
+                    <div class="muted small" style="color:var(--green); margin-top:4px; font-weight:600;">
+                        🎯 Score: ${attempt.score} Marks | 📅 Attempted: ${attemptDate}
+                    </div>
                 </div>`;
         } else {
-            d.innerHTML = `
-                <div style="font-weight:700">📄 ${t.name} ${subjectTag}</div>
-                <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
-                <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-                <div class="btn-row" style="margin-top:8px;">
-                    <button class="btn small primary">▶ Start Test</button>
+            hasPending = true;
+            pendingHTML += `
+                <div class="bank-item" style="border-color: var(--accent);">
+                    <div style="font-weight:700; font-size: 16px;">📄 ${t.name} ${subjectTag}</div>
+                    <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
+                    <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
+                    <div class="btn-row" style="margin-top:8px;">
+                        <button class="btn primary" style="width:100%;" onclick="window.startAssignedTest('${testId}')">▶ Start Test</button>
+                    </div>
                 </div>`;
-            d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: testId, teacherId: t.teacherId});
         }
-        listDiv.appendChild(d);
     });
+
+    pendingHTML += '</div>';
+    completedHTML += '</div>';
+
+    if (!hasPending) {
+        wrapper.innerHTML += '<h2 class="section-title" style="margin-top:0; color:var(--muted);">📌 Pending Tests</h2><div class="card"><p class="muted small" style="margin:0;">No pending tests. You are all caught up!</p></div>';
+    } else {
+        wrapper.innerHTML += pendingHTML;
+    }
+
+    if (hasCompleted) {
+        wrapper.innerHTML += completedHTML;
+    }
+
+    // Attach global function for onclick
+    window.startAssignedTest = function(id) {
+        const t = testsList.find(x => x.id === id);
+        if(t) launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: id, teacherId: t.teacherId});
+    };
 }
 
 async function loadTeacherDashboard() {
@@ -757,7 +785,49 @@ function safeParseJSON(text){ if (!text) return []; var t = String(text).trim().
 function formatStatements(text) { if (!text) return ''; var formatted = text; formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2').replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2').replace(/^([A-E]\.\s)/, '\n$1').replace(/^(\([A-E1-4]\)\s)/, '\n$1'); return formatted.trim(); }
 function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1'); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; } if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) { var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, ''); if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str; str = str.replace(/\$/g, ''); } var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) { var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i); if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)'; return '\\(' + str + '\\)'; } return str; }
 function cleanOptionText(str) { if (!str) return ''; var s = String(str).trim(); s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, ''); return s.trim(); }
-function normaliseList(raw){ var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []); var out = []; for(var i=0; i<arr.length; i++){ var item = arr[i]; if(!item || typeof item !== 'object') continue; var q = item.q || item.question || item.text; var opts = item.options || item.opts || []; if(!q) continue; while(opts.length < 4) opts.push('None of the above'); opts = opts.slice(0, 4); var ans = Number(item.ans); if(isNaN(ans) || ans < 0 || ans > 3) ans = 0; out.push({ q: autoWrapMath(formatStatements(q)), options: opts.map(function(o) { return autoWrapMath(cleanOptionText(o)); }), ans: ans, topic: String(item.topic || 'General'), diff: String(item.diff || 'medium'), explain: String(item.explain || '') }); } return out; }
+
+// FIX: Added Deduplication Logic to prevent duplicate options
+function normaliseList(raw){ 
+    var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []); 
+    var out = []; 
+    for(var i=0; i<arr.length; i++){ 
+        var item = arr[i]; 
+        if(!item || typeof item !== 'object') continue; 
+        var q = item.q || item.question || item.text; 
+        var opts = item.options || item.opts || []; 
+        if(!q) continue; 
+        
+        // Deduplicate and clean options
+        var uniqueOpts = [];
+        var seen = new Set();
+        opts.forEach(function(o) {
+            var cleanO = cleanOptionText(o);
+            if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') {
+                seen.add(cleanO.toLowerCase());
+                uniqueOpts.push(cleanO);
+            }
+        });
+        
+        // If deduplication removed options, fill with placeholder
+        while(uniqueOpts.length < 4) {
+            uniqueOpts.push('None of the above');
+        }
+        opts = uniqueOpts.slice(0, 4); 
+        
+        var ans = Number(item.ans); 
+        if(isNaN(ans) || ans < 0 || ans > 3) ans = 0; 
+        
+        out.push({ 
+            q: autoWrapMath(formatStatements(q)), 
+            options: opts.map(function(o) { return autoWrapMath(o); }), 
+            ans: ans, 
+            topic: String(item.topic || 'General'), 
+            diff: String(item.diff || 'medium'), 
+            explain: String(item.explain || '') 
+        }); 
+    } 
+    return out; 
+}
 
 function compressImage(file, maxDim, quality){ maxDim = maxDim || 2500; quality = quality || 0.88; return new Promise(function(resolve, reject){ var reader = new FileReader(); reader.onload = function(e){ var img = new Image(); img.onload = function(){ var w = img.width, h = img.height; if(w > maxDim || h > maxDim){ if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; } else { w = Math.round((w * maxDim)/h); h = maxDim; } } var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); var dataUrl = canvas.toDataURL('image/jpeg', quality); canvas.width = 0; canvas.height = 0; resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' }); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
 async function extractPDFText(file, onProgress) { var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var pages = []; for (var i = 1; i <= pdf.numPages; i++) { var page = await pdf.getPage(i); var content = await page.getTextContent(); pages.push(content.items.map(function(it){ return it.str; }).join(' ')); if (onProgress) onProgress(i, pdf.numPages); } return { text: pages.join('\n\n'), pageCount: pdf.numPages }; }
@@ -832,7 +902,11 @@ function startAITest(){
   else state.timerMins = 15;
 
   var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
-  var prompt='Generate '+state.count+' CUET MCQs for '+state.subject+' (Topics: '+chapters.join(', ')+'). Difficulty: '+state.difficulty+'. Raw JSON format.';
+  
+  // FIX: Added random seed to force new questions
+  var randomSeed = Math.floor(Math.random() * 999999);
+  var prompt='Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
+  
   showLoader('AI is generating questions…','This might take a few seconds');
   aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai'}).then(function(res){
     var list=normaliseList(safeParseJSON(res));
@@ -858,7 +932,7 @@ async function saveTeacherTest(questions, testName, subjectName) {
             subject: subjectName || 'General',
             questions: questions,
             teacherName: currentUserData.name,
-            teacherId: currentUser.uid, // Save Teacher ID for filtering
+            teacherId: currentUser.uid,
             assignedTo: 'all',
             timeLimit: state.timerMins || 15,
             timestamp: serverTimestamp()
@@ -1070,7 +1144,6 @@ async function submitTest(){
   if(timerHandle) clearInterval(timerHandle);
   LS.del(K.ACTIVE);
   
-  // Add Loader immediately to prevent lag feeling
   showLoader('Submitting Test...', 'Calculating your score');
 
   var correct=0,wrong=0,skipped=0; var topicStats = {};
@@ -1091,7 +1164,7 @@ async function submitTest(){
               studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
               testName: T.name,
               testId: T.testId,
-              teacherId: T.teacherId, // Save Teacher ID
+              teacherId: T.teacherId, 
               type: testType,
               score: score,
               pct: pct,
@@ -1102,7 +1175,6 @@ async function submitTest(){
       } catch(e) { console.error("Error saving result:", e); }
   }
 
-  // Hide Loader and show result
   hideLoader();
 
   var strongHtml = '', weakHtml = '';
@@ -1251,4 +1323,4 @@ wireEvents();
 IDB.open().catch(function(){});
 </script>
 </body>
-</html>
+  </html>
