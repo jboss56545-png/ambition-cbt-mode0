@@ -39,7 +39,6 @@ a{color:var(--accent-2);text-decoration:none}
 .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:520px}
 .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:700;margin:26px 0 12px}
 
-/* ANIMATED GRID */
 .animated-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
 @media(min-width:620px){.animated-grid{grid-template-columns:repeat(4,1fr)}}
 .action-card { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 14px; text-align: left; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 8px; cursor: pointer; opacity: 0; transform: translateY(15px); animation: slideUpFade 0.5s forwards; }
@@ -49,6 +48,32 @@ a{color:var(--accent-2);text-decoration:none}
 .action-card:nth-child(2) { animation-delay: 0.1s; }
 .action-card:nth-child(3) { animation-delay: 0.15s; }
 .action-card:nth-child(4) { animation-delay: 0.2s; }
+
+/* FOLDER + NOTIFICATION */
+.folder-card { position: relative; min-height: 130px; }
+.notif-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 7px;
+  box-shadow: 0 0 0 3px var(--card);
+  animation: pulseDot 2s infinite;
+  z-index: 2;
+}
+@keyframes pulseDot {
+  0%, 100% { box-shadow: 0 0 0 3px var(--card); }
+  50% { box-shadow: 0 0 0 3px var(--card), 0 0 0 8px rgba(239,68,68,0.25); }
+}
 
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
@@ -158,7 +183,6 @@ window.MathJax = {
       <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
     
-    <!-- STEP 1: Details & Google Login -->
     <div class="card" id="authStep1">
       <div class="vip-header">
         <div class="vip-title">Welcome to Ambition CBT</div>
@@ -180,7 +204,6 @@ window.MathJax = {
       <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
 
-    <!-- STEP 2: VIP Code -->
     <div class="card hidden" id="authStep2">
       <div class="vip-header">
         <div class="vip-icon">🔑</div>
@@ -220,40 +243,27 @@ window.MathJax = {
         <p id="userGreeting">Ready to practice today?</p>
       </div>
 
-      <!-- PREVIEW BANNER -->
       <div id="previewBanner" class="preview-banner hidden">
         <span>👀 Viewing as Student</span>
         <button id="btnExitPreview">Return to Teacher</button>
       </div>
 
+      <!-- ===== NEW STUDENT DASHBOARD (2 FOLDERS) ===== -->
       <div id="studentDashboard" class="hidden">
         <div id="resumeBanner"></div>
         
-        <div id="assignedTestsWrapper">
-            <!-- Content will be injected via JS -->
-        </div>
-
-        <h2 class="section-title">Self Practice</h2>
-        <div class="animated-grid">
-          <button class="action-card" id="btnSelfPractice">
-            <div style="font-size:28px">🧪</div>
-            <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
-            <div class="muted small">Generate custom test</div>
+        <h2 class="section-title" style="margin-top:0;">Study Folders</h2>
+        <div class="animated-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <button class="action-card folder-card" id="btnTeacherFolder">
+            <div style="font-size:34px">📚</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Teacher Tests</div>
+            <div class="muted small">Questions uploaded by teacher</div>
+            <span class="notif-badge hidden" id="teacherPendingBadge">0</span>
           </button>
-          <button class="action-card" id="btnSelfBook">
-            <div style="font-size:28px">📄</div>
-            <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
-            <div class="muted small">Extract from PDF</div>
-          </button>
-          <button class="action-card" id="btnSelfNotes">
-            <div style="font-size:28px">📝</div>
-            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
-            <div class="muted small">AI generates MCQs</div>
-          </button>
-          <button class="action-card" id="btnSelfImage">
-            <div style="font-size:28px">📷</div>
-            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
-            <div class="muted small">Extract from image</div>
+          <button class="action-card folder-card" id="btnSelfFolder">
+            <div style="font-size:34px">🧪</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Your Question</div>
+            <div class="muted small">AI &amp; self practice</div>
           </button>
         </div>
 
@@ -263,6 +273,7 @@ window.MathJax = {
           <div style="height: 220px; width: 100%; position: relative;"><canvas id="progressChart"></canvas></div>
         </div>
       </div>
+      <!-- ===== END STUDENT DASHBOARD ===== -->
 
       <div id="teacherDashboard" class="hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -302,6 +313,56 @@ window.MathJax = {
     </div>
   </section>
 
+  <!-- ===== NEW SCREEN: TEACHER TESTS FOLDER ===== -->
+  <section id="screen-teacher-tests" class="screen">
+    <div class="wrap">
+      <header class="appbar">
+        <button type="button" class="icon-btn" id="btnTeacherTestsBack">←</button>
+        <div class="appbar-title">📚 Teacher Tests</div>
+        <div style="width:44px"></div>
+      </header>
+      <div id="teacherTestsContent">
+        <p class="muted small">Loading...</p>
+      </div>
+    </div>
+  </section>
+  <!-- ===== END TEACHER TESTS ===== -->
+
+  <!-- ===== NEW SCREEN: SELF PRACTICE FOLDER ===== -->
+  <section id="screen-self-practice" class="screen">
+    <div class="wrap">
+      <header class="appbar">
+        <button type="button" class="icon-btn" id="btnSelfPracticeBack">←</button>
+        <div class="appbar-title">🧪 Your Question</div>
+        <div style="width:44px"></div>
+      </header>
+      <h2 class="section-title" style="margin-top:0;">Self Practice</h2>
+      <div class="animated-grid">
+        <button class="action-card" id="btnSelfPractice">
+          <div style="font-size:28px">🧪</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
+          <div class="muted small">Generate custom test</div>
+        </button>
+        <button class="action-card" id="btnSelfBook">
+          <div style="font-size:28px">📄</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
+          <div class="muted small">Extract from PDF</div>
+        </button>
+        <button class="action-card" id="btnSelfNotes">
+          <div style="font-size:28px">📝</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
+          <div class="muted small">AI generates MCQs</div>
+        </button>
+        <button class="action-card" id="btnSelfImage">
+          <div style="font-size:28px">📷</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
+          <div class="muted small">Extract from image</div>
+        </button>
+      </div>
+    </div>
+  </section>
+  <!-- ===== END SELF PRACTICE ===== -->
+
   <section id="screen-setup" class="screen">
     <div class="wrap">
       <header class="appbar"><button type="button" class="icon-btn" id="btnSetupBack">←</button><div class="appbar-title" id="setupTitle">AI Practice Test</div><div style="width:44px"></div></header>
@@ -323,17 +384,19 @@ window.MathJax = {
       <header class="appbar"><button type="button" class="icon-btn" id="btnUploadBack">←</button><div class="appbar-title" id="uploadTitle">Upload File</div><div style="width:44px"></div></header>
       
       <div class="card">
-        <div id="teacherUploadFields" class="hidden" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+        <div id="teacherTitleField" class="hidden" style="margin-bottom: 16px;">
             <label class="small muted">Test Title</label>
             <input type="text" id="uploadTestTitle" placeholder="e.g. Biology Chapter 1">
-            <label class="small muted" style="margin-top:8px; display:block;">Subject</label>
+        </div>
+        <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+            <label class="small muted">Subject</label>
             <select id="uploadTestSubject">
                 <option value="Mathematics">Mathematics</option>
                 <option value="Physics">Physics</option>
                 <option value="Chemistry">Chemistry</option>
                 <option value="Biology">Biology</option>
                 <option value="English">English</option>
-                <option value="General Test">General Test</option>
+                <option value="General">General</option>
             </select>
         </div>
 
@@ -377,7 +440,7 @@ window.MathJax = {
     </div>
   </section>
 
-</div> <!-- End Main App -->
+</div>
 
 <div id="loader" class="overlay hidden"><div class="spinner"></div><div id="loaderText">Working…</div><div id="loaderSub"></div></div>
 
@@ -418,6 +481,18 @@ function formatDate(ts) {
         if (typeof ts.toDate === 'function') return ts.toDate().toLocaleString();
         return new Date(ts).toLocaleString();
     } catch(e) { return 'N/A'; }
+}
+
+// --- HELPER: Normalize Subject (PCB/PCM grouping) ---
+function normalizeSubject(s) {
+    if (!s) return 'General';
+    const sl = String(s).toLowerCase();
+    if (sl.includes('physics')) return 'Physics';
+    if (sl.includes('chemistry')) return 'Chemistry';
+    if (sl.includes('biology')) return 'Biology';
+    if (sl.includes('math')) return 'Mathematics';
+    if (sl.includes('english')) return 'English';
+    return 'General';
 }
 
 // --- GOOGLE LOGIN FLOW ---
@@ -461,7 +536,6 @@ document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
   document.getElementById('authError2').textContent = '';
 });
 
-// Verify Code Logic
 document.getElementById('btnVerifyCode').addEventListener('click', async () => {
   const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
   const errDiv = document.getElementById('authError2');
@@ -497,7 +571,6 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
     const user = auth.currentUser;
     if (!user) throw new Error("Session expired. Please login with Google again.");
 
-    // Save Data
     await setDoc(doc(db, "users", user.uid), {
       name: tempName,
       email: tempEmail,
@@ -510,7 +583,6 @@ document.getElementById('btnVerifyCode').addEventListener('click', async () => {
         usedByEmail: tempEmail
     });
 
-    // Immediately load dashboard
     const updatedDocSnap = await getDoc(doc(db, "users", user.uid));
     if (updatedDocSnap.exists()) {
         currentUserData = updatedDocSnap.data();
@@ -595,118 +667,176 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// 3. DASHBOARD LOADERS
+// ==================== STUDENT DASHBOARD (NEW) ====================
 async function loadStudentDashboard() {
     renderHistoryChart();
-    const wrapper = document.getElementById('assignedTestsWrapper');
-    wrapper.innerHTML = '<p class="muted small">Loading tests...</p>';
-    
-    // Get completed tests
-    const resultsQ = query(collection(db, "results"), where("studentId", "==", currentUser.uid));
-    const resultsSnap = await getDocs(resultsQ);
-    
-    const resultsMap = {};
-    resultsSnap.forEach(doc => {
-        const data = doc.data();
-        if(data.testId) resultsMap[data.testId] = data;
-    });
-
-    // Fetch assigned tests
-    const q = query(collection(db, "tests"), where("assignedTo", "==", "all"));
-    const querySnapshot = await getDocs(q);
-    
-    if(querySnapshot.empty) {
-        wrapper.innerHTML = '<p class="muted small">No tests assigned by teacher yet.</p>';
-        return;
-    }
-    
-    wrapper.innerHTML = '';
-    
-    // Sort tests by timestamp (newest first)
-    let testsList = [];
-    querySnapshot.forEach(docSnap => testsList.push({ id: docSnap.id, ...docSnap.data() }));
-    testsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-    // Separate into Pending and Completed
-    let pendingHTML = '<h2 class="section-title" style="margin-top:0; color:var(--accent);">📌 Pending Tests</h2><div style="display:flex; flex-direction:column; gap:11px; margin-bottom:20px;">';
-    let completedHTML = '<h2 class="section-title" style="color:var(--green);">✅ Completed Tests</h2><div style="display:flex; flex-direction:column; gap:11px;">';
-    
-    let hasPending = false;
-    let hasCompleted = false;
-
-    testsList.forEach((t) => {
-        const testId = t.id;
-        const attempt = resultsMap[testId]; 
-        
-        const subjectTag = t.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${t.subject}</span>` : '';
-        const createdDate = formatDate(t.timestamp);
-        
-        if (attempt) {
-            hasCompleted = true;
-            const attemptDate = formatDate(attempt.timestamp);
-            completedHTML += `
-                <div class="bank-item" style="opacity: 0.8;">
-                    <div style="font-weight:700; color:var(--muted)">
-                        📄 ${t.name} ${subjectTag} 
-                    </div>
-                    <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
-                    <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-                    <div class="muted small" style="color:var(--green); margin-top:4px; font-weight:600;">
-                        🎯 Score: ${attempt.score} Marks | 📅 Attempted: ${attemptDate}
-                    </div>
-                </div>`;
-        } else {
-            hasPending = true;
-            pendingHTML += `
-                <div class="bank-item" style="border-color: var(--accent);">
-                    <div style="font-weight:700; font-size: 16px;">📄 ${t.name} ${subjectTag}</div>
-                    <div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>
-                    <div class="muted small" style="margin-top:4px;">📅 Sent: ${createdDate}</div>
-                    <div class="btn-row" style="margin-top:8px;">
-                        <button class="btn primary" style="width:100%;" onclick="window.startAssignedTest('${testId}')">▶ Start Test</button>
-                    </div>
-                </div>`;
-        }
-    });
-
-    pendingHTML += '</div>';
-    completedHTML += '</div>';
-
-    if (!hasPending) {
-        wrapper.innerHTML += '<h2 class="section-title" style="margin-top:0; color:var(--muted);">📌 Pending Tests</h2><div class="card"><p class="muted small" style="margin:0;">No pending tests. You are all caught up!</p></div>';
-    } else {
-        wrapper.innerHTML += pendingHTML;
-    }
-
-    if (hasCompleted) {
-        wrapper.innerHTML += completedHTML;
-    }
-
-    // Attach global function for onclick
-    window.startAssignedTest = function(id) {
-        const t = testsList.find(x => x.id === id);
-        if(t) launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: id, teacherId: t.teacherId});
-    };
+    updateTeacherBadge();
 }
 
+async function updateTeacherBadge() {
+    if (!currentUser) return;
+    try {
+        const testsSnap = await getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all")));
+        const resultsSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
+        const completedIds = new Set();
+        resultsSnap.forEach(d => { if (d.data().testId) completedIds.add(d.data().testId); });
+        let pendingCount = 0;
+        testsSnap.forEach(d => { if (!completedIds.has(d.id)) pendingCount++; });
+        const badge = document.getElementById('teacherPendingBadge');
+        if (!badge) return;
+        if (pendingCount > 0) {
+            badge.textContent = pendingCount > 9 ? '9+' : String(pendingCount);
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    } catch(e) { console.error("Badge error:", e); }
+}
+
+async function openTeacherTests() {
+    showScreen('screen-teacher-tests');
+    const content = document.getElementById('teacherTestsContent');
+    content.innerHTML = '<p class="muted small">Loading tests...</p>';
+    
+    try {
+        const testsSnap = await getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all")));
+        const testsList = [];
+        testsSnap.forEach(d => testsList.push({ id: d.id, ...d.data() }));
+        testsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        
+        const resultsSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
+        const resultsMap = {};
+        resultsSnap.forEach(d => { const data = d.data(); if (data.testId) resultsMap[data.testId] = data; });
+        
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const weakTopics = userDoc.data()?.weakTopics || {};
+        
+        const pending = testsList.filter(t => !resultsMap[t.id]);
+        const completed = testsList.filter(t => resultsMap[t.id]);
+        
+        let html = '';
+        
+        // PENDING
+        if (pending.length > 0) {
+            html += '<h2 class="section-title" style="margin-top:0; color:var(--accent);">📌 Pending Tests (' + pending.length + ')</h2>';
+            html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
+            pending.forEach(t => { html += renderTeacherTestCard(t, null); });
+            html += '</div>';
+        } else {
+            html += '<h2 class="section-title" style="margin-top:0; color:var(--muted);">📌 Pending Tests</h2>';
+            html += '<div class="card" style="margin-bottom:20px;"><p class="muted small" style="margin:0;">✅ No pending tests. You are all caught up!</p></div>';
+        }
+        
+        // COMPLETED
+        if (completed.length > 0) {
+            html += '<h2 class="section-title" style="color:var(--green);">✅ Completed Tests (' + completed.length + ')</h2>';
+            html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
+            completed.forEach(t => { html += renderTeacherTestCard(t, resultsMap[t.id]); });
+            html += '</div>';
+        }
+        
+        // WEAK TOPICS
+        html += renderWeakTopics(weakTopics);
+        
+        content.innerHTML = html;
+        
+        // Attach start handlers
+        content.querySelectorAll('[data-start-test]').forEach(btn => {
+            btn.onclick = () => {
+                const id = btn.getAttribute('data-start-test');
+                const t = testsList.find(x => x.id === id);
+                if (!t) return;
+                launchTest({ 
+                    name: t.name, 
+                    questions: t.questions, 
+                    timerMode: 'timer', 
+                    timerMins: t.timeLimit || 15, 
+                    type: 'assigned', 
+                    testId: id, 
+                    teacherId: t.teacherId,
+                    subject: t.subject || 'General'
+                });
+            };
+        });
+    } catch(e) {
+        console.error(e);
+        content.innerHTML = '<p class="muted small">Error loading. Please try again.</p>';
+    }
+}
+
+function renderTeacherTestCard(t, result) {
+    const createdDate = formatDate(t.timestamp);
+    const subjectTag = t.subject ? '<span style="font-size:10px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">' + esc(t.subject) + '</span>' : '';
+    
+    if (result) {
+        return `<div class="bank-item" style="opacity:0.85;">
+            <div style="font-weight:700;color:var(--muted);">📄 ${esc(t.name)} ${subjectTag}</div>
+            <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
+            <div class="muted small">📅 Sent: ${createdDate}</div>
+            <div class="muted small" style="color:var(--green);font-weight:600;">🎯 Score: ${result.score} Marks | Attempted: ${formatDate(result.timestamp)}</div>
+        </div>`;
+    }
+    
+    return `<div class="bank-item" style="border-color:var(--accent);">
+        <div style="font-weight:700;font-size:16px;">📄 ${esc(t.name)} ${subjectTag}</div>
+        <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
+        <div class="muted small">📅 Sent: ${createdDate}</div>
+        <button class="btn primary" style="width:100%;margin-top:8px;" data-start-test="${t.id}">▶ Start Test</button>
+    </div>`;
+}
+
+function renderWeakTopics(weakTopics) {
+    const subjects = Object.keys(weakTopics).filter(s => Object.keys(weakTopics[s] || {}).length > 0);
+    
+    if (subjects.length === 0) {
+        return '<h2 class="section-title" style="color:var(--orange);">📊 Weak Topics</h2><div class="card"><p class="muted small" style="margin:0;">Give a test to see your weak topics. We track topics where you score below 60%.</p></div>';
+    }
+    
+    const subjectIcons = { 'Physics': '⚛️', 'Chemistry': '🧪', 'Biology': '🧬', 'Mathematics': '📐', 'English': '📖', 'General': '📚' };
+    const subjectColors = { 'Physics': '#3b82f6', 'Chemistry': '#f59e0b', 'Biology': '#22c55e', 'Mathematics': '#a855f7', 'English': '#ec4899', 'General': '#6366f1' };
+    
+    let html = '<h2 class="section-title" style="color:var(--orange);">📊 Weak Topics by Subject</h2>';
+    html += '<p class="muted small" style="margin:-8px 0 12px;">Topics where you scored below 60%. Focus here to improve.</p>';
+    
+    subjects.forEach(subject => {
+        const topics = Object.entries(weakTopics[subject] || {});
+        if (topics.length === 0) return;
+        topics.sort((a, b) => (a[1].pct || 0) - (b[1].pct || 0));
+        
+        const icon = subjectIcons[subject] || '📚';
+        const color = subjectColors[subject] || 'var(--accent)';
+        
+        html += `<div class="card" style="margin-bottom:12px;border-left:4px solid ${color};">
+            <div style="font-weight:800;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+                <span>${icon}</span><span>${esc(subject)}</span>
+                <span style="font-size:11px;background:${color};color:#fff;padding:2px 8px;border-radius:99px;margin-left:auto;">${topics.length} weak</span>
+            </div>`;
+        
+        topics.forEach(([name, stats]) => {
+            const pct = stats.pct != null ? stats.pct : 0;
+            html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13.5px;border-bottom:1px solid var(--border);">
+                <span style="flex:1;">⚠️ ${esc(name)}</span>
+                <b style="color:var(--red);white-space:nowrap;margin-left:8px;">${pct}%</b>
+            </div>`;
+        });
+        
+        html += '</div>';
+    });
+    
+    return html;
+}
+
+// ==================== TEACHER DASHBOARD ====================
 async function loadTeacherDashboard() {
     const listDiv = document.getElementById('teacherResultsList');
     listDiv.innerHTML = '<p class="muted small">Loading results...</p>';
     
     try {
-        // Fetch results for THIS teacher WITHOUT orderBy to avoid index error
-        const q = query(
-            collection(db, "results"), 
-            where("teacherId", "==", currentUser.uid)
-        );
+        const q = query(collection(db, "results"), where("teacherId", "==", currentUser.uid));
         const querySnapshot = await getDocs(q);
         
         let resultsList = [];
-        querySnapshot.forEach((docSnap) => {
-            resultsList.push(docSnap.data());
-        });
-
-        // Sort in JS by timestamp descending
+        querySnapshot.forEach((docSnap) => { resultsList.push(docSnap.data()); });
         resultsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
         if(resultsList.length === 0) {
@@ -786,7 +916,6 @@ function formatStatements(text) { if (!text) return ''; var formatted = text; fo
 function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1'); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; } if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) { var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, ''); if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str; str = str.replace(/\$/g, ''); } var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) { var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i); if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)'; return '\\(' + str + '\\)'; } return str; }
 function cleanOptionText(str) { if (!str) return ''; var s = String(str).trim(); s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, ''); return s.trim(); }
 
-// FIX: Added Deduplication Logic to prevent duplicate options
 function normaliseList(raw){ 
     var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []); 
     var out = []; 
@@ -797,7 +926,6 @@ function normaliseList(raw){
         var opts = item.options || item.opts || []; 
         if(!q) continue; 
         
-        // Deduplicate and clean options
         var uniqueOpts = [];
         var seen = new Set();
         opts.forEach(function(o) {
@@ -808,7 +936,6 @@ function normaliseList(raw){
             }
         });
         
-        // If deduplication removed options, fill with placeholder
         while(uniqueOpts.length < 4) {
             uniqueOpts.push('None of the above');
         }
@@ -842,7 +969,7 @@ var myChart=null;
 function renderHome(){
   renderResumeBanner();
   if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
-      renderHistoryChart();
+      updateTeacherBadge();
   }
 }
 
@@ -902,8 +1029,6 @@ function startAITest(){
   else state.timerMins = 15;
 
   var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
-  
-  // FIX: Added random seed to force new questions
   var randomSeed = Math.floor(Math.random() * 999999);
   var prompt='Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
   
@@ -916,7 +1041,7 @@ function startAITest(){
     if (currentUserData.role === 'teacher' && !isStudentPreview) {
         saveTeacherTest(list, state.subject + ' Test', state.subject);
     } else {
-        launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self'});
+        launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: state.subject});
     }
   }).catch(function(err){
     hideLoader();
@@ -956,10 +1081,10 @@ function openUpload(mode){
   $('bankListTitle').textContent = config.bank;
   
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
-      document.getElementById('teacherUploadFields').classList.remove('hidden');
+      document.getElementById('teacherTitleField').classList.remove('hidden');
       document.getElementById('uploadTestTitle').value = ''; 
   } else {
-      document.getElementById('teacherUploadFields').classList.add('hidden');
+      document.getElementById('teacherTitleField').classList.add('hidden');
   }
 
   renderBanks(); showScreen('screen-upload');
@@ -973,8 +1098,8 @@ function renderBanks(){
     host.innerHTML='';
     filtered.forEach(function(b){
       var d=document.createElement('div');d.className='bank-item';
-      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
-      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch', type: 'self'})};
+      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions • Subject: '+esc(b.subject||'General')+'</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
+      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch', type: 'self', subject: b.subject || 'General'})};
       d.querySelector('[data-act="del"]').onclick=function(){IDB.del(b.id).then(renderBanks)};
       host.appendChild(d);
     });
@@ -985,15 +1110,15 @@ async function handleFileUpload(file){
   if(!file) return;
   
   let customName = "";
-  let customSubject = "";
+  let customSubject = "General";
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
       customName = document.getElementById('uploadTestTitle').value.trim();
-      customSubject = document.getElementById('uploadTestSubject').value;
       if(!customName) {
           dialog({title: 'Missing Title', message: 'Please enter a test title before uploading.'});
           return;
       }
   }
+  customSubject = document.getElementById('uploadTestSubject').value || 'General';
 
   var fname=(file.name||'').toLowerCase();
   var isImage = (file.type && file.type.indexOf('image/')===0) || /\.(jpg|jpeg|png|webp|heic|heif|bmp|gif)$/i.test(fname);
@@ -1018,11 +1143,11 @@ async function handleFileUpload(file){
     if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
         saveTeacherTest(questions, customName, customSubject);
     } else {
-        var bank={ id:'bank_'+Date.now(), name:file.name, category: uploadMode, questions:questions, created:Date.now() };
+        var bank={ id:'bank_'+Date.now(), name: customName || file.name, category: uploadMode, questions:questions, subject: customSubject, created:Date.now() };
         await IDB.put(bank);
         progressWrap.classList.add('hidden'); renderBanks();
         var elapsed=((Date.now()-startTs)/1000).toFixed(1);
-        dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self'}); });
+        dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self', subject: bank.subject}); });
     }
   } catch(err){ progressWrap.classList.add('hidden'); dialog({title:'Upload failed',message:(err.message||'Unknown error')}); }
 }
@@ -1085,7 +1210,19 @@ function chunkText(text, size){
 }
 
 function launchTest(cfg){
-  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}), testId: cfg.testId || null, teacherId: cfg.teacherId || null};
+  T = {
+    name: cfg.name,
+    questions: cfg.questions,
+    cur: 0,
+    elapsed: 0,
+    timerMode: cfg.timerMode || 'stopwatch',
+    timerMins: cfg.timerMins || 15,
+    subject: cfg.subject || 'General',
+    answers: cfg.questions.map(function(){ return null; }),
+    marked: cfg.questions.map(function(){ return false; }),
+    testId: cfg.testId || null,
+    teacherId: cfg.teacherId || null
+  };
   testType = cfg.type || 'self';
   LS.set(K.ACTIVE, T);
   $('testTitle').textContent=T.name;
@@ -1157,11 +1294,12 @@ async function submitTest(){
   var record={ name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats };
   var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
 
-  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
+  // Save result + weak topics (only for students, not teacher preview)
+  if (currentUser && currentUserData && currentUserData.role === 'student') {
       try {
           await addDoc(collection(db, "results"), {
               studentId: currentUser.uid,
-              studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
+              studentName: currentUserData.name,
               testName: T.name,
               testId: T.testId,
               teacherId: T.teacherId, 
@@ -1173,6 +1311,33 @@ async function submitTest(){
               timestamp: serverTimestamp()
           });
       } catch(e) { console.error("Error saving result:", e); }
+
+      // === WEAK TOPICS TRACKING (subject-wise, don't mix PCB/PCM) ===
+      try {
+          const subject = normalizeSubject(T.subject);
+          const userRef = doc(db, "users", currentUser.uid);
+          const userDoc = await getDoc(userRef);
+          const existingWeak = userDoc.data()?.weakTopics || {};
+          if (!existingWeak[subject]) existingWeak[subject] = {};
+          
+          Object.keys(topicStats).forEach(topic => {
+              const stats = topicStats[topic];
+              const acc = Math.round((stats.correct / stats.total) * 100);
+              if (acc < 60) {
+                  existingWeak[subject][topic] = { pct: acc, correct: stats.correct, total: stats.total, lastDate: new Date().toISOString() };
+              } else {
+                  // Remove if improved
+                  delete existingWeak[subject][topic];
+              }
+          });
+          
+          // Clean empty subjects
+          Object.keys(existingWeak).forEach(sub => {
+              if (Object.keys(existingWeak[sub]).length === 0) delete existingWeak[sub];
+          });
+          
+          await updateDoc(userRef, { weakTopics: existingWeak });
+      } catch(e) { console.error("Weak topics save error:", e); }
   }
 
   hideLoader();
@@ -1239,7 +1404,6 @@ async function submitTest(){
   showScreen('screen-result'); T = null;
 }
 
-// Fix for the crash: Use a safe function to attach events so missing IDs don't break the app
 function safeClick(id, fn) {
   var el = document.getElementById(id);
   if (el) el.onclick = fn;
@@ -1272,10 +1436,16 @@ function wireEvents(){
   
   safeClick('btnResultHome', function(){
     showScreen('screen-home');
-    renderHome();
+    if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) loadStudentDashboard(); else if (currentUserData) loadTeacherDashboard();
   });
 
-  // Student Dashboard Buttons
+  // ===== NEW FOLDER BUTTONS =====
+  safeClick('btnTeacherFolder', openTeacherTests);
+  safeClick('btnSelfFolder', function(){ showScreen('screen-self-practice'); });
+  safeClick('btnTeacherTestsBack', function(){ showScreen('screen-home'); updateTeacherBadge(); });
+  safeClick('btnSelfPracticeBack', function(){ showScreen('screen-home'); });
+
+  // Self Practice buttons (now inside self-practice screen)
   safeClick('btnSelfPractice', () => { openSetup(); });
   safeClick('btnSelfBook', () => { openUpload('extract'); });
   safeClick('btnSelfNotes', () => { openUpload('notes'); });
@@ -1288,33 +1458,22 @@ function wireEvents(){
   safeClick('btnTeacherImage', () => { openUpload('image'); });
 
   // Preview Mode Buttons
-  safeClick('btnPreviewAsStudent', () => {
-      isStudentPreview = true;
-      loadDashboards();
-  });
-  safeClick('btnExitPreview', () => {
-      isStudentPreview = false;
-      loadDashboards();
-  });
+  safeClick('btnPreviewAsStudent', () => { isStudentPreview = true; loadDashboards(); });
+  safeClick('btnExitPreview', () => { isStudentPreview = false; loadDashboards(); });
 
-  // REFRESH BUTTON LOGIC
+  // REFRESH BUTTON
   safeClick('btnRefreshDash', async () => {
       var btn = document.getElementById('btnRefreshDash');
       if(btn) btn.classList.add('spinning');
-      
       try {
           if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
               await loadStudentDashboard();
-              renderHistoryChart();
           } else if (currentUserData && currentUserData.role === 'teacher') {
               await loadTeacherDashboard();
           }
-      } catch (e) {
-          console.error("Refresh error:", e);
-      } finally {
-          setTimeout(() => {
-              if(btn) btn.classList.remove('spinning');
-          }, 600);
+      } catch (e) { console.error("Refresh error:", e); }
+      finally {
+          setTimeout(() => { if(btn) btn.classList.remove('spinning'); }, 600);
       }
   });
 }
