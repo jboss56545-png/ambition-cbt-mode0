@@ -612,7 +612,6 @@ async function loadStudentDashboard() {
         const testId = docSnap.id;
         const isDone = completedTestIds.has(testId) || completedTestNames.has(t.name);
         
-        // Display Subject tag if available
         const subjectTag = t.subject ? `<span style="font-size:10px; background:var(--accent); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">${t.subject}</span>` : '';
 
         const d = document.createElement('div');
@@ -622,7 +621,7 @@ async function loadStudentDashboard() {
             d.innerHTML = `<div style="font-weight:700; color:var(--muted)">📄 ${t.name} ${subjectTag} <span style="color:var(--green); font-size:12px; margin-left:10px;">✅ DONE</span></div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div>`;
         } else {
             d.innerHTML = `<div style="font-weight:700">📄 ${t.name} ${subjectTag}</div><div class="muted small">${t.questions.length} questions • By ${t.teacherName}</div><div class="btn-row"><button class="btn small primary">▶ Start Test</button></div>`;
-            d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: testId});
+            d.querySelector('button').onclick = () => launchTest({name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit, type: 'assigned', testId: testId, teacherId: t.teacherId});
         }
         listDiv.appendChild(d);
     });
@@ -630,7 +629,13 @@ async function loadStudentDashboard() {
 
 async function loadTeacherDashboard() {
     const listDiv = document.getElementById('teacherResultsList');
-    const q = query(collection(db, "results"), orderBy("timestamp", "desc"));
+    
+    // Fetch ONLY results for tests created by THIS teacher
+    const q = query(
+        collection(db, "results"), 
+        where("teacherId", "==", currentUser.uid), 
+        orderBy("timestamp", "desc")
+    );
     const querySnapshot = await getDocs(q);
     
     if(querySnapshot.empty) {
@@ -799,6 +804,7 @@ async function saveTeacherTest(questions, testName, subjectName) {
             subject: subjectName || 'General',
             questions: questions,
             teacherName: currentUserData.name,
+            teacherId: currentUser.uid, // NEW: Save Teacher ID
             assignedTo: 'all',
             timeLimit: state.timerMins || 15,
             timestamp: serverTimestamp()
@@ -821,10 +827,9 @@ function openUpload(mode){
   $('uploadCardHint').textContent = config.hint; 
   $('bankListTitle').textContent = config.bank;
   
-  // Show/Hide teacher custom fields
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
       document.getElementById('teacherUploadFields').classList.remove('hidden');
-      document.getElementById('uploadTestTitle').value = ''; // Reset field
+      document.getElementById('uploadTestTitle').value = ''; 
   } else {
       document.getElementById('teacherUploadFields').classList.add('hidden');
   }
@@ -851,7 +856,6 @@ function renderBanks(){
 async function handleFileUpload(file){
   if(!file) return;
   
-  // Custom Title & Subject validation for Teachers
   let customName = "";
   let customSubject = "";
   if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
@@ -953,7 +957,7 @@ function chunkText(text, size){
 }
 
 function launchTest(cfg){
-  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}), testId: cfg.testId || null};
+  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'stopwatch',timerMins:cfg.timerMins||15,answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false}), testId: cfg.testId || null, teacherId: cfg.teacherId || null};
   testType = cfg.type || 'self';
   LS.set(K.ACTIVE, T);
   $('testTitle').textContent=T.name;
@@ -1030,6 +1034,7 @@ async function submitTest(){
               studentName: isStudentPreview ? currentUserData.name + " (Teacher Preview)" : currentUserData.name,
               testName: T.name,
               testId: T.testId,
+              teacherId: T.teacherId, // NEW: Save Teacher ID here
               type: testType,
               score: score,
               pct: pct,
@@ -1180,8 +1185,6 @@ function wireEvents(){
           }, 600);
       }
   });
-
-  // REMOVED SETTINGS BUTTON LOGIC
 }
 
 wireEvents();
