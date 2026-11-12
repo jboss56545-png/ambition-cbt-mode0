@@ -683,9 +683,8 @@ async function updateTeacherBadge() {
 // CHANGE WEAK FILTER
 window.setWeakFilter = function(filter) {
     weakFilter = filter;
-    // Re-render whatever screen is open
     if (document.getElementById('screen-teacher-tests').classList.contains('active')) {
-        openTeacherTests(); // re-fetch and re-render
+        openTeacherTests(); 
     } else if (document.getElementById('screen-self-practice').classList.contains('active')) {
         loadSelfPractice();
     }
@@ -715,7 +714,7 @@ async function openTeacherTests() {
         const headerEl = document.getElementById('teacherHeaderBanner');
         headerEl.innerHTML = `
            <div class="th-top">
-              <button class="th-back-btn" onclick="showScreen('screen-home'); updateTeacherBadge();">← Folders</button>
+              <button class="th-back-btn" id="btnTeacherBackBtn">← Folders</button>
               <div class="th-title-area">📁 Upload Question by Teacher</div>
            </div>
            <div class="th-stats-row">
@@ -724,6 +723,12 @@ async function openTeacherTests() {
               <div class="stat-pill total">📨 ${totalSent} Total Sent</div>
            </div>
         `;
+        
+        // FIX: Attach back button click event
+        document.getElementById('btnTeacherBackBtn').onclick = function() {
+            showScreen('screen-home'); 
+            updateTeacherBadge();
+        };
 
         let html = '';
         
