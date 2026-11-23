@@ -1,19 +1,5 @@
+// Ambition CBT Mode 2.0 — AI Backend (Standalone Node.js)
 'use strict';
-
-// 1. Firebase Admin Initialize karo
-const admin = require('firebase-admin');
-
-if (!admin.apps.length) {
-  try {
-    // Vercel me environment variable set karna hoga
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
-    });
-  } catch (error) {
-    console.error('Firebase Admin Init Error:', error);
-  }
-}
 
 const MAX_MESSAGE_CHARS = 60000;
 const MAX_CONTEXT_CHARS = 60000;
@@ -142,8 +128,8 @@ function shuffleAnswers(jsonString) {
 }
 
 module.exports = async function handler(req, res) {
-  // CORS setup (Isko apne domain se replace karna baad me)
-  res.setHeader('Access-Control-Allow-Origin', '*'); 
+  // CORS setup
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
@@ -157,34 +143,6 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify({ error: 'POST only' }));
   }
-
-  // ==========================================
-  // 🔴 AUTH CHECK: Bina login ke koi API use nahi kar sakta
-  // ==========================================
-  const authHeader = req.headers.authorization || '';
-  const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-  
-  if (!idToken) {
-    res.statusCode = 401;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify({ error: 'LOGIN_REQUIRED', message: 'Please log in to use AI Coach.' }));
-  }
-
-  try {
-    // Verify Firebase Token
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedToken; // User info mil gayi (uid, email)
-    
-    // Agar chaho to yaha check kar sakte ho ki user ka course purchased hai ya nahi
-    // const entSnap = await admin.firestore().doc(`users/${decodedToken.uid}/entitlements/neet`).get();
-    // if (!entSnap.exists || !entSnap.data().active) { return res.end(JSON.stringify({error: 'COURSE_NOT_PURCHASED'})) }
-
-  } catch (error) {
-    res.statusCode = 401;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify({ error: 'INVALID_TOKEN', message: 'Session expired. Please log in again.' }));
-  }
-  // ==========================================
 
   let body = req.body;
   if (typeof body === 'string') {
