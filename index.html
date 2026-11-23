@@ -7,12 +7,14 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ambition CBT Mode</title>
 
+<meta name="google-site-verification" content="BPY__4U3V_3ojViyn2vqneUaRpdIJ2gAgIkAEyvUxdo" />
+
 <link rel="manifest" href="/manifest.json" />
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3404/3404134.png">
+<link rel="apple-touch-icon" href="https://ambition-cbt-v2.vercel.app/icon.png">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{--bg:#0b0d12;--bg-2:#0f1219;--card:#161a24;--card-2:#1c2130;--border:#252b3a;--text:#e8ecf5;--muted:#8b95ad;--accent:#6366f1;--accent-2:#a855f7;--green:#22c55e;--red:#ef4444;--purple:#a855f7;--grey:#4b5563;--orange:#f59e0b;--radius:16px;--radius-sm:10px;--shadow:0 10px 34px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(15,23,42,.28);--tap:44px}
-[data-theme="light"]{--bg:#f5f6fb;--bg-2:#fff;--card:#fff;--card-2:#f2f4fa;--border:#e4e7f0;--text:#0f172a;--muted:#6b7280;--grey:#cbd5e1;--shadow:0 10px 30px rgba(15,23,42,.10);--shadow-sm:0 4px 14px rgba(15,23,42,.07)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;overscroll-behavior-y:none}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
@@ -24,11 +26,10 @@ a{color:var(--accent-2);text-decoration:none}
 .screen{display:none}.screen.active{display:block;animation:fadeUp .28s ease}
 #screen-test.active{display:flex}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.wrap{max-width:940px;margin:0 auto;padding:18px 16px 60px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-bottom:max(60px,calc(40px + env(safe-area-inset-bottom)))}
+.wrap{max-width:940px;margin:0 auto;padding:18px 16px 60px;padding-bottom:max(60px,calc(40px + env(safe-area-inset-bottom)))}
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0 18px}
 .appbar-title{font-weight:700;font-size:16px;text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px}
-.logo-dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 16px rgba(139,92,246,.7)}
 .ambition-brand{gap:10px;letter-spacing:-.02em}.ambition-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:var(--card-2);border:1px solid var(--border);flex-shrink:0}.ambition-mark svg{width:25px;height:25px;display:block}.brand-light{font-weight:500;color:var(--muted);letter-spacing:0}
 .analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}.analysis-stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px}.analysis-stat .value{font-size:23px;font-weight:850;line-height:1.2}.analysis-stat .label{font-size:11px;color:var(--muted);margin-top:5px}
 .icon-btn{width:var(--tap);height:var(--tap);border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--border);font-size:17px;transition:.16s;flex-shrink:0}
@@ -37,15 +38,54 @@ a{color:var(--accent-2);text-decoration:none}
 .hero h1{margin:0 0 10px;font-size:30px;line-height:1.12;font-weight:800;background:linear-gradient(120deg,var(--text) 20%,var(--accent) 65%,var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{margin:0;color:var(--muted);font-size:14.5px;max-width:520px}
 .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:700;margin:26px 0 12px}
-.exam-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-@media(min-width:620px){.exam-grid{grid-template-columns:repeat(3,1fr)}}
-.exam-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;min-height:120px;cursor:pointer}
-.mode-grid{display:grid;gap:14px;margin-top:8px}
-@media(min-width:640px){.mode-grid{grid-template-columns:1fr 1fr}}
-.mode-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 18px;text-align:left;transition:.12s;display:flex;flex-direction:column;gap:8px;cursor:pointer;min-height:var(--tap)}
-.mode-icon{font-size:32px;pointer-events:none}
-.mode-title{font-weight:750;font-size:18px;pointer-events:none}
-.mode-sub{font-size:13px;color:var(--muted);pointer-events:none}
+
+.animated-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+@media(min-width:620px){.animated-grid{grid-template-columns:repeat(4,1fr)}}
+.action-card { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 14px; text-align: left; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 8px; cursor: pointer; opacity: 0; transform: translateY(15px); animation: slideUpFade 0.5s forwards; }
+.action-card:hover { transform: translateY(-3px) scale(1.02); border-color: var(--accent); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15); }
+@keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+.action-card:nth-child(1) { animation-delay: 0.05s; }
+.action-card:nth-child(2) { animation-delay: 0.1s; }
+.action-card:nth-child(3) { animation-delay: 0.15s; }
+.action-card:nth-child(4) { animation-delay: 0.2s; }
+
+/* FOLDER + NOTIFICATION */
+.folder-card { position: relative; min-height: 130px; }
+.notif-badge { position: absolute; top: 10px; right: 10px; background: var(--red); color: #fff; font-size: 11px; font-weight: 800; min-width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 0 7px; box-shadow: 0 0 0 3px var(--card); animation: pulseDot 2s infinite; z-index: 2;}
+@keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px var(--card); } 50% { box-shadow: 0 0 0 3px var(--card), 0 0 0 8px rgba(239,68,68,0.25); } }
+
+/* NEW TEACHER HEADER */
+.teacher-header-banner { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.th-top { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.th-back-btn { background: var(--bg-2); border: 1px solid var(--border); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s;}
+.th-back-btn:active { transform: scale(0.95); }
+.th-title-area { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; }
+.th-stats-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.stat-pill { background: var(--bg-2); border: 1px solid var(--border); border-radius: 99px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.stat-pill.pending { color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+.stat-pill.pending .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; }
+.stat-pill.completed { color: #86efac; border-color: rgba(34,197,94,0.3); }
+.stat-pill.total { color: #cbd5e1; }
+
+/* WEAK TOPICS NEW UI */
+.filter-chips { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;}
+.f-chip { background: var(--card); border: 1px solid var(--border); border-radius: 99px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; transition: 0.2s; }
+.f-chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-color: transparent; }
+
+.weak-subject-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 14px; overflow: hidden; border-top-width: 4px; border-top-style: solid; }
+.ws-header { padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+.ws-title { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.ws-subtitle { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: 6px;}
+.ws-badge { padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+.ws-badge.strong { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.ws-badge.weak { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+.ws-body { padding: 16px 18px; }
+.ws-empty-text { color: var(--muted); font-size: 13.5px; font-weight: 500; }
+.ws-topic-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+.ws-topic-row:last-child { border-bottom: none; padding-bottom: 0;}
+.ws-topic-name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.ws-topic-pct { color: var(--red); font-weight: 800; background: rgba(239,68,68,0.1); padding: 2px 8px; border-radius: 6px; font-size: 12px;}
+
 .chip-grid{display:flex;flex-wrap:wrap;gap:9px}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;transition:.15s;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;cursor:pointer}
 .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:#fff}
@@ -61,8 +101,11 @@ a{color:var(--accent-2);text-decoration:none}
 .btn.danger{border-color:var(--red);color:var(--red)}
 .btn.big{width:100%;padding:15px;font-size:15.5px;margin-top:26px;min-height:52px}
 .btn.small{padding:8px 14px;font-size:12.5px;border-radius:9px;min-height:38px}
+.btn.google { background: #fff; color: #333; border: 1px solid #ddd; font-weight: 600; }
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
 input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed var(--border);background:var(--bg-2);font-size:13px;cursor:pointer;color:var(--text)}
+input[type=number], input[type=email], input[type=password], input[type=text], select {width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;margin-top:8px;margin-bottom:12px;}
+input:focus, select:focus{outline:none;border-color:var(--accent);}
 .progress-outer{height:8px;background:var(--card-2);border-radius:99px;overflow:hidden;margin-top:10px}
 .progress-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s;border-radius:99px}
 .overlay{position:fixed;inset:0;background:rgba(5,7,12,.8);backdrop-filter:blur(7px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:900;padding:24px;text-align:center}
@@ -74,7 +117,7 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .test-topbar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg-2);flex-shrink:0}
 .test-title{flex:1;font-weight:650;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .marking-badge{font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;background:var(--card);border:1px solid var(--border);color:var(--muted);flex-shrink:0}
-.timer{font-weight:700;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;flex-shrink:0}
+.timer{font-weight:700;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;flex-shrink:0;color:var(--text);transition:color 0.3s;}
 .test-body{flex:1;display:flex;overflow:hidden;position:relative}
 .q-area{flex:1;overflow-y:auto;padding:18px 16px 40px}
 .q-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
@@ -88,10 +131,8 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .option.selected{border-color:transparent;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.22));box-shadow:0 0 0 1.5px var(--accent) inset}
 .opt-key{width:28px;height:28px;min-width:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:var(--card-2);border:1px solid var(--border);flex-shrink:0;margin-top:2px}
 .option.selected .opt-key{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
-
 .option-text{flex:1;overflow-x:auto;word-wrap:break-word;scrollbar-width:none;-ms-overflow-style:none}
 .option-text::-webkit-scrollbar{display:none}
-
 .palette{width:290px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg-2);padding:16px;overflow-y:auto}
 .palette-head{font-size:12px;text-transform:uppercase;font-weight:750;color:var(--muted);margin-bottom:12px}
 .palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
@@ -113,11 +154,24 @@ input[type=file]{width:100%;padding:14px;border-radius:12px;border:1.5px dashed 
 .scr-meta-val{font-size:16px;font-weight:800}
 .scr-meta-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;margin-top:4px}
 .asviro-footer{margin-top:40px;padding:20px 0;text-align:center;font-size:12.5px;color:var(--muted);border-top:1px solid var(--border)}
-.asviro-footer a{color:#a855f7;font-weight:700;text-decoration:none;transition:0.15s;display:inline-flex;align-items:center;gap:5px}
-.asviro-footer a:hover{color:#6366f1;text-decoration:underline}
+.asviro-footer a{color:#a855f7;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
 mjx-container{color:var(--text)!important;max-width:100%;overflow-x:auto}
 mjx-container svg{fill:var(--text)!important;stroke:var(--text)!important}
 mjx-container svg path{fill:var(--text)!important;stroke:var(--text)!important}
+.review-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; text-align: left; }
+.review-q { font-size: 14.5px; font-weight: 600; margin-bottom: 10px; white-space: pre-wrap; }
+.review-exp { font-size: 13px; margin-top: 8px; padding: 8px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--border); }
+
+.vip-header { text-align: center; margin-bottom: 24px; }
+.vip-icon { width: 60px; height: 60px; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
+.vip-title { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
+.vip-sub { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+.signed-in-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-2); border: 1px solid var(--green); padding: 8px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 16px; }
+
+.preview-banner { background: var(--orange); color: #000; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
+.preview-banner button { background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; }
+
+.spinning { animation: spin 0.8s linear infinite; }
 </style>
 
 <script>
@@ -131,180 +185,737 @@ window.MathJax = {
 </head>
 <body>
 
-<section id="screen-home" class="screen active">
-  <div class="wrap">
-    <header class="appbar">
-      <div class="logo ambition-brand"><span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT Mode</span></span></div>
-      <button type="button" class="icon-btn" id="btnOpenSettings" title="Settings">⚙️</button>
-    </header>
-    <div class="hero">
-      <h1>Your CUET preparation, one test at a time.</h1>
-      <p>Practice CUET UG with AI tests or your own PDFs, photos and question papers. Track every score with instant analytics.</p>
+<section id="screen-auth" class="screen active">
+  <div class="wrap" style="display:flex; flex-direction:column; justify-content:center; min-height:100vh; max-width:400px;">
+    <div class="logo ambition-brand" style="justify-content:center; margin-bottom:20px;">
+      <span class="ambition-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 3 37 33H29L20 17 11 33H3Z" fill="url(#ambitionGrad)"/><path d="M20 22 26 33H14Z" fill="#0b0d12"/><defs><linearGradient id="ambitionGrad" x1="4" y1="3" x2="36" y2="36"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg></span><span>Ambition <span class="brand-light">CBT</span></span>
     </div>
-    <div id="resumeBanner"></div>
-    <h2 class="section-title">Choose your CUET practice mode</h2>
-    <div class="exam-grid" id="examGrid"></div>
-    <div id="analysisWrap"></div>
-    <div id="historyWrap"></div>
-    <footer class="asviro-footer">
-      Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
-    </footer>
-  </div>
-</section>
-
-<section id="screen-exam" class="screen">
-  <div class="wrap">
-    <header class="appbar">
-      <button type="button" class="icon-btn" id="btnBackHome">←</button>
-      <div class="appbar-title" id="examTitle">CUET UG 2026</div>
-      <div style="width:44px"></div>
-    </header>
-    <div class="mode-grid">
-      <button type="button" class="mode-card" id="btnModeAI">
-        <div class="mode-icon">🧪</div>
-        <div class="mode-title">AI Practice Test</div>
-        <div class="mode-sub">NCERT-based PYQ pattern mock tests</div>
-      </button>
-      <button type="button" class="mode-card" id="btnModeBook">
-        <div class="mode-icon">📄</div>
-        <div class="mode-title">Extract from Question Paper</div>
-        <div class="mode-sub">Upload PDF / DOCX question papers</div>
-      </button>
-      <button type="button" class="mode-card" id="btnModeNotes">
-        <div class="mode-icon">📝</div>
-        <div class="mode-title">Generate from Notes</div>
-        <div class="mode-sub">AI converts theoretical notes into MCQs</div>
-      </button>
-      <button type="button" class="mode-card" id="btnModeImage">
-        <div class="mode-icon">📷</div>
-        <div class="mode-title">Extract from Photo / Image</div>
-        <div class="mode-sub">Textbook photos, exercise problems & PYQs solved into MCQs</div>
-      </button>
-    </div>
-  </div>
-</section>
-
-<section id="screen-setup" class="screen">
-  <div class="wrap">
-    <header class="appbar">
-      <button type="button" class="icon-btn" id="btnSetupBack">←</button>
-      <div class="appbar-title" id="setupTitle">AI Practice Test</div>
-      <div style="width:44px"></div>
-    </header>
-    <h2 class="section-title">Select Subject</h2>
-    <div class="chip-grid" id="subjectGrid"></div>
-    <div id="setupPanel" class="hidden">
-      <h2 class="section-title">Select Chapters <span class="muted" id="chCount"></span></h2>
-      <div class="btn-row" style="margin-bottom:12px">
-        <button type="button" class="btn small" id="btnFullSubject">✓ Full Subject</button>
-        <button type="button" class="btn small" id="btnClearChapters">Clear</button>
+    
+    <div class="card" id="authStep1">
+      <div class="vip-header">
+        <div class="vip-title">Welcome to Ambition CBT</div>
+        <p class="vip-sub">Enter your details and continue with Google.</p>
       </div>
-      <div class="check-list" id="chapterList"></div>
-      <h2 class="section-title">Number of Questions</h2>
-      <div class="chip-row" id="numChips"></div>
-      <h2 class="section-title">Difficulty</h2>
-      <div class="chip-row" id="diffChips"></div>
-      <h2 class="section-title">Timer</h2>
-      <div class="chip-row" id="timerChips"></div>
-      <button type="button" class="btn primary big" id="btnStartTest">⚡ Start Test</button>
+      
+      <label class="small muted">Full Name</label>
+      <input type="text" id="authName" placeholder="Your Name">
+      
+      <label class="small muted">I am a</label>
+      <select id="authRole">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+      </select>
+
+      <button class="btn big google" id="btnGoogleLogin" style="margin-top:20px;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width: 20px; margin-right: 8px;"> Continue with Google
+      </button>
+      <div id="authError1" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
+    </div>
+
+    <div class="card hidden" id="authStep2">
+      <div class="vip-header">
+        <div class="vip-icon">🔑</div>
+        <div class="vip-title">VIP Access Required</div>
+        <p class="vip-sub">Ambition CBT is an invite-only private ecosystem. Enter your access code to unlock the dashboard.</p>
+        <div class="signed-in-badge">✔ Signed in as <span id="displayEmail" style="color:var(--text)">...</span></div>
+      </div>
+      
+      <label class="small muted" style="color:var(--accent);">Access Code</label>
+      <input type="text" id="authAccessCode" placeholder="e.g. ATT-XXXX or ATS-XXXX" style="border-color:var(--accent); font-weight:700; letter-spacing:1px;">
+      
+      <button class="btn primary big" id="btnVerifyCode" style="margin-top:10px;">Verify &amp; Login</button>
+      <div style="text-align:center; margin-top:16px;">
+        <a href="#" id="btnBackToStep1" style="color:var(--muted); font-size:13.5px;">← Edit Details</a>
+      </div>
+      <div id="authError2" style="color:var(--red); font-size:13px; margin-top:10px; text-align:center; font-weight:600;"></div>
     </div>
   </div>
 </section>
 
-<section id="screen-upload" class="screen">
-  <div class="wrap">
-    <header class="appbar">
-      <button type="button" class="icon-btn" id="btnUploadBack">←</button>
-      <div class="appbar-title" id="uploadTitle">Upload File</div>
-      <div style="width:44px"></div>
-    </header>
-    <div class="card">
-      <h3 id="uploadCardTitle">📄 Add a file or photo</h3>
-      <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, PDF, and TXT.</p>
-      <input type="file" id="fileInput" accept=".pdf,.txt,.jpg,.jpeg,.png,.webp,image/*,application/pdf,text/plain">
-      <div id="uploadProgress" class="hidden" style="margin-top:14px">
-        <div class="small muted" id="uploadProgressText">Reading file…</div>
-        <div class="progress-outer"><div class="progress-inner" id="uploadProgressBar" style="width:0%"></div></div>
+<div id="mainApp" class="hidden">
+  
+  <section id="screen-home" class="screen active">
+    <div class="wrap">
+      <header class="appbar">
+        <div class="logo ambition-brand"><span>Ambition <span class="brand-light">CBT</span></span></div>
+        <div style="display:flex; gap:8px;">
+          <span class="badge topic" id="userRoleBadge" style="align-self:center;">ROLE</span>
+          <button type="button" class="icon-btn hidden" id="btnInstallApp" title="Install App">📥</button>
+          <button type="button" class="icon-btn" id="btnRefreshDash" title="Refresh Data">🔄</button>
+          <button type="button" class="icon-btn" id="btnLogout" title="Log Out">🚪</button>
+        </div>
+      </header>
+      
+      <div class="hero">
+        <h1>Hello, <span id="userNameDisplay">User</span>.</h1>
+        <p id="userGreeting">Ready to practice today?</p>
+      </div>
+
+      <div id="previewBanner" class="preview-banner hidden">
+        <span>👀 Viewing as Student</span>
+        <button id="btnExitPreview">Return to Teacher</button>
+      </div>
+
+      <div id="studentDashboard" class="hidden">
+        <div id="resumeBanner"></div>
+        
+        <h2 class="section-title" style="margin-top:0;">Study Folders</h2>
+        <div class="animated-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <button class="action-card folder-card" id="btnTeacherFolder">
+            <div style="font-size:34px">📚</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Teacher Tests</div>
+            <div class="muted small">Questions uploaded by teacher</div>
+            <span class="notif-badge hidden" id="teacherPendingBadge">0</span>
+          </button>
+          <button class="action-card folder-card" id="btnSelfFolder">
+            <div style="font-size:34px">🧪</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Your Question</div>
+            <div class="muted small">AI &amp; self practice</div>
+          </button>
+        </div>
+
+        <h2 class="section-title">My Progress</h2>
+        <div id="analysisWrap"></div>
+        <div class="card hidden" id="chartContainer" style="margin-top: 14px; padding: 18px;">
+          <div style="height: 220px; width: 100%; position: relative;"><canvas id="progressChart"></canvas></div>
+        </div>
+      </div>
+
+      <div id="teacherDashboard" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2 class="section-title" style="margin:0;">Create Tests</h2>
+            <button class="btn small" id="btnPreviewAsStudent" style="font-size:11px; padding:6px 12px;">👁️ Preview as Student</button>
+        </div>
+        <div class="animated-grid">
+          <button class="action-card" id="btnTeacherCreateTest">
+            <div style="font-size:28px">🧪</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
+            <div class="muted small">Generate custom test</div>
+          </button>
+          <button class="action-card" id="btnTeacherBook">
+            <div style="font-size:28px">📄</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
+            <div class="muted small">Extract from PDF</div>
+          </button>
+          <button class="action-card" id="btnTeacherNotes">
+            <div style="font-size:28px">📝</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
+            <div class="muted small">AI generates MCQs</div>
+          </button>
+          <button class="action-card" id="btnTeacherImage">
+            <div style="font-size:28px">📷</div>
+            <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
+            <div class="muted small">Extract from image</div>
+          </button>
+        </div>
+        
+        <h2 class="section-title">Student Results</h2>
+        <div id="teacherResultsList"><p class="muted small">Loading results...</p></div>
+      </div>
+
+      <footer class="asviro-footer">
+        Powered by <a href="https://asviro-studio.vercel.app" target="_blank" rel="noopener">ASVIRO STUDIO ↗</a>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ===== NEW SCREEN: TEACHER TESTS FOLDER ===== -->
+  <section id="screen-teacher-tests" class="screen">
+    <div class="wrap">
+      
+      <!-- NEW HEADER: Image 2 Style -->
+      <div class="teacher-header-banner" id="teacherHeaderBanner">
+         <!-- Will be filled dynamically -->
+      </div>
+
+      <div id="teacherTestsContent">
+        <p class="muted small">Loading...</p>
       </div>
     </div>
-    <h2 class="section-title">Your Question Banks</h2>
-    <div id="bankList"><p class="muted small">No banks uploaded yet.</p></div>
-  </div>
-</section>
+  </section>
 
-<section id="screen-test" class="screen">
-  <div class="test-topbar">
-    <button type="button" class="icon-btn" id="btnPaletteToggle" title="Palette">☰</button>
-    <div class="test-title" id="testTitle">Test</div>
-    <div class="marking-badge" id="markingBadge">+5 / -1</div>
-    <div class="timer" id="timerDisplay">00:00</div>
-  </div>
-  <div class="test-body">
-    <div class="q-area" id="qArea">
-      <div class="q-meta">
-        <span class="q-counter" id="qCounter">Question 1</span>
-        <span class="badge topic" id="qTopic">CUET</span>
-        <span class="badge medium" id="qDiff">Medium</span>
+  <!-- ===== NEW SCREEN: SELF PRACTICE FOLDER ===== -->
+  <section id="screen-self-practice" class="screen">
+    <div class="wrap">
+      <header class="appbar">
+        <button type="button" class="icon-btn" id="btnSelfPracticeBack">←</button>
+        <div class="appbar-title">🧪 Your Question</div>
+        <div style="width:44px"></div>
+      </header>
+      <h2 class="section-title" style="margin-top:0;">Self Practice</h2>
+      <div class="animated-grid">
+        <button class="action-card" id="btnSelfPractice">
+          <div style="font-size:28px">🧪</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">AI Practice</div>
+          <div class="muted small">Generate custom test</div>
+        </button>
+        <button class="action-card" id="btnSelfBook">
+          <div style="font-size:28px">📄</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">Question Paper</div>
+          <div class="muted small">Extract from PDF</div>
+        </button>
+        <button class="action-card" id="btnSelfNotes">
+          <div style="font-size:28px">📝</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">From Notes</div>
+          <div class="muted small">AI generates MCQs</div>
+        </button>
+        <button class="action-card" id="btnSelfImage">
+          <div style="font-size:28px">📷</div>
+          <div style="font-weight:700;font-size:15px;margin-top:4px;">From Photo</div>
+          <div class="muted small">Extract from image</div>
+        </button>
       </div>
-      <div class="q-text" id="qText"></div>
-      <div class="options" id="optionsBox"></div>
+      
+      <!-- Weak Topics in Self Practice -->
+      <div id="selfPracticeWeakTopics" style="margin-top:20px;">
+         <!-- Dynamic content -->
+      </div>
     </div>
-    <aside class="palette" id="palette">
-      <div class="palette-head">Question Palette</div>
-      <div class="palette-grid" id="paletteGrid"></div>
-    </aside>
-  </div>
-  <div class="test-footer">
-    <button type="button" class="btn" id="btnPrev">← Prev</button>
-    <button type="button" class="btn" id="btnMark">🚩 Mark</button>
-    <button type="button" class="btn" id="btnClear">Clear</button>
-    <button type="button" class="btn primary" id="btnNext">Save &amp; Next →</button>
-    <button type="button" class="btn danger" id="btnSubmit">Submit</button>
-  </div>
-</section>
+  </section>
 
-<section id="screen-result" class="screen">
-  <div class="wrap">
-    <header class="appbar">
-      <button type="button" class="icon-btn" id="btnResultHome">←</button>
-      <div class="appbar-title">Scorecard</div>
-      <div style="width:44px"></div>
-    </header>
-    <div id="resultBody"></div>
-  </div>
-</section>
+  <section id="screen-setup" class="screen">
+    <div class="wrap">
+      <header class="appbar"><button type="button" class="icon-btn" id="btnSetupBack">←</button><div class="appbar-title" id="setupTitle">AI Practice Test</div><div style="width:44px"></div></header>
+      <h2 class="section-title">Select Subject</h2><div class="chip-grid" id="subjectGrid"></div>
+      <div id="setupPanel" class="hidden">
+        <h2 class="section-title">Select Chapters</h2>
+        <div class="btn-row" style="margin-bottom:12px"><button type="button" class="btn small" id="btnFullSubject">✓ Full Subject</button><button type="button" class="btn small" id="btnClearChapters">Clear</button></div>
+        <div class="check-list" id="chapterList"></div>
+        <h2 class="section-title">Number of Questions</h2><div class="chip-row" id="numChips" style="margin-bottom:8px;"></div><input type="number" id="customNumInput" min="1" max="100" placeholder="Ya type karo (jaise 50)" value="10">
+        <h2 class="section-title">Difficulty</h2><div class="chip-row" id="diffChips"></div>
+        <h2 class="section-title">Timer Mode</h2><div class="chip-row" id="timerChips"></div><div id="customTimerWrap" class="hidden"><input type="number" id="customTimerInput" min="1" max="180" placeholder="Minutes" value="15"></div>
+        <button type="button" class="btn primary big" id="btnStartTest">⚡ Start Test</button>
+      </div>
+    </div>
+  </section>
 
-<div id="loader" class="overlay hidden">
-  <div class="spinner"></div>
-  <div id="loaderText">AI is generating questions…</div>
-  <div id="loaderSub"></div>
-  <div id="loaderActions" class="btn-row hidden" style="justify-content:center"></div>
+  <section id="screen-upload" class="screen">
+    <div class="wrap">
+      <header class="appbar"><button type="button" class="icon-btn" id="btnUploadBack">←</button><div class="appbar-title" id="uploadTitle">Upload File</div><div style="width:44px"></div></header>
+      
+      <div class="card">
+        <div id="teacherTitleField" class="hidden" style="margin-bottom: 16px;">
+            <label class="small muted">Test Title</label>
+            <input type="text" id="uploadTestTitle" placeholder="e.g. Biology Chapter 1">
+        </div>
+        <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+            <label class="small muted">Subject</label>
+            <select id="uploadTestSubject">
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="English">English</option>
+                <option value="General">General</option>
+            </select>
+        </div>
+
+        <h3 id="uploadCardTitle">📄 Add a file or photo</h3>
+        <p class="muted small" id="uploadCardHint" style="margin:0 0 12px">Supports JPG, PNG, WEBP, PDF, TXT.</p>
+        <input type="file" id="fileInput" accept=".pdf,.txt,.jpg,.jpeg,.png,.webp,image/*,application/pdf,text/plain">
+        <div id="uploadProgress" class="hidden" style="margin-top:14px"><div class="small muted" id="uploadProgressText">Reading file…</div><div class="progress-outer"><div class="progress-inner" id="uploadProgressBar" style="width:0%"></div></div></div>
+      </div>
+      <h2 class="section-title" id="bankListTitle">Your Question Banks</h2>
+      <div id="bankList"><p class="muted small">No banks uploaded yet.</p></div>
+    </div>
+  </section>
+
+  <section id="screen-test" class="screen">
+    <div class="test-topbar">
+      <button type="button" class="icon-btn" id="btnPaletteToggle" title="Palette">☰</button>
+      <div class="test-title" id="testTitle">Test</div>
+      <div class="marking-badge">+5 / -1</div>
+      <div class="timer" id="timerDisplay">00:00</div>
+    </div>
+    <div class="test-body">
+      <div class="q-area" id="qArea">
+        <div class="q-meta"><span class="q-counter" id="qCounter">Question 1</span><span class="badge topic" id="qTopic">CUET</span><span class="badge medium" id="qDiff">Medium</span></div>
+        <div class="q-text" id="qText"></div><div class="options" id="optionsBox"></div>
+      </div>
+      <aside class="palette" id="palette"><div class="palette-head">Question Palette</div><div class="palette-grid" id="paletteGrid"></div></aside>
+    </div>
+    <div class="test-footer">
+      <button type="button" class="btn" id="btnPrev">← Prev</button>
+      <button type="button" class="btn" id="btnMark">🚩 Mark</button>
+      <button type="button" class="btn" id="btnClear">Clear</button>
+      <button type="button" class="btn primary" id="btnNext">Save &amp; Next →</button>
+      <button type="button" class="btn danger" id="btnSubmit">Submit</button>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <div class="wrap">
+      <header class="appbar"><button type="button" class="icon-btn" id="btnResultHome">←</button><div class="appbar-title">Scorecard</div><div style="width:44px"></div></header>
+      <div id="resultBody"></div>
+    </div>
+  </section>
+
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>
-"use strict";
+<div id="loader" class="overlay hidden"><div class="spinner"></div><div id="loaderText">Working…</div><div id="loaderSub"></div></div>
 
-if (typeof pdfjsLib !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBI5-BN0V5SNOLUCNzZ8ffC8y-mf_6sYqs",
+  authDomain: "ambition-cbt.firebaseapp.com",
+  projectId: "ambition-cbt",
+  storageBucket: "ambition-cbt.firebasestorage.app",
+  messagingSenderId: "1033882593149",
+  appId: "1:1033882593149:web:379378c0e33f4fd998ce14"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let currentUserData = null;
+let testType = 'self'; 
+let tempEmail = null;
+let tempRole = null;
+let tempName = null;
+let isStudentPreview = false;
+let weakFilter = 'all'; // 'all', 'pcb', 'pcm'
+
+// --- HELPER: Format Date ---
+function formatDate(ts) {
+    if (!ts) return 'Just now';
+    try {
+        if (typeof ts.toDate === 'function') return ts.toDate().toLocaleString();
+        return new Date(ts).toLocaleString();
+    } catch(e) { return 'N/A'; }
 }
 
+function normalizeSubject(s) {
+    if (!s) return 'General';
+    const sl = String(s).toLowerCase();
+    if (sl.includes('physics')) return 'Physics';
+    if (sl.includes('chemistry')) return 'Chemistry';
+    if (sl.includes('biology')) return 'Biology';
+    if (sl.includes('math')) return 'Mathematics';
+    if (sl.includes('english')) return 'English';
+    return 'General';
+}
+
+// --- GOOGLE LOGIN FLOW ---
+document.getElementById('btnGoogleLogin').addEventListener('click', async () => {
+  const name = document.getElementById('authName').value.trim();
+  const role = document.getElementById('authRole').value;
+  const errDiv = document.getElementById('authError1');
+  
+  errDiv.textContent = '';
+  if(!name) { errDiv.textContent = "Please enter your name first."; return; }
+
+  tempName = name;
+  tempRole = role;
+
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    tempEmail = user.email;
+    
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      document.getElementById('displayEmail').textContent = tempEmail;
+      document.getElementById('authStep1').classList.add('hidden');
+      document.getElementById('authStep2').classList.remove('hidden');
+    }
+  } catch (error) {
+    errDiv.textContent = "Google Login Failed. Try again or use manual login.";
+    console.error(error);
+  }
+});
+
+document.getElementById('btnBackToStep1').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('authStep2').classList.add('hidden');
+  document.getElementById('authStep1').classList.remove('hidden');
+  document.getElementById('authError2').textContent = '';
+});
+
+document.getElementById('btnVerifyCode').addEventListener('click', async () => {
+  const code = document.getElementById('authAccessCode').value.trim().toUpperCase();
+  const errDiv = document.getElementById('authError2');
+  
+  errDiv.textContent = '';
+  if(!code) { errDiv.textContent = "Please enter access code."; return; }
+
+  const btn = document.getElementById('btnVerifyCode');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+
+  try {
+    const docRef = doc(db, "access_codes", code);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) throw new Error("Invalid Access Code.");
+    
+    let firestoreRole = '';
+    if (code.startsWith('ATT')) firestoreRole = 'teacher';
+    else if (code.startsWith('ATS')) firestoreRole = 'student';
+    else throw new Error("Invalid Code Format. Code must start with ATT or ATS.");
+
+    if (firestoreRole !== tempRole) {
+       throw new Error(`This is a ${firestoreRole.toUpperCase()} code, but you selected ${tempRole.toUpperCase()}.`);
+    }
+
+    const user = auth.currentUser;
+    if (!user) throw new Error("Session expired. Please login with Google again.");
+
+    await setDoc(doc(db, "users", user.uid), {
+      name: tempName, email: tempEmail, role: firestoreRole, lastLogin: serverTimestamp()
+    }, { merge: true });
+
+    await updateDoc(doc(db, "access_codes", code), { used: true, usedByEmail: tempEmail });
+
+    const updatedDocSnap = await getDoc(doc(db, "users", user.uid));
+    if (updatedDocSnap.exists()) {
+        currentUserData = updatedDocSnap.data();
+        document.getElementById('userNameDisplay').textContent = currentUserData.name;
+        isStudentPreview = false;
+        loadDashboards();
+        document.getElementById('screen-auth').classList.remove('active');
+        document.getElementById('mainApp').classList.remove('hidden');
+        renderHome();
+    }
+
+  } catch (err) {
+    errDiv.textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = 'Verify & Login';
+  }
+});
+
+document.getElementById('btnLogout').addEventListener('click', () => { signOut(auth); });
+
+function loadDashboards() {
+    if (!currentUserData) return;
+    document.getElementById('studentDashboard').classList.add('hidden');
+    document.getElementById('teacherDashboard').classList.add('hidden');
+    document.getElementById('previewBanner').classList.add('hidden');
+    
+    if (currentUserData.role === 'student' || isStudentPreview) {
+        document.getElementById('studentDashboard').classList.remove('hidden');
+        if (currentUserData.role === 'teacher') {
+            document.getElementById('previewBanner').classList.remove('hidden');
+            document.getElementById('userRoleBadge').textContent = 'STUDENT (PREVIEW)';
+        } else {
+            document.getElementById('userRoleBadge').textContent = 'STUDENT';
+        }
+        loadStudentDashboard();
+    } else if (currentUserData.role === 'teacher') {
+        document.getElementById('teacherDashboard').classList.remove('hidden');
+        document.getElementById('userRoleBadge').textContent = 'TEACHER';
+        loadTeacherDashboard();
+    }
+}
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user;
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            currentUserData = docSnap.data();
+            document.getElementById('userNameDisplay').textContent = currentUserData.name;
+            isStudentPreview = false;
+            loadDashboards();
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('mainApp').classList.remove('hidden');
+            renderHome();
+        } else {
+            if (!tempEmail) tempEmail = user.email;
+            document.getElementById('displayEmail').textContent = tempEmail;
+            document.getElementById('authStep1').classList.add('hidden');
+            document.getElementById('authStep2').classList.remove('hidden');
+        }
+    } else {
+        currentUser = null; currentUserData = null;
+        document.getElementById('mainApp').classList.add('hidden');
+        document.getElementById('screen-auth').classList.add('active');
+        document.getElementById('authStep1').classList.remove('hidden');
+        document.getElementById('authStep2').classList.add('hidden');
+        document.getElementById('authAccessCode').value = '';
+        document.getElementById('authName').value = '';
+        document.getElementById('btnVerifyCode').disabled = false;
+        document.getElementById('btnVerifyCode').textContent = 'Verify & Login';
+        document.getElementById('authError1').textContent = '';
+        document.getElementById('authError2').textContent = '';
+    }
+});
+
+// ==================== STUDENT DASHBOARD ====================
+async function loadStudentDashboard() {
+    renderHistoryChart();
+    updateTeacherBadge();
+}
+
+async function updateTeacherBadge() {
+    if (!currentUser) return;
+    try {
+        const testsSnap = await getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all")));
+        const resultsSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
+        const completedIds = new Set();
+        resultsSnap.forEach(d => { if (d.data().testId) completedIds.add(d.data().testId); });
+        let pendingCount = 0;
+        testsSnap.forEach(d => { if (!completedIds.has(d.id)) pendingCount++; });
+        const badge = document.getElementById('teacherPendingBadge');
+        if (!badge) return;
+        if (pendingCount > 0) {
+            badge.textContent = pendingCount > 9 ? '9+' : String(pendingCount);
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    } catch(e) { console.error("Badge error:", e); }
+}
+
+// CHANGE WEAK FILTER
+window.setWeakFilter = function(filter) {
+    weakFilter = filter;
+    if (document.getElementById('screen-teacher-tests').classList.contains('active')) {
+        openTeacherTests(); 
+    } else if (document.getElementById('screen-self-practice').classList.contains('active')) {
+        loadSelfPractice();
+    }
+}
+
+// NEW: IMAGE 2 HEADER UI
+async function openTeacherTests() {
+    showScreen('screen-teacher-tests');
+    const content = document.getElementById('teacherTestsContent');
+    content.innerHTML = '<p class="muted small">Loading tests...</p>';
+    
+    try {
+        const testsSnap = await getDocs(query(collection(db, "tests"), where("assignedTo", "==", "all")));
+        const testsList = [];
+        testsSnap.forEach(d => testsList.push({ id: d.id, ...d.data() }));
+        testsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        
+        const resultsSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
+        const resultsMap = {};
+        resultsSnap.forEach(d => { const data = d.data(); if (data.testId) resultsMap[data.testId] = data; });
+        
+        const pending = testsList.filter(t => !resultsMap[t.id]);
+        const completed = testsList.filter(t => resultsMap[t.id]);
+        const totalSent = testsList.length;
+        
+        // Build The New Header (Image 2)
+        const headerEl = document.getElementById('teacherHeaderBanner');
+        headerEl.innerHTML = `
+           <div class="th-top">
+              <button class="th-back-btn" id="btnTeacherBackBtn">← Folders</button>
+              <div class="th-title-area">📁 Upload Question by Teacher</div>
+           </div>
+           <div class="th-stats-row">
+              <div class="stat-pill pending"><span class="dot"></span> ${pending.length} Pending</div>
+              <div class="stat-pill completed">✅ ${completed.length} Completed</div>
+              <div class="stat-pill total">📨 ${totalSent} Total Sent</div>
+           </div>
+        `;
+        
+        // FIX: Attach back button click event
+        document.getElementById('btnTeacherBackBtn').onclick = function() {
+            showScreen('screen-home'); 
+            updateTeacherBadge();
+        };
+
+        let html = '';
+        
+        // PENDING
+        if (pending.length > 0) {
+            html += '<h2 class="section-title" style="margin-top:0; color:var(--red);">🔴 Pending Questions (' + pending.length + ')</h2>';
+            html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
+            pending.forEach(t => { html += renderTeacherTestCard(t, null); });
+            html += '</div>';
+        } else {
+            html += '<h2 class="section-title" style="margin-top:0; color:var(--muted);">📌 Pending Questions</h2>';
+            html += '<div class="card" style="margin-bottom:20px;"><p class="muted small" style="margin:0;">✅ No pending tests. You are all caught up!</p></div>';
+        }
+        
+        // COMPLETED
+        if (completed.length > 0) {
+            html += '<h2 class="section-title" style="color:var(--green);">✅ Completed Tests (' + completed.length + ')</h2>';
+            html += '<div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">';
+            completed.forEach(t => { html += renderTeacherTestCard(t, resultsMap[t.id]); });
+            html += '</div>';
+        }
+        
+        // WEAK TOPICS
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const weakTopics = userDoc.data()?.weakTopics || {};
+        html += renderWeakTopicsNewUI(weakTopics);
+        
+        content.innerHTML = html;
+        
+        // Attach start handlers
+        content.querySelectorAll('[data-start-test]').forEach(btn => {
+            btn.onclick = () => {
+                const id = btn.getAttribute('data-start-test');
+                const t = testsList.find(x => x.id === id);
+                if (!t) return;
+                launchTest({ name: t.name, questions: t.questions, timerMode: 'timer', timerMins: t.timeLimit || 15, type: 'assigned', testId: id, teacherId: t.teacherId, subject: t.subject || 'General' });
+            };
+        });
+    } catch(e) {
+        console.error(e);
+        content.innerHTML = '<p class="muted small">Error loading. Please try again.</p>';
+    }
+}
+
+function renderTeacherTestCard(t, result) {
+    const createdDate = formatDate(t.timestamp);
+    const subjectTag = t.subject ? '<span style="font-size:10px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;">' + esc(t.subject) + '</span>' : '';
+    
+    if (result) {
+        return `<div class="bank-item" style="opacity:0.85;">
+            <div style="font-weight:700;color:var(--muted);">📄 ${esc(t.name)} ${subjectTag}</div>
+            <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
+            <div class="muted small">📅 Sent: ${createdDate}</div>
+            <div class="muted small" style="color:var(--green);font-weight:600;">🎯 Score: ${result.score} Marks | Attempted: ${formatDate(result.timestamp)}</div>
+        </div>`;
+    }
+    
+    return `<div class="bank-item" style="border-color:var(--accent);">
+        <div style="font-weight:700;font-size:16px;">📄 ${esc(t.name)} ${subjectTag}</div>
+        <div class="muted small">${t.questions.length} questions • By ${esc(t.teacherName)}</div>
+        <div class="muted small">📅 Sent: ${createdDate}</div>
+        <button class="btn primary" style="width:100%;margin-top:8px;" data-start-test="${t.id}">▶ Start Test</button>
+    </div>`;
+}
+
+// NEW: IMAGE 1 UI (Weak Topics with Cards & Filters)
+function renderWeakTopicsNewUI(weakTopics) {
+    let html = `
+        <h2 class="section-title" style="color:var(--orange); margin-top:30px;">⚠️ Weak Topics in Your Questions (PCB / PCM Subject-Wise)</h2>
+        <p class="muted small" style="margin:-8px 0 12px;">Physics, Chemistry, Biology & Maths weak topics are kept strictly separate so PCB/PCM topics never mix.</p>
+        
+        <div class="filter-chips">
+            <button class="f-chip ${weakFilter === 'all' ? 'active' : ''}" onclick="setWeakFilter('all')">All (PCB + PCM)</button>
+            <button class="f-chip ${weakFilter === 'pcb' ? 'active' : ''}" onclick="setWeakFilter('pcb')">PCB Only</button>
+            <button class="f-chip ${weakFilter === 'pcm' ? 'active' : ''}" onclick="setWeakFilter('pcm')">PCM Only</button>
+        </div>
+    `;
+
+    const subjectData = {
+        'Physics': { icon: '⚛️', color: '#3b82f6', streams: ['PCB', 'PCM'], streamText: '(PCB & PCM)' },
+        'Chemistry': { icon: '🧪', color: '#f59e0b', streams: ['PCB', 'PCM'], streamText: '(PCB & PCM)' },
+        'Biology': { icon: '🧬', color: '#22c55e', streams: ['PCB'], streamText: '(PCB)' },
+        'Mathematics': { icon: '📐', color: '#a855f7', streams: ['PCM'], streamText: '(PCM)' }
+    };
+
+    Object.keys(subjectData).forEach(subject => {
+        const subData = subjectData[subject];
+        
+        // Skip based on filter
+        if (weakFilter === 'pcb' && !subData.streams.includes('PCB')) return;
+        if (weakFilter === 'pcm' && !subData.streams.includes('PCM')) return;
+
+        const topicsObj = weakTopics[subject] || {};
+        const topics = Object.entries(topicsObj).filter(([_, data]) => data.pct < 60); // double check
+        const hasWeak = topics.length > 0;
+        
+        html += `
+            <div class="weak-subject-card" style="border-top-color: ${subData.color};">
+                <div class="ws-header">
+                    <div class="ws-title">
+                        <span>${subData.icon}</span> ${subject} <span class="ws-subtitle">${subData.streamText}</span>
+                    </div>
+                    ${hasWeak 
+                        ? `<div class="ws-badge weak">⚠️ ${topics.length} Weak</div>` 
+                        : `<div class="ws-badge strong">✔ Strong</div>`}
+                </div>
+                <div class="ws-body">
+        `;
+        
+        if (!hasWeak) {
+            html += `<div class="ws-empty-text">No weak topics in ${subject} yet. Keep practicing!</div>`;
+        } else {
+            topics.sort((a, b) => (a[1].pct || 0) - (b[1].pct || 0));
+            topics.forEach(([topicName, data]) => {
+                html += `
+                    <div class="ws-topic-row">
+                        <div class="ws-topic-name"><span style="color:var(--muted);">⚠️</span> ${esc(topicName)}</div>
+                        <div class="ws-topic-pct">${data.pct}%</div>
+                    </div>
+                `;
+            });
+        }
+        
+        html += `</div></div>`;
+    });
+
+    return html;
+}
+
+async function loadSelfPractice() {
+    showScreen('screen-self-practice');
+    const container = document.getElementById('selfPracticeWeakTopics');
+    container.innerHTML = '<p class="muted small">Loading analysis...</p>';
+    try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const weakTopics = userDoc.data()?.weakTopics || {};
+        container.innerHTML = renderWeakTopicsNewUI(weakTopics);
+    } catch(e) {
+        container.innerHTML = '<p class="muted small">Error loading analysis.</p>';
+    }
+}
+
+// ==================== TEACHER DASHBOARD ====================
+async function loadTeacherDashboard() {
+    const listDiv = document.getElementById('teacherResultsList');
+    listDiv.innerHTML = '<p class="muted small">Loading results...</p>';
+    
+    try {
+        const q = query(collection(db, "results"), where("teacherId", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        
+        let resultsList = [];
+        querySnapshot.forEach((docSnap) => { resultsList.push(docSnap.data()); });
+        resultsList.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+        if(resultsList.length === 0) {
+            listDiv.innerHTML = '<p class="muted small">No student results yet.</p>';
+            return;
+        }
+        
+        listDiv.innerHTML = '';
+        resultsList.forEach((r) => {
+            const attemptDate = formatDate(r.timestamp);
+            const d = document.createElement('div');
+            d.className = 'bank-item';
+            d.innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-weight:700;">
+                    <span>${r.studentName}</span> 
+                    <span style="color:var(--green)">${r.score} Marks</span>
+                </div>
+                <div class="muted small">${r.testName} • Accuracy: ${r.pct}%</div>
+                <div class="muted small" style="margin-top:4px;">📅 Attempted: ${attemptDate}</div>`;
+            listDiv.appendChild(d);
+        });
+    } catch(e) {
+        console.error(e);
+        listDiv.innerHTML = '<p class="muted small">Error loading results.</p>';
+    }
+}
+
+// 4. APP CORE LOGIC
 var CH_PHY_12=["Electric Charges and Fields","Electrostatic Potential","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"];
 var CH_CHEM_12=["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules"];
 var CH_MATH_12=["Relations and Functions","Inverse Trigonometric Functions","Matrices","Determinants","Continuity and Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","Three Dimensional Geometry","Linear Programming","Probability"];
 var CH_BIO_12=["Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Welfare","Biotechnology Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation"];
 
-var EXAM_DATA={
-  CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{
-    "Mathematics (Class 12)":CH_MATH_12,
-    "Physics (Class 12)":CH_PHY_12,
-    "Chemistry (Class 12)":CH_CHEM_12,
-    "Biology (Class 12)":CH_BIO_12,
-    "English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],
-    "General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]
-  }}
-};
-
+var EXAM_DATA={ CUET:{icon:"🎓",full:"CUET UG 2026",subjects:{"Mathematics (Class 12)":CH_MATH_12,"Physics (Class 12)":CH_PHY_12,"Chemistry (Class 12)":CH_CHEM_12,"Biology (Class 12)":CH_BIO_12,"English":["Reading Comprehension","Vocabulary","Grammar","Synonyms and Antonyms","Sentence Correction","Fill in the Blanks"],"General Test":["General Knowledge","Current Affairs","Numerical Ability","Quantitative Reasoning","Logical Reasoning"]}}};
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
 var K={ACTIVE:'cbt_active_test',HISTORY:'cbt_history'};
 var IDB={db:null,open:function(){var self=this;if(self.db)return Promise.resolve(self.db);return new Promise(function(res,rej){var req;try{req=indexedDB.open('ambition_db',1)}catch(e){rej(e);return}req.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('banks'))db.createObjectStore('banks',{keyPath:'id'})};req.onsuccess=function(e){self.db=e.target.result;res(self.db)};req.onerror=function(){rej(req.error)}})},put:function(obj){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').put(obj);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})},all:function(){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readonly');var r=tx.objectStore('banks').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})})},del:function(id){return this.open().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('banks','readwrite');tx.objectStore('banks').delete(id);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}};
@@ -313,340 +924,221 @@ function $(id){return document.getElementById(id)}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function fmtTime(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function showScreen(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('active');var el=$(id);if(el)el.classList.add('active');window.scrollTo(0,0);document.body.classList.toggle('no-scroll',id==='screen-test')}
-
-function renderMath(el){
-  if(!el) return;
-  if(window.MathJax && MathJax.typesetPromise){
-    try{
-      if(MathJax.typesetClear) MathJax.typesetClear([el]);
-      MathJax.typesetPromise([el]).catch(function(){});
-    }catch(e){}
-  } else {
-    setTimeout(function(){ renderMath(el); }, 350);
-  }
-}
-
+function renderMath(el){if(!el) return;if(window.MathJax && MathJax.typesetPromise){try{ if(MathJax.typesetClear) MathJax.typesetClear([el]); MathJax.typesetPromise([el]).catch(function(){}); }catch(e){}} else { setTimeout(function(){ renderMath(el); }, 350); }}
 function showLoader(text,sub){$('loaderText').textContent=text||'Working…';$('loaderSub').textContent=sub||'';$('loader').classList.remove('hidden')}
 function hideLoader(){$('loader').classList.add('hidden')}
 function dialog(opts){return new Promise(function(resolve){var ov=document.createElement('div');ov.className='modal-overlay';var box=document.createElement('div');box.className='modal';box.innerHTML='<h3>'+esc(opts.title||'')+'</h3><p style="margin:12px 0;line-height:1.5;color:var(--muted)">'+esc(opts.message||'')+'</p>';var acts=document.createElement('div');acts.className='modal-actions';(opts.buttons||[{text:'OK',primary:true,value:true}]).forEach(function(b){var btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.text;btn.onclick=function(){document.body.removeChild(ov);resolve(b.value)};acts.appendChild(btn)});box.appendChild(acts);ov.appendChild(box);document.body.appendChild(ov)})}
 
 async function aiCall(message, context, opts) {
   opts = opts || {};
-  var timeoutMs = opts.timeoutMs || 60000;
+  var timeoutMs = opts.timeoutMs || 90000;
   var retries = opts.retries === undefined ? 0 : opts.retries;
-
   var payload = { message: message, context: context ? Object.assign({}, context) : {} };
   if (context && context.image) { payload.image = context.image; delete payload.context.image; }
   if (context && context.images) { payload.images = context.images; delete payload.context.images; }
-
   var lastErr;
   for (var attempt = 0; attempt <= retries; attempt++) {
     var ctrl = new AbortController();
     var timer = setTimeout(function() { ctrl.abort(); }, timeoutMs);
     try {
-      var res = await fetch('/api/ai-coach', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: ctrl.signal
-      });
+      var res = await fetch('/api/ai-coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: ctrl.signal });
       clearTimeout(timer);
-      if (!res.ok) {
-        var body = '';
-        try { body = await res.text(); } catch (e) {}
-        var err = new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : ''));
-        err.status = res.status;
-        throw err;
-      }
-      var data = await res.json();
-      var text = data && (data.message || data.text);
-      if (!text) throw new Error('Empty AI response');
-      return String(text);
+      if (!res.ok) { var body = ''; try { body = await res.text(); } catch (e) {} var err = new Error('Server ' + res.status + (body ? ': ' + body.slice(0, 100) : '')); err.status = res.status; throw err; }
+      var data = await res.json(); var text = data && (data.message || data.text);
+      if (!text) throw new Error('Empty AI response'); return String(text);
     } catch (e) {
-      clearTimeout(timer);
-      lastErr = e;
-      if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) {
-        await new Promise(function(r) { setTimeout(r, 1000); });
-        continue;
-      }
+      clearTimeout(timer); lastErr = e;
+      if (attempt < retries && (e.name === 'AbortError' || e instanceof TypeError)) { await new Promise(function(r) { setTimeout(r, 1000); }); continue; }
       throw e;
     }
   }
   throw lastErr;
 }
 
-// Protect LaTeX commands (\tan, \frac, \beta, \sqrt, etc.) before JSON.parse eats them!
-function fixLatexEscapesInJSON(jsonStr) {
-  return jsonStr
-    // Protect single backslash before common LaTeX commands starting with t, f, b, r, n
-    .replace(/(?<!\\)\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '\\\\$1')
-    // Protect any remaining single backslash that isn't a valid JSON escape
-    .replace(/(?<!\\)\\(?![/\"\\bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\');
+function fixLatexEscapesInJSON(jsonStr) { return jsonStr.replace(/(^|[^\\])\\(tan|theta|times|text|tfrac|tau|to|top|triangle|frac|forall|flat|beta|binom|bar|mathbf|mathbb|sqrt|sin|sec|sum|sigma|int|infty|cos|cot|csc|cdot|alpha|delta|gamma|lambda|mu|omega|pi|phi|psi|rho|left|right|vec|hat|overline|underline|lim|log|ln|pm|mp|neq|leq|geq|approx|equiv|subset|supset|cup|cap|in|notin|partial|nabla|degree|circ)/g, '$1\\\\$2').replace(/(^|[^\\])\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})/g, '$1\\\\'); }
+function safeParseJSON(text){ if (!text) return []; var t = String(text).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim(); var safeT = fixLatexEscapesInJSON(t); try { return JSON.parse(safeT); } catch(e) {} try { return JSON.parse(t); } catch(e) {} var s = safeT.indexOf('['), e = safeT.lastIndexOf(']'); if(s >= 0 && e > s) { try { return JSON.parse(safeT.slice(s, e+1)); } catch(err) {} } var s2 = safeT.indexOf('{'), e2 = safeT.lastIndexOf('}'); if(s2 >= 0 && e2 > s2) { try { var o = JSON.parse(safeT.slice(s2, e2+1)); if (o && Array.isArray(o.questions)) return o.questions; return o; } catch(err) {} } if (t.length > 0 && t.length < 500 && !t.includes('{')) return []; throw new Error('AI returned non-JSON. Please retry.'); }
+function formatStatements(text) { if (!text) return ''; var formatted = text; formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2').replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2').replace(/^([A-E]\.\s)/, '\n$1').replace(/^(\([A-E1-4]\)\s)/, '\n$1'); return formatted.trim(); }
+function autoWrapMath(str) { if (!str) return ''; str = String(str).trim(); str = str.replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1').replace(/\f(rac|orall|lat)\b/g, '\\f$1').replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1').replace(/\r(ight|ho|aise)\b/g, '\\r$1'); if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) return str; var dollarCount = (str.match(/\$/g) || []).length; if (dollarCount % 2 !== 0) { str = str.replace(/\$/g, ''); dollarCount = 0; } if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) { var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, ''); if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) return str; str = str.replace(/\$/g, ''); } var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str); if (hasLatex) { var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i); if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)'; return '\\(' + str + '\\)'; } return str; }
+function cleanOptionText(str) { if (!str) return ''; var s = String(str).trim(); s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, ''); return s.trim(); }
+
+function normaliseList(raw){ 
+    var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []); 
+    var out = []; 
+    for(var i=0; i<arr.length; i++){ 
+        var item = arr[i]; 
+        if(!item || typeof item !== 'object') continue; 
+        var q = item.q || item.question || item.text; 
+        var opts = item.options || item.opts || []; 
+        if(!q) continue; 
+        
+        var uniqueOpts = []; var seen = new Set();
+        opts.forEach(function(o) {
+            var cleanO = cleanOptionText(o);
+            if (!seen.has(cleanO.toLowerCase()) && cleanO.trim() !== '') { seen.add(cleanO.toLowerCase()); uniqueOpts.push(cleanO); }
+        });
+        
+        while(uniqueOpts.length < 4) { uniqueOpts.push('None of the above'); }
+        opts = uniqueOpts.slice(0, 4); 
+        
+        var ans = Number(item.ans); 
+        if(isNaN(ans) || ans < 0 || ans > 3) ans = 0; 
+        
+        out.push({ 
+            q: autoWrapMath(formatStatements(q)), 
+            options: opts.map(function(o) { return autoWrapMath(o); }), 
+            ans: ans, 
+            topic: String(item.topic || 'General'), 
+            diff: String(item.diff || 'medium'), 
+            explain: String(item.explain || '') 
+        }); 
+    } 
+    return out; 
 }
 
-function safeParseJSON(text){
-  if (!text) return [];
-  var t = String(text).trim();
-  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
-  
-  var safeT = fixLatexEscapesInJSON(t);
-  try { return JSON.parse(safeT); } catch(e) {}
-  try { return JSON.parse(t); } catch(e) {}
-  
-  var s = safeT.indexOf('['), e = safeT.lastIndexOf(']');
-  if(s >= 0 && e > s) { 
-    try { return JSON.parse(safeT.slice(s, e+1)); } catch(err) {} 
-  }
-  var s2 = safeT.indexOf('{'), e2 = safeT.lastIndexOf('}');
-  if(s2 >= 0 && e2 > s2) { 
-    try { 
-      var o = JSON.parse(safeT.slice(s2, e2+1)); 
-      if (o && Array.isArray(o.questions)) return o.questions; 
-      return o; 
-    } catch(err) {} 
-  }
-  
-  if (t.length > 0 && t.length < 500 && !t.includes('{')) {
-     return []; 
-  }
-  
-  throw new Error('AI returned non-JSON. Please retry.');
-}
+function compressImage(file, maxDim, quality){ maxDim = maxDim || 2500; quality = quality || 0.88; return new Promise(function(resolve, reject){ var reader = new FileReader(); reader.onload = function(e){ var img = new Image(); img.onload = function(){ var w = img.width, h = img.height; if(w > maxDim || h > maxDim){ if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; } else { w = Math.round((w * maxDim)/h); h = maxDim; } } var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); var dataUrl = canvas.toDataURL('image/jpeg', quality); canvas.width = 0; canvas.height = 0; resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' }); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
+async function extractPDFText(file, onProgress) { var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var pages = []; for (var i = 1; i <= pdf.numPages; i++) { var page = await pdf.getPage(i); var content = await page.getTextContent(); pages.push(content.items.map(function(it){ return it.str; }).join(' ')); if (onProgress) onProgress(i, pdf.numPages); } return { text: pages.join('\n\n'), pageCount: pdf.numPages }; }
+async function renderPDFPages(file, maxPages) { maxPages = maxPages || 30; var buf = await file.arrayBuffer(); var pdf = await pdfjsLib.getDocument({ data: buf }).promise; var total = Math.min(pdf.numPages, maxPages); var images = []; for (var i = 1; i <= total; i++) { var page = await pdf.getPage(i); var viewport = page.getViewport({ scale: 2.0 }); var canvas = document.createElement('canvas'); canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height); await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise; var dataUrl = canvas.toDataURL('image/jpeg', 0.85); images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' }); canvas.width = 0; canvas.height = 0; } return { images: images, pageCount: pdf.numPages, renderedCount: total }; }
 
-function formatStatements(text) {
-  if (!text) return '';
-  var formatted = text;
-  formatted = formatted.replace(/([^\n])\s+([A-E]\.\s)/g, '$1\n$2');
-  formatted = formatted.replace(/([^\n])\s+(\([A-E1-4]\)\s)/g, '$1\n$2');
-  formatted = formatted.replace(/^([A-E]\.\s)/, '\n$1');
-  formatted = formatted.replace(/^(\([A-E1-4]\)\s)/, '\n$1');
-  return formatted.trim();
-}
-
-// Upgraded autoWrapMath: Repairs corrupted tabs/formfeeds and wraps any unwrapped LaTeX
-function autoWrapMath(str) {
-  if (!str) return '';
-  str = String(str).trim();
-
-  // Repair control characters if already corrupted in older saved IndexedDB banks
-  str = str
-    .replace(/\t(an|heta|imes|ext|frac|au|o|op|riangle)\b/g, '\\t$1')
-    .replace(/\f(rac|orall|lat)\b/g, '\\f$1')
-    .replace(/[\b](eta|inom|ar|ig)\b/g, '\\b$1')
-    .replace(/\r(ight|ho|aise)\b/g, '\\r$1');
-
-  // Skip plain English phrases like "None of these" or "All of the above"
-  if (/^(none of these|none of the above|all of these|all of the above|both a and b|cannot be determined)$/i.test(str)) {
-    return str;
-  }
-
-  // Balance odd dollar signs
-  var dollarCount = (str.match(/\$/g) || []).length;
-  if (dollarCount % 2 !== 0) {
-    str = str.replace(/\$/g, '');
-    dollarCount = 0;
-  }
-
-  // If already properly wrapped in $...$ or \(...\) without raw leaked LaTeX outside
-  if ((dollarCount > 0 || str.includes('\\(') || str.includes('\\['))) {
-    // Check if raw LaTeX exists outside $...$
-    var stripped = str.replace(/\$[^$]+\$/g, '').replace(/\\\([\s\S]*?\\\)/g, '');
-    if (!/\\[a-zA-Z]+/.test(stripped) && !/[\^_]\{/.test(stripped)) {
-      return str;
-    }
-    // If mixed raw LaTeX and $, strip $ and wrap cleanly
-    str = str.replace(/\$/g, '');
-  }
-
-  // Detect any LaTeX command (\sqrt, \cos, \frac, etc.) or math exponents/subscripts (^, _)
-  var hasLatex = /\\[a-zA-Z]+/.test(str) || /[\^_]\{/.test(str) || /[a-zA-Z0-9]\^[0-9a-zA-Z+-]/.test(str);
-
-  if (hasLatex) {
-    // If string starts with prose like "Evaluate " followed by math
-    var proseMatch = str.match(/^((?:Evaluate|Find|Solve|Integrate|Differentiate|Simplify|The value of|If)\s+)(.+)$/i);
-    if (proseMatch && /\\[a-zA-Z]+/.test(proseMatch[2])) {
-      return proseMatch[1] + '\\(' + proseMatch[2].trim() + '\\)';
-    }
-    return '\\(' + str + '\\)';
-  }
-
-  return str;
-}
-
-function cleanOptionText(str) {
-  if (!str) return '';
-  var s = String(str).trim();
-  s = s.replace(/^[\(\[]?\s*[a-dA-D1-4i-vI-V]\s*[\)\].:-]\s*/i, '');
-  return s.trim();
-}
-
-function normaliseList(raw){
-  var arr = Array.isArray(raw) ? raw : (raw && raw.questions ? raw.questions : []);
-  var out = [];
-  for(var i=0; i<arr.length; i++){
-    var item = arr[i];
-    if(!item || typeof item !== 'object') continue;
-    var q = item.q || item.question || item.text;
-    var opts = item.options || item.opts || [];
-    if(!q) continue;
-    while(opts.length < 4) opts.push('None of the above');
-    opts = opts.slice(0, 4);
-    var ans = Number(item.ans);
-    if(isNaN(ans) || ans < 0 || ans > 3) ans = 0;
-    
-    var fixedQ = autoWrapMath(formatStatements(q));
-    
-    var fixedOpts = opts.map(function(o) { 
-      return autoWrapMath(cleanOptionText(o)); 
-    });
-
-    out.push({
-      q: fixedQ,
-      options: fixedOpts,
-      ans: ans,
-      topic: String(item.topic || 'CUET UG'),
-      diff: String(item.diff || 'medium'),
-      explain: String(item.explain || '')
-    });
-  }
-  return out;
-}
-
-function compressImage(file, maxDim, quality){
-  maxDim = maxDim || 1600;
-  quality = quality || 0.8;
-  return new Promise(function(resolve, reject){
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var img = new Image();
-      img.onload = function(){
-        var w = img.width, h = img.height;
-        if(w > maxDim || h > maxDim){
-          if(w > h){ h = Math.round((h * maxDim)/w); w = maxDim; }
-          else { w = Math.round((w * maxDim)/h); h = maxDim; }
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        var dataUrl = canvas.toDataURL('image/jpeg', quality);
-        canvas.width = 0; canvas.height = 0;
-        resolve({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
-      };
-      img.onerror = reject;
-      img.src = e.target.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-async function extractPDFText(file, onProgress) {
-  var buf = await file.arrayBuffer();
-  var pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-  var pages = [];
-  for (var i = 1; i <= pdf.numPages; i++) {
-    var page = await pdf.getPage(i);
-    var content = await page.getTextContent();
-    pages.push(content.items.map(function(it){ return it.str; }).join(' '));
-    if (onProgress) onProgress(i, pdf.numPages);
-  }
-  return { text: pages.join('\n\n'), pageCount: pdf.numPages };
-}
-
-async function renderPDFPages(file, maxPages) {
-  maxPages = maxPages || 10;
-  var buf = await file.arrayBuffer();
-  var pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-  var total = Math.min(pdf.numPages, maxPages);
-  var images = [];
-  for (var i = 1; i <= total; i++) {
-    var page = await pdf.getPage(i);
-    var viewport = page.getViewport({ scale: 1.2 });
-    var canvas = document.createElement('canvas');
-    canvas.width = Math.round(viewport.width);
-    canvas.height = Math.round(viewport.height);
-    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-    var dataUrl = canvas.toDataURL('image/jpeg', 0.72);
-    images.push({ data: dataUrl.split(',')[1], mime: 'image/jpeg' });
-    canvas.width = 0; canvas.height = 0;
-  }
-  return { images: images, pageCount: pdf.numPages, renderedCount: total };
-}
-
-var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'up'};
+var state={exam:'CUET',subject:null,chapters:[],count:10,difficulty:'Mixed',timerMode:'stopwatch',timerMins:15};
 var uploadMode='extract';
 var T=null,timerHandle=null;
+var startTime=0, totalDuration=0;
+var myChart=null;
 
 function renderHome(){
-  var grid=$('examGrid');grid.innerHTML='';
-  var b=document.createElement('button');
-  b.className='exam-card';
-  b.innerHTML='<div style="font-size:26px">🎓</div><div style="font-weight:700;font-size:16px">CUET UG 2026</div><div class="muted small">Practice • PYQs • Image Solver</div><div style="color:var(--accent);font-weight:700;font-size:12px;margin-top:4px">+5 Correct | -1 Negative</div>';
-  b.onclick=function(){openExam('CUET')};
-  grid.appendChild(b);
-  renderHistory();
+  renderResumeBanner();
+  if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
+      updateTeacherBadge();
+  }
 }
-function openExam(){showScreen('screen-exam')}
 
-function renderHistory(){
+function renderHistoryChart() {
   var hist=LS.get(K.HISTORY,[]);
   var analysis=$('analysisWrap');
   if(!hist.length){
     analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="card"><p class="muted small" style="margin:0">Completed test scores will appear here.</p></div>';
-    return;
+    $('chartContainer').classList.add('hidden'); return;
   }
-  var avg=Math.round(hist.reduce(function(a,h){return a+h.pct},0)/hist.length);
-  analysis.innerHTML='<h2 class="section-title">Your Performance</h2><div class="analysis-grid">'+
-    '<div class="analysis-stat"><div class="value">'+hist.length+'</div><div class="label">Tests taken</div></div>'+
-    '<div class="analysis-stat"><div class="value">'+avg+'%</div><div class="label">Average accuracy</div></div>'+
-    '</div>';
+  var totalCorrect=0, totalQs=0;
+  hist.forEach(function(h) { totalCorrect += (h.correct || 0); totalQs += ((h.correct || 0) + (h.wrong || 0) + (h.skipped || 0)); });
+  var overallAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
+  analysis.innerHTML='<h2 class="section-title">Your Dashboard</h2><div class="analysis-grid"><div class="analysis-stat"><div class="value">'+hist.length+'</div><div class="label">Tests taken</div></div><div class="analysis-stat"><div class="value">'+overallAcc+'%</div><div class="label">Overall Accuracy</div></div></div>';
+  $('chartContainer').classList.remove('hidden');
+  var recentTests = hist.slice(0, 10).reverse();
+  var labels = recentTests.map(function(h, i) { return h.date ? h.date.split(',')[0] : 'Test '+(i+1); });
+  var dataPts = recentTests.map(function(h) { return h.pct; });
+  var ctx = document.getElementById('progressChart').getContext('2d');
+  if(myChart) myChart.destroy();
+  myChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Score %', data: dataPts, borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.15)', borderWidth: 3, pointBackgroundColor: '#a855f7', pointBorderColor: '#fff', pointRadius: 4, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b95ad', font: { size: 11 } } }, x: { grid: { display: false }, ticks: { color: '#8b95ad', font: { size: 11 } } } } } });
 }
 
-function openSetup(){state.subject=null;state.chapters=[];state.count=10;renderSubjects();renderChips();$('setupPanel').classList.add('hidden');showScreen('screen-setup')}
+function renderResumeBanner(){
+  var active = LS.get(K.ACTIVE, null);
+  var banner = $('resumeBanner');
+  if(active && active.questions && active.questions.length > 0){
+    banner.innerHTML = '<div class="card" style="border-color:var(--accent);margin-bottom:18px;"><div style="font-weight:700;color:var(--accent);margin-bottom:6px;">⚠️ Test in progress</div><div class="muted small" style="margin-bottom:12px;">Unfinished test: <b>'+esc(active.name)+'</b></div><div class="btn-row"><button class="btn small primary" id="btnResumeTest">▶ Resume Test</button><button class="btn small danger" id="btnDiscardTest">Discard</button></div></div>';
+    $('btnResumeTest').onclick=function(){ T = active; startTime = Date.now() - (T.elapsed * 1000); showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette(); };
+    $('btnDiscardTest').onclick=function(){ LS.del(K.ACTIVE); renderResumeBanner(); };
+  } else { banner.innerHTML=''; }
+}
+
+function openSetup(){
+  state.subject=null; state.chapters=[]; state.count=10; state.timerMode='stopwatch';
+  renderSubjects(); renderChips(); $('setupPanel').classList.add('hidden'); showScreen('screen-setup');
+}
+
 function renderSubjects(){var subs=Object.keys(EXAM_DATA.CUET.subjects);var g=$('subjectGrid');g.innerHTML='';subs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){selectSubject(s,b)};g.appendChild(b)})}
 function selectSubject(name,btn){state.subject=name;state.chapters=[];var all=$('subjectGrid').querySelectorAll('.chip');for(var i=0;i<all.length;i++)all[i].classList.remove('active');btn.classList.add('active');renderChapters();$('setupPanel').classList.remove('hidden')}
 function renderChapters(){var list=EXAM_DATA.CUET.subjects[state.subject]||[];var host=$('chapterList');host.innerHTML='';list.forEach(function(c){var d=document.createElement('button');d.className='check-item';d.innerHTML='<span class="check-box">✓</span><span>'+esc(c)+'</span>';d.onclick=function(){toggleChapter(c,d)};host.appendChild(d)})}
 function toggleChapter(c,el){var idx=state.chapters.indexOf(c);if(idx>=0){state.chapters.splice(idx,1);el.classList.remove('on')}else{state.chapters.push(c);el.classList.add('on')}}
+
 function renderChips(){
-  var nc=$('numChips');nc.innerHTML='';[10,15,20].forEach(function(n){var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n;b.onclick=function(){state.count=n;renderChips()};nc.appendChild(b)});
-  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d;b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b)});
-  var tc=$('timerChips');tc.innerHTML='';[{k:'up',t:'⏱ Count Up'},{k:'down',t:'⏳ 15 Min'}].forEach(function(tm){var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t;b.onclick=function(){state.timerMode=tm.k;renderChips()};tc.appendChild(b)});
+  var nc=$('numChips');nc.innerHTML='';[10,15,20,25,30].forEach(function(n){ var b=document.createElement('button');b.className='chip'+(state.count===n?' active':'');b.textContent=n; b.onclick=function(){state.count=n; $('customNumInput').value=n; renderChips()};nc.appendChild(b) });
+  var dc=$('diffChips');dc.innerHTML='';['Easy','Medium','Hard','Mixed'].forEach(function(d){ var b=document.createElement('button');b.className='chip'+(state.difficulty===d?' active':'');b.textContent=d; b.onclick=function(){state.difficulty=d;renderChips()};dc.appendChild(b) });
+  var tc=$('timerChips');tc.innerHTML=''; [{k:'stopwatch',t:'⏱ Stopwatch'},{k:'timer',t:'⏳ Timer'}].forEach(function(tm){ var b=document.createElement('button');b.className='chip'+(state.timerMode===tm.k?' active':'');b.textContent=tm.t; b.onclick=function(){state.timerMode=tm.k; renderChips()};tc.appendChild(b) });
+  if (state.timerMode === 'timer') { $('customTimerWrap').classList.remove('hidden'); } else { $('customTimerWrap').classList.add('hidden'); }
 }
 
 function startAITest(){
   if(!state.subject){dialog({title:'Pick a subject',message:'Please select a subject first.'});return}
+  var cInput = parseInt($('customNumInput').value);
+  if(cInput > 0 && cInput <= 100) state.count = cInput;
+  var tInput = parseInt($('customTimerInput').value);
+  if(tInput > 0 && tInput <= 180) state.timerMins = tInput;
+  else state.timerMins = 15;
+
   var chapters=state.chapters.length?state.chapters:['Full Syllabus'];
-  var prompt='Generate '+state.count+' CUET MCQs for '+state.subject+' (Topics: '+chapters.join(', ')+'). Difficulty: '+state.difficulty+'. Raw JSON format.';
-  showLoader('AI is generating questions…','This usually takes 3-5 seconds');
+  var randomSeed = Math.floor(Math.random() * 999999);
+  var prompt='Generate ' + state.count + ' NEW and UNIQUE CUET MCQs for ' + state.subject + ' (Topics: ' + chapters.join(', ') + '). Difficulty: ' + state.difficulty + '. Make sure no two options are the same. Random Seed: ' + randomSeed + '. Raw JSON format.';
+  
+  showLoader('AI is generating questions…','This might take a few seconds');
   aiCall(prompt,{source:'ambition-cuet-cbt',mode:'ai'}).then(function(res){
     var list=normaliseList(safeParseJSON(res));
     hideLoader();
     if(!list.length) throw new Error('No questions generated');
-    launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode});
+    
+    if (currentUserData.role === 'teacher' && !isStudentPreview) {
+        saveTeacherTest(list, state.subject + ' Test', state.subject);
+    } else {
+        launchTest({name:'CUET • '+state.subject,questions:list,timerMode:state.timerMode, timerMins:state.timerMins, type: 'self', subject: state.subject});
+    }
   }).catch(function(err){
     hideLoader();
     dialog({title:'Error',message:err.message||'Failed to generate questions.'});
   });
 }
 
+async function saveTeacherTest(questions, testName, subjectName) {
+    showLoader('Saving test for students…', '');
+    try {
+        await addDoc(collection(db, "tests"), {
+            name: testName || 'New Test',
+            subject: subjectName || 'General',
+            questions: questions,
+            teacherName: currentUserData.name,
+            teacherId: currentUser.uid,
+            assignedTo: 'all',
+            timeLimit: state.timerMins || 15,
+            timestamp: serverTimestamp()
+        });
+        hideLoader();
+        dialog({title:'✅ Test Assigned', message:'Test saved successfully! Students can now see this test on their dashboard.'}).then(() => {
+            showScreen('screen-home');
+        });
+    } catch(e) {
+        hideLoader();
+        dialog({title:'Error', message: 'Could not save test: ' + e.message});
+    }
+}
+
 function openUpload(mode){
   uploadMode=mode;
-  $('uploadTitle').textContent=mode==='image'?'📷 Upload Question Photo':(mode==='notes'?'📝 Upload Notes':'📄 Upload Document');
-  $('uploadCardTitle').textContent=mode==='image'?'📷 Add a photo':(mode==='notes'?'📝 Add notes file':'📄 Add a file');
-  $('uploadCardHint').textContent=mode==='image'?'JPG, PNG, WEBP supported. Max 20 MB.':(mode==='notes'?'PDF / TXT up to 100 pages.':'PDF / TXT up to 100 pages. Auto OCR for scanned files.');
-  renderBanks();
-  showScreen('screen-upload');
+  var config = { image: { title:'📷 Upload Photo', card:'📷 Add photo', hint:'JPG, PNG, WEBP — max 30 MB.', bank:'Image Banks' }, extract: { title:'📄 Upload PDF', card:'📄 Add PDF / TXT', hint:'PDF / TXT up to 500 MB.', bank:'PDF Banks' }, notes: { title:'📝 Upload Notes', card:'📝 Add notes', hint:'AI will GENERATE new MCQs from your notes.', bank:'Notes Banks' } }[mode];
+  $('uploadTitle').textContent = config.title; 
+  $('uploadCardTitle').textContent = config.card; 
+  $('uploadCardHint').textContent = config.hint; 
+  $('bankListTitle').textContent = config.bank;
+  
+  if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
+      document.getElementById('teacherTitleField').classList.remove('hidden');
+      document.getElementById('uploadTestTitle').value = ''; 
+  } else {
+      document.getElementById('teacherTitleField').classList.add('hidden');
+  }
+
+  renderBanks(); showScreen('screen-upload');
 }
 
 function renderBanks(){
   var host=$('bankList');
   IDB.all().then(function(banks){
-    if(!banks.length){host.innerHTML='<p class="muted small">No banks uploaded yet.</p>';return}
+    var filtered = banks.filter(function(b){ return (b.category || 'extract') === uploadMode; });
+    if(!filtered.length){host.innerHTML='<p class="muted small">No banks yet.</p>';return}
     host.innerHTML='';
-    banks.forEach(function(b){
+    filtered.forEach(function(b){
       var d=document.createElement('div');d.className='bank-item';
-      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions saved</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
-      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'up'})};
+      d.innerHTML='<div style="font-weight:700">📄 '+esc(b.name)+'</div><div class="muted small">'+b.questions.length+' questions • Subject: '+esc(b.subject||'General')+'</div><div class="btn-row"><button class="btn small primary" data-act="start">▶ Start Test</button><button class="btn small danger" data-act="del">Delete</button></div>';
+      d.querySelector('[data-act="start"]').onclick=function(){launchTest({name:b.name,questions:b.questions,timerMode:'stopwatch', type: 'self', subject: b.subject || 'General'})};
       d.querySelector('[data-act="del"]').onclick=function(){IDB.del(b.id).then(renderBanks)};
       host.appendChild(d);
     });
@@ -655,272 +1147,263 @@ function renderBanks(){
 
 async function handleFileUpload(file){
   if(!file) return;
+  
+  let customName = "";
+  let customSubject = "General";
+  if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
+      customName = document.getElementById('uploadTestTitle').value.trim();
+      if(!customName) {
+          dialog({title: 'Missing Title', message: 'Please enter a test title before uploading.'});
+          return;
+      }
+  }
+  customSubject = document.getElementById('uploadTestSubject').value || 'General';
+
   var fname=(file.name||'').toLowerCase();
   var isImage = (file.type && file.type.indexOf('image/')===0) || /\.(jpg|jpeg|png|webp|heic|heif|bmp|gif)$/i.test(fname);
   var isPDF = file.type === 'application/pdf' || fname.endsWith('.pdf');
   var isText = file.type === 'text/plain' || fname.endsWith('.txt');
+  if(file.size > 500*1024*1024){ dialog({title:'File too large',message:'Max 500 MB allowed.'}); return; }
+  if(isImage && file.size > 30*1024*1024){ dialog({title:'Image too large',message:'Max 30 MB allowed.'}); return; }
 
-  if(file.size > 100*1024*1024){
-    dialog({title:'File too large',message:'Max 100 MB allowed.'});
-    return;
-  }
-  if(isImage && file.size > 20*1024*1024){
-    dialog({title:'Image too large',message:'Max 20 MB allowed for images.'});
-    return;
-  }
-
-  var progressWrap=$('uploadProgress');
-  var progressBar=$('uploadProgressBar');
-  var progressText=$('uploadProgressText');
-  progressWrap.classList.remove('hidden');
-  progressBar.style.width='5%';
-  progressText.textContent='Reading file…';
-  var startTime=Date.now();
-
+  var progressWrap=$('uploadProgress'), progressBar=$('uploadProgressBar'), progressText=$('uploadProgressText');
+  progressWrap.classList.remove('hidden'); progressBar.style.width='5%'; progressText.textContent='Reading file…';
+  var startTs=Date.now();
   try {
     var questions;
-    if(isImage){
-      questions = await processImageFile(file, progressBar, progressText);
-    } else if(isPDF){
-      questions = await processPDFFile(file, progressBar, progressText);
-    } else if(isText){
-      questions = await processTextFile(file, progressBar, progressText);
+    if(isImage){ questions = await processImageFile(file, progressBar, progressText); }
+    else if(isPDF){ questions = await processPDFFile(file, progressBar, progressText); }
+    else if(isText){ questions = await processTextFile(file, progressBar, progressText); }
+    else { throw new Error('Unsupported file type.'); }
+    if(!questions || !questions.length) throw new Error('No valid questions found.');
+    
+    progressBar.style.width='100%'; progressText.textContent='Saving…';
+
+    if (currentUserData && currentUserData.role === 'teacher' && !isStudentPreview) {
+        saveTeacherTest(questions, customName, customSubject);
     } else {
-      throw new Error('Unsupported file type.');
+        var bank={ id:'bank_'+Date.now(), name: customName || file.name, category: uploadMode, questions:questions, subject: customSubject, created:Date.now() };
+        await IDB.put(bank);
+        progressWrap.classList.add('hidden'); renderBanks();
+        var elapsed=((Date.now()-startTs)/1000).toFixed(1);
+        dialog({ title:'✅ Done in '+elapsed+'s', message:questions.length+' questions extracted.', buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}] }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'stopwatch', type: 'self', subject: bank.subject}); });
     }
-
-    if(!questions || !questions.length) throw new Error('No valid questions found. Please upload a clearer image or a text-based PDF.');
-
-    progressBar.style.width='100%';
-    progressText.textContent='Saving '+questions.length+' questions…';
-
-    var bank={id:'bank_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),name:file.name,questions:questions,created:Date.now()};
-    await IDB.put(bank);
-
-    progressWrap.classList.add('hidden');
-    renderBanks();
-    var elapsed=((Date.now()-startTime)/1000).toFixed(1);
-    dialog({
-      title:'✅ Done in '+elapsed+'s',
-      message:questions.length+' questions extracted from '+file.name,
-      buttons:[{text:'Later',value:false},{text:'Start Test',primary:true,value:true}]
-    }).then(function(go){ if(go) launchTest({name:bank.name,questions:questions,timerMode:'up'}); });
-  } catch(err){
-    progressWrap.classList.add('hidden');
-    dialog({title:'Upload failed',message:(err.message||'Unknown error')});
-  }
+  } catch(err){ progressWrap.classList.add('hidden'); dialog({title:'Upload failed',message:(err.message||'Unknown error')}); }
 }
 
 async function processImageFile(file, bar, text){
-  bar.style.width='15%';
-  text.textContent='Compressing image…';
-  var img = await compressImage(file, 1600, 0.8);
-
-  bar.style.width='40%';
-  text.textContent='AI is reading the image…';
-
-  var raw = await aiCall(
-    'Extract ALL questions from this image. If MCQ, copy options exactly. If direct question, solve it and create 4 options. "ans" = 0-based index of correct option. Wrap ALL math in $...$ and double-escape backslashes (\\\\frac, \\\\sqrt, \\\\cos). Return raw JSON array only.',
-    {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'image-extract', image: img},
-    {timeoutMs: 60000}
-  );
-
-  bar.style.width='90%';
-  return normaliseList(safeParseJSON(raw));
+  bar.style.width='15%'; text.textContent='Compressing photo…';
+  var img = await compressImage(file, 2500, 0.88);
+  bar.style.width='40%'; text.textContent='AI is reading…';
+  var mode = uploadMode==='notes' ? 'notes' : 'image-extract';
+  var raw = await aiCall('Extract every single question from this photo. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode, image: img}, {timeoutMs: 90000});
+  bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
 }
 
 async function processTextFile(file, bar, text){
-  bar.style.width='15%';
-  text.textContent='Reading text…';
-  var content = await file.text();
-  if(!content.trim()) throw new Error('Empty file.');
-
-  bar.style.width='40%';
-  text.textContent='AI is extracting questions from text…';
-
+  bar.style.width='15%'; text.textContent='Reading text…';
+  var content = await file.text(); if(!content.trim()) throw new Error('Empty file.');
+  bar.style.width='40%'; text.textContent='AI is extracting…';
   var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-  var raw = await aiCall(
-    (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000),
-    {source:'ambition-cuet-cbt', mode: mode},
-    {timeoutMs: 60000}
-  );
-
-  bar.style.width='90%';
-  return normaliseList(safeParseJSON(raw));
+  var raw = await aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + content.slice(0, 30000), {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000});
+  bar.style.width='90%'; return normaliseList(safeParseJSON(raw));
 }
 
 async function processPDFFile(file, bar, text){
-  bar.style.width='10%';
-  text.textContent='Loading PDF…';
-
+  bar.style.width='10%'; text.textContent='Loading PDF…';
   var extracted;
-  try {
-    extracted = await extractPDFText(file, function(page, total){
-      bar.style.width = (10 + (page/total)*15) + '%';
-      text.textContent = 'Extracting text… page '+page+'/'+total;
-    });
-  } catch(e) {
-    extracted = { text: '', pageCount: 0 };
-  }
-
+  try { extracted = await extractPDFText(file, function(page, total){ bar.style.width = (10 + (page/total)*15) + '%'; text.textContent = 'Extracting text… page '+page+'/'+total; }); } 
+  catch(e) { extracted = { text: '', pageCount: 0 }; }
   var textLen = (extracted.text || '').trim().length;
-
   if(textLen > 500){
-    bar.style.width='30%';
-    text.textContent='Text extracted. AI is reading…';
-
-    var chunks = chunkText(extracted.text, 25000);
-    var mode = uploadMode === 'notes' ? 'notes' : 'extract';
-    var collected = [];
-    var concurrency = 2; 
-    
+    bar.style.width='30%'; text.textContent='Text extracted. AI is reading…';
+    var chunks = chunkText(extracted.text, 25000); var mode = uploadMode === 'notes' ? 'notes' : 'extract'; var collected = []; var concurrency = 2;
     for(var b=0; b<chunks.length; b+=concurrency){
       var group = chunks.slice(b, b+concurrency);
-      bar.style.width = (30 + (b/chunks.length)*60) + '%';
-      text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions collected…';
-
-      var results = await Promise.all(group.map(function(chunk){
-        return aiCall(
-          (mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk,
-          {source:'ambition-cuet-cbt', mode: mode},
-          {timeoutMs: 60000, retries: 1}
-        ).catch(function(e){
-          console.warn('Chunk failed:', e.message);
-          return '';
-        });
-      }));
-
-      results.forEach(function(r){
-        if(r) {
-          try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){}
-        }
-      });
+      bar.style.width = (30 + (b/chunks.length)*60) + '%'; text.textContent = 'Processing parts '+(b+1)+' to '+Math.min(b+concurrency, chunks.length)+' of '+chunks.length+' — '+collected.length+' questions…';
+      var results = await Promise.all(group.map(function(chunk){ return aiCall((mode === 'notes' ? 'Generate MCQs from these notes:\n\n' : 'Extract all MCQs from this text:\n\n') + chunk, {source:'ambition-cuet-cbt', mode: mode}, {timeoutMs: 90000, retries: 1}).catch(function(e){ return ''; }); }));
+      results.forEach(function(r){ if(r) { try { collected = collected.concat(normaliseList(safeParseJSON(r))); } catch(e){} } });
     }
     return collected;
   }
-
-  bar.style.width='25%';
-  text.textContent='Scanned PDF — rendering pages…';
-  var rendered = await renderPDFPages(file, 10);
+  bar.style.width='25%'; text.textContent='Scanned PDF — rendering pages…';
+  var rendered = await renderPDFPages(file, 30);
   if(!rendered.images.length) throw new Error('Could not render PDF pages.');
-
-  bar.style.width='40%';
-  text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
-
+  bar.style.width='40%'; text.textContent='Rendered '+rendered.images.length+' pages. AI is reading…';
   var collected = [];
   for(var i=0; i<rendered.images.length; i++){
-    bar.style.width = (40 + (i/rendered.images.length)*50) + '%';
-    text.textContent = 'Processing page '+(i+1)+'/'+rendered.images.length+'…';
+    bar.style.width = (40 + (i/rendered.images.length)*50) + '%'; text.textContent = 'Page '+(i+1)+'/'+rendered.images.length+' — '+collected.length+' questions…';
     try {
-      var raw = await aiCall(
-        'Extract ALL MCQs from this page. Copy options exactly. If direct question, solve and create 4 options. "ans" = 0-based index. Wrap ALL math in $...$. Return raw JSON array only.',
-        {source:'ambition-cuet-cbt', mode: uploadMode==='notes' ? 'notes' : 'scanned-extract', image: rendered.images[i]},
-        {timeoutMs: 60000, retries: 1}
-      );
+      var mode2 = uploadMode==='notes' ? 'notes' : 'scanned-extract';
+      var raw = await aiCall('Extract every single question on this page. Raw JSON array only.', {source:'ambition-cuet-cbt', mode: mode2, image: rendered.images[i]}, {timeoutMs: 90000, retries: 1});
       collected = collected.concat(normaliseList(safeParseJSON(raw)));
-    } catch(e) {
-      console.warn('Page '+(i+1)+' failed:', e.message);
-    }
+    } catch(e) {}
   }
   return collected;
 }
 
 function chunkText(text, size){
-  var chunks = [];
-  var i = 0;
-  while(i < text.length){
-    var end = Math.min(i + size, text.length);
-    if(end < text.length){
-      var slice = text.slice(i, end);
-      var lastBreak = Math.max(slice.lastIndexOf('\n\n'), slice.lastIndexOf('. '));
-      if(lastBreak > size * 0.5) end = i + lastBreak + 1;
-    }
-    chunks.push(text.slice(i, end));
-    i = end;
-  }
+  var chunks = []; var i = 0;
+  while(i < text.length){ var end = Math.min(i + size, text.length); if(end < text.length){ var slice = text.slice(i, end); var lastBreak = Math.max(slice.lastIndexOf('\n\n'), slice.lastIndexOf('. ')); if(lastBreak > size * 0.5) end = i + lastBreak + 1; } chunks.push(text.slice(i, end)); i = end; }
   return chunks;
 }
 
 function launchTest(cfg){
-  T={name:cfg.name,questions:cfg.questions,cur:0,elapsed:0,timerMode:cfg.timerMode||'up',answers:cfg.questions.map(function(){return null}),marked:cfg.questions.map(function(){return false})};
+  T = {
+    name: cfg.name,
+    questions: cfg.questions,
+    cur: 0,
+    elapsed: 0,
+    timerMode: cfg.timerMode || 'stopwatch',
+    timerMins: cfg.timerMins || 15,
+    subject: cfg.subject || 'General',
+    answers: cfg.questions.map(function(){ return null; }),
+    marked: cfg.questions.map(function(){ return false; }),
+    testId: cfg.testId || null,
+    teacherId: cfg.teacherId || null
+  };
+  testType = cfg.type || 'self';
+  LS.set(K.ACTIVE, T);
   $('testTitle').textContent=T.name;
-  showScreen('screen-test');
-  startTimer();
-  renderQuestion();
-  renderPalette();
+  $('timerDisplay').style.color = 'var(--text)';
+  startTime = Date.now(); totalDuration = T.timerMins * 60;
+  showScreen('screen-test'); startTimer(); renderQuestion(); renderPalette();
 }
 
 function startTimer(){
   if(timerHandle) clearInterval(timerHandle);
   timerHandle=setInterval(function(){
     if(!T) return;
-    T.elapsed++;
-    $('timerDisplay').textContent=fmtTime(T.elapsed);
+    var now = Date.now(); T.elapsed = Math.floor((now - startTime) / 1000);
+    if (T.timerMode === 'timer') {
+      var remaining = totalDuration - T.elapsed;
+      if (remaining <= 0) { clearInterval(timerHandle); $('timerDisplay').textContent = '00:00'; dialog({title:'Time Up!',message:'Auto-submitting your test.'}).then(function(){ submitTest(); }); return; }
+      $('timerDisplay').textContent=fmtTime(remaining); $('timerDisplay').style.color = remaining < 60 ? 'var(--red)' : 'var(--text)';
+    } else { $('timerDisplay').textContent=fmtTime(T.elapsed); }
   },1000);
 }
 
-// Upgraded renderQuestion: runs autoWrapMath live so even already-saved Question Banks render properly
 function renderQuestion(){
   if(!T) return;
   var q=T.questions[T.cur];
-  $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length;
-  $('qTopic').textContent=q.topic;
-  $('qDiff').textContent=q.diff;
-  $('qText').innerHTML=autoWrapMath(q.q);
-
-  var box=$('optionsBox');box.innerHTML='';
-  var letters=['A','B','C','D'];
+  $('qCounter').textContent='Question '+(T.cur+1)+' of '+T.questions.length; $('qTopic').textContent=q.topic; $('qDiff').textContent=q.diff;
+  $('qText').innerHTML=autoWrapMath(esc(q.q));
+  var box=$('optionsBox');box.innerHTML=''; var letters=['A','B','C','D'];
   q.options.forEach(function(opt,i){
-    var b=document.createElement('button');
-    b.className='option'+(T.answers[T.cur]===i?' selected':'');
-    var formattedOpt = autoWrapMath(cleanOptionText(opt));
+    var b=document.createElement('button'); b.className='option'+(T.answers[T.cur]===i?' selected':'');
+    var formattedOpt = autoWrapMath(esc(cleanOptionText(opt)));
     b.innerHTML='<span class="opt-key">'+letters[i]+'</span><span class="option-text">'+formattedOpt+'</span>';
-    b.onclick=function(){T.answers[T.cur]=i;renderQuestion();renderPalette()};
+    b.onclick=function(){T.answers[T.cur]=i; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette();};
     box.appendChild(b);
   });
-
-  $('btnPrev').disabled=(T.cur===0);
-  $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
-  renderMath($('qText'));
-  renderMath(box);
+  $('btnPrev').disabled=(T.cur===0); $('btnNext').textContent=(T.cur===T.questions.length-1)?'Review & Submit':'Save & Next →';
+  renderMath($('qText')); renderMath(box);
 }
 
 function renderPalette(){
   if(!T) return;
   var grid=$('paletteGrid');grid.innerHTML='';
   T.questions.forEach(function(_,i){
-    var cls='grey';
-    if(T.marked[i]) cls='purple';
-    else if(T.answers[i]!==null) cls='green';
-    var b=document.createElement('button');
-    b.className='pal-btn '+cls+(i===T.cur?' cur':'');
-    b.textContent=i+1;
+    var cls='grey'; if(T.marked[i]) cls='purple'; else if(T.answers[i]!==null) cls='green';
+    var b=document.createElement('button'); b.className='pal-btn '+cls+(i===T.cur?' cur':''); b.textContent=i+1;
     b.onclick=function(){T.cur=i;renderQuestion();renderPalette();$('palette').classList.remove('open')};
     grid.appendChild(b);
   });
 }
 
-function goNext(){ if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); } else submitTest(); }
+function goNext(){ if(T.cur < T.questions.length-1){ T.cur++; renderQuestion(); renderPalette(); } else { dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest();}); } }
 function goPrev(){ if(T.cur > 0){ T.cur--; renderQuestion(); renderPalette(); } }
-function toggleMark(){ T.marked[T.cur]=!T.marked[T.cur]; renderQuestion(); renderPalette(); }
-function clearAns(){ T.answers[T.cur]=null; renderQuestion(); renderPalette(); }
+function toggleMark(){ T.marked[T.cur]=!T.marked[T.cur]; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
+function clearAns(){ T.answers[T.cur]=null; LS.set(K.ACTIVE, T); renderQuestion(); renderPalette(); }
 
-function submitTest(){
+async function submitTest(){
   if(timerHandle) clearInterval(timerHandle);
-  var correct=0,wrong=0,skipped=0;
-  T.questions.forEach(function(q,i){
-    if(T.answers[i]===null) { skipped++; return; }
-    if(T.answers[i]===q.ans) correct++;
-    else wrong++;
-  });
-  var score=(correct*5)-(wrong*1);
-  var max=T.questions.length*5;
-  var pct=Math.max(0,Math.round((score/max)*100));
+  LS.del(K.ACTIVE);
+  
+  showLoader('Submitting Test...', 'Calculating your score');
 
-  var record={name:T.name,score:score,max:max,pct:pct,correct:correct,wrong:wrong,skipped:skipped,date:new Date().toLocaleString()};
-  var hist=LS.get(K.HISTORY,[]);
-  hist.unshift(record);
-  LS.set(K.HISTORY,hist);
+  var correct=0,wrong=0,skipped=0; var topicStats = {};
+  T.questions.forEach(function(q,i){
+    var topic = q.topic || 'General'; if(!topicStats[topic]) topicStats[topic] = { correct: 0, total: 0 }; topicStats[topic].total++;
+    if(T.answers[i]===null) { skipped++; return; }
+    if(T.answers[i]===q.ans) { correct++; topicStats[topic].correct++; } else { wrong++; }
+  });
+  var score=(correct*5)-(wrong*1); var max=T.questions.length*5; var pct=Math.max(0,Math.round((score/max)*100));
+  
+  var record={ name:T.name, score:score, max:max, pct:pct, correct:correct, wrong:wrong, skipped:skipped, date:new Date().toLocaleString(), topicStats: topicStats };
+  var hist=LS.get(K.HISTORY,[]); hist.unshift(record); LS.set(K.HISTORY,hist);
+
+  // Save result + weak topics (only for students, not teacher preview)
+  if (currentUser && currentUserData && currentUserData.role === 'student') {
+      try {
+          await addDoc(collection(db, "results"), {
+              studentId: currentUser.uid, studentName: currentUserData.name,
+              testName: T.name, testId: T.testId, teacherId: T.teacherId, 
+              type: testType, score: score, pct: pct, correct: correct, wrong: wrong,
+              timestamp: serverTimestamp()
+          });
+      } catch(e) { console.error("Error saving result:", e); }
+
+      try {
+          const subject = normalizeSubject(T.subject);
+          const userRef = doc(db, "users", currentUser.uid);
+          const userDoc = await getDoc(userRef);
+          const existingWeak = userDoc.data()?.weakTopics || {};
+          if (!existingWeak[subject]) existingWeak[subject] = {};
+          
+          Object.keys(topicStats).forEach(topic => {
+              const stats = topicStats[topic];
+              const acc = Math.round((stats.correct / stats.total) * 100);
+              if (acc < 60) {
+                  existingWeak[subject][topic] = { pct: acc, correct: stats.correct, total: stats.total, lastDate: new Date().toISOString() };
+              } else {
+                  delete existingWeak[subject][topic];
+              }
+          });
+          
+          Object.keys(existingWeak).forEach(sub => {
+              if (Object.keys(existingWeak[sub]).length === 0) delete existingWeak[sub];
+          });
+          
+          await updateDoc(userRef, { weakTopics: existingWeak });
+      } catch(e) { console.error("Weak topics save error:", e); }
+  }
+
+  hideLoader();
+
+  var strongHtml = '', weakHtml = '';
+  for (var t in topicStats) {
+    var stats = topicStats[t]; var acc = Math.round((stats.correct / stats.total) * 100);
+    if (acc >= 70) strongHtml += '<div style="color:var(--green);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>✅ '+esc(t)+'</span><b>'+acc+'%</b></div>';
+    else if (acc < 50) weakHtml += '<div style="color:var(--red);margin-bottom:6px;font-size:13.5px;display:flex;justify-content:space-between;"><span>⚠️ '+esc(t)+'</span><b>'+acc+'%</b></div>';
+  }
+  
+  var analysisHtml = '<div class="card" style="margin-top:16px; padding:16px;">';
+  if(strongHtml || weakHtml) {
+    analysisHtml += '<h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Topic Analysis</h3>';
+    if(strongHtml) analysisHtml += '<div style="margin-bottom:12px;"><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Strong Topics</div>'+strongHtml+'</div>';
+    if(weakHtml) analysisHtml += '<div><div style="font-weight:700;font-size:12px;margin-bottom:6px;color:var(--text)">Needs Improvement</div>'+weakHtml+'</div>';
+  } else { analysisHtml += '<p class="muted small" style="margin:0">Complete more questions to see analysis.</p>'; }
+  analysisHtml += '</div>';
+
+  var reviewHtml = '<div style="margin-top:26px; display:none;" id="reviewSection"><h2 class="section-title" style="margin-top:0;">Review Answers & Explanations</h2>';
+  T.questions.forEach(function(q, i) {
+    var userAns = T.answers[i]; var isCorrect = (userAns === q.ans);
+    var statusColor = userAns === null ? 'var(--muted)' : (isCorrect ? 'var(--green)' : 'var(--red)');
+    reviewHtml += '<div class="review-item" style="border-left: 4px solid '+statusColor+';">';
+    reviewHtml += '<div class="review-q">Q'+(i+1)+'. ' + esc(q.q) + '</div>';
+    q.options.forEach(function(opt, optIdx) {
+        var isThisCorrect = (optIdx === q.ans); var isThisUser = (optIdx === userAns);
+        var optStyle = 'padding:6px 10px; border-radius:6px; margin-bottom:4px; font-size:13px;';
+        if (isThisCorrect) optStyle += 'background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); font-weight:600;';
+        else if (isThisUser) optStyle += 'background: rgba(239,68,68,0.15); border: 1px solid var(--red); color: var(--red);';
+        else optStyle += 'color: var(--muted);';
+        reviewHtml += '<div style="'+optStyle+'">' + String.fromCharCode(65 + optIdx) + ') ' + esc(opt) + '</div>';
+    });
+    if(q.explain) { reviewHtml += '<div class="review-exp"><b style="color:var(--accent);">Explanation:</b> ' + esc(q.explain) + '</div>'; }
+    reviewHtml += '</div>';
+  });
+  reviewHtml += '</div>';
 
   $('resultBody').innerHTML='<div class="scorecard">'+
     '<div class="muted small" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">CUET UG Scorecard</div>'+
@@ -931,46 +1414,97 @@ function submitTest(){
     '<div class="scr-meta-item"><div class="scr-meta-val" style="color:var(--red)">'+wrong+'</div><div class="scr-meta-lbl">Wrong (-'+wrong+')</div></div>'+
     '<div class="scr-meta-item"><div class="scr-meta-val">'+fmtTime(T.elapsed)+'</div><div class="scr-meta-lbl">Time</div></div>'+
     '</div></div>'+
+    analysisHtml +
+    '<button class="btn big" id="btnToggleReview" style="margin-top:20px; background:var(--card-2); border:1px solid var(--border); color:var(--text);">👁️ Review Answers & Explanations</button>' +
+    reviewHtml +
     '<button class="btn primary big" id="btnResHome">🏠 Back to Home</button>';
 
-  $('btnResHome').onclick=function(){renderHome();showScreen('screen-home')};
-  showScreen('screen-result');
+  $('btnToggleReview').onclick = function() {
+    var rev = $('reviewSection');
+    if (rev.style.display === 'none') { rev.style.display = 'block'; this.textContent = '🙈 Hide Answers & Explanations'; renderMath(rev); } 
+    else { rev.style.display = 'none'; this.textContent = '👁️ Review Answers & Explanations'; }
+  };
+  
+  $('btnResHome').onclick=function(){
+    showScreen('screen-home');
+    if (currentUserData.role === 'student' || isStudentPreview) loadStudentDashboard(); else loadTeacherDashboard();
+  };
+  
+  showScreen('screen-result'); T = null;
+}
+
+function safeClick(id, fn) {
+  var el = document.getElementById(id);
+  if (el) el.onclick = fn;
 }
 
 function wireEvents(){
-  $('btnOpenSettings').onclick=function(){dialog({title:'Settings',message:'Ambition CBT Mode — full Math & LaTeX rendering.'})};
-  $('btnBackHome').onclick=function(){showScreen('screen-home')};
-  $('btnModeAI').onclick=openSetup;
-  $('btnModeBook').onclick=function(){openUpload('extract')};
-  $('btnModeNotes').onclick=function(){openUpload('notes')};
-  $('btnModeImage').onclick=function(){openUpload('image')};
-  $('btnSetupBack').onclick=function(){showScreen('screen-exam')};
-  $('btnUploadBack').onclick=function(){showScreen('screen-exam')};
-  $('btnFullSubject').onclick=function(){
-    state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice();
-    document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')});
-  };
-  $('btnClearChapters').onclick=function(){
-    state.chapters=[];
-    document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')});
-  };
-  $('btnStartTest').onclick=startAITest;
-  $('fileInput').onchange=function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
-  $('btnPaletteToggle').onclick=function(){$('palette').classList.toggle('open')};
-  $('btnNext').onclick=goNext;
-  $('btnPrev').onclick=goPrev;
-  $('btnMark').onclick=toggleMark;
-  $('btnClear').onclick=clearAns;
-  $('btnSubmit').onclick=function(){dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})};
-  $('btnResultHome').onclick=function(){renderHome();showScreen('screen-home')};
+  safeClick('btnSetupBack', function(){showScreen('screen-home')});
+  safeClick('btnUploadBack', function(){showScreen('screen-home')});
+  safeClick('btnFullSubject', function(){ state.chapters=(EXAM_DATA.CUET.subjects[state.subject]||[]).slice(); document.querySelectorAll('.check-item').forEach(function(i){i.classList.add('on')}); });
+  safeClick('btnClearChapters', function(){ state.chapters=[]; document.querySelectorAll('.check-item').forEach(function(i){i.classList.remove('on')}); });
+  
+  var ci = $('customNumInput'); if(ci) ci.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 100) { state.count = v; renderChips(); } };
+  var ti = $('customTimerInput'); if(ti) ti.oninput = function(e) { var v = parseInt(e.target.value); if(v > 0 && v <= 180) { state.timerMins = v; } };
+
+  safeClick('btnStartTest', startAITest);
+  var fi = $('fileInput'); if(fi) fi.onchange = function(e){if(e.target.files[0]) handleFileUpload(e.target.files[0]); e.target.value='';};
+  safeClick('btnPaletteToggle', function(){$('palette').classList.toggle('open')});
+  safeClick('btnNext', goNext); 
+  safeClick('btnPrev', goPrev); 
+  safeClick('btnMark', toggleMark); 
+  safeClick('btnClear', clearAns);
+  safeClick('btnSubmit', function(){dialog({title:'Submit Test?',message:'Finish the exam?',buttons:[{text:'Continue',value:false},{text:'Submit',primary:true,value:true}]}).then(function(ok){if(ok) submitTest()})});
+  
+  safeClick('btnResultHome', function(){
+    showScreen('screen-home');
+    if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) loadStudentDashboard(); else if (currentUserData) loadTeacherDashboard();
+  });
+
+  // FOLDER BUTTONS
+  safeClick('btnTeacherFolder', openTeacherTests);
+  safeClick('btnSelfFolder', loadSelfPractice);
+  safeClick('btnSelfPracticeBack', function(){ showScreen('screen-home'); });
+
+  // Self Practice buttons
+  safeClick('btnSelfPractice', () => { openSetup(); });
+  safeClick('btnSelfBook', () => { openUpload('extract'); });
+  safeClick('btnSelfNotes', () => { openUpload('notes'); });
+  safeClick('btnSelfImage', () => { openUpload('image'); });
+  
+  // Teacher Dashboard Buttons
+  safeClick('btnTeacherCreateTest', () => { openSetup(); });
+  safeClick('btnTeacherBook', () => { openUpload('extract'); });
+  safeClick('btnTeacherNotes', () => { openUpload('notes'); });
+  safeClick('btnTeacherImage', () => { openUpload('image'); });
+
+  // Preview Mode Buttons
+  safeClick('btnPreviewAsStudent', () => { isStudentPreview = true; loadDashboards(); });
+  safeClick('btnExitPreview', () => { isStudentPreview = false; loadDashboards(); });
+
+  // REFRESH BUTTON
+  safeClick('btnRefreshDash', async () => {
+      var btn = document.getElementById('btnRefreshDash');
+      if(btn) btn.classList.add('spinning');
+      try {
+          if (currentUserData && (currentUserData.role === 'student' || isStudentPreview)) {
+              if (document.getElementById('screen-teacher-tests').classList.contains('active')) {
+                  await openTeacherTests();
+              } else {
+                  await loadStudentDashboard();
+              }
+          } else if (currentUserData && currentUserData.role === 'teacher') {
+              await loadTeacherDashboard();
+          }
+      } catch (e) { console.error("Refresh error:", e); }
+      finally {
+          setTimeout(() => { if(btn) btn.classList.remove('spinning'); }, 600);
+      }
+  });
 }
 
-(function init(){
-  wireEvents();
-  renderHome();
-  showScreen('screen-home');
-  IDB.open().catch(function(){});
-})();
+wireEvents();
+IDB.open().catch(function(){});
 </script>
 </body>
-</html>
+  </html>
